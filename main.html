@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Boost</title>
+		<style>
+			body{position:fixed;background-color:black;overflow:hidden;font-family:sans-serif;margin:0}
+			body,#container{
+				left:0;top:0;bottom:0;right:0;
+			}
+			#container{position:absolute;z-index:0;}
+			#lowerright{position:fixed;right:0;bottom:0;color:black;padding:10px;font-size:2cm;font-family:'Walkway Black'}
+			#units{font-size:1cm;}
+		</style>
+	</head>
+	<body>
+		<div id="container"></div>
+		<div id="lowerright"><span id="speed"></span><span id="units">mph</span></div>
+		<script src="js/socket.io.js"></script>
+		<script src="js/three-55.js"></script>
+		<script src="fx/EffectComposer.js"></script>
+		<script src="fx/ShaderPass.js"></script>
+		<script src="fx/MaskPass.js"></script>
+		<!--<script src="fx/TexturePass.js"></script>-->
+		<script src="fx/RenderPass.js"></script>
+		<script src="fx/CopyShader.js"></script>
+		<script src="js/const.js"></script>
+		<script src="js/scene.js"></script>
+		<script src="js/fx.js"></script>
+		<script src="js/control.js"></script>
+		<script src="js/main.js"></script>
+	</body>
+</html>
