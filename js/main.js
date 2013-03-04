@@ -69,7 +69,7 @@ function step(){
 		}
 		else{//Normal acceleration
 			grip=drift[0]
-			morelength=0.001*(maxspeed-length)//accel*d
+			morelength=accel*(maxspeed-length)//accel*d
 		}
 		turnspeed=turn[0]//Fastest speed turns slower
 	}

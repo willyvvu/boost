@@ -2,7 +2,7 @@
 //Unit settings
 mph=3600*100/2.54/12/5280
 kmph=3600/1000
-speedunit=kmph
+speedunit=mph
 //Camera settings
 minfov=65//Field of view
 maxfov=120//Field of view
@@ -19,7 +19,7 @@ climb=0.7
 //Movement + Handling
 //All speeds in m/s
 maxspeed=200//340
-accel=20
+accel=0.001
 turn=[
 	0.02,//Fast
 	0.03,//Not going
