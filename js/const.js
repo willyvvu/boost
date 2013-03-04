@@ -2,19 +2,34 @@
 //Unit settings
 mph=3600*100/2.54/12/5280
 kmph=3600/1000
-speedunit=mph
+speedunit=kmph
 //Camera settings
-fov=65//Field of view
+minfov=65//Field of view
+maxfov=120//Field of view
 near=0.1//Near
 far=10000000//Far
 camchase=new THREE.Vector3(0,3,10)
 
-//Movement settings
+//Constants
 friction=0.9
-grip=0.1
 gravity=0.1
 float=1
 climb=0.7
+
+//Movement + Handling
+//All speeds in m/s
+maxspeed=200//340
+accel=20
+turn=[
+	0.02,//Fast
+	0.03,//Not going
+	0.035//Brake
+]
+drift=[
+	0.2,//Fast
+	0.2,//Not going
+	0.01//Brake
+]
 
 //Everyone loves a skybox!
 skyPrefix='scene/skybox/'

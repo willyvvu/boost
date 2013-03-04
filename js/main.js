@@ -26,6 +26,11 @@ function restrict(a,b){//Restricts a into the plane of b
 }
 velocity=new THREE.Vector3()
 fall=0
+
+//Cam follow purposes
+front=new THREE.Vector3(0,0,-5)
+behind=new THREE.Vector3(0,3,10).normalize()
+
 function step(){
 	
 	//Make the exhaust look like it's alive
@@ -60,17 +65,17 @@ function step(){
 	if(boosting||pedal>0){//Going forwards
 		if(boosting){//Going FAAAAAAST!
 			grip=1//Strong grip
-			morelength=0.10*(340-length)//Speed of sound is 340 m/s
+			morelength=0.10*(maxspeed-length)//Speed of sound is 340 m/s
 		}
-		else{//Normal speed
-			grip=0.05
-			morelength=12*d
+		else{//Normal acceleration
+			grip=drift[0]
+			morelength=0.001*(maxspeed-length)//accel*d
 		}
-		turnspeed=0.02//Fastest speed turns slower
+		turnspeed=turn[0]//Fastest speed turns slower
 	}
 	else{//Not going at all.
-		turnspeed=0.03//No thrust turns fastest
-		grip=0.05//Normal grip
+		turnspeed=turn[1]//No thrust turns fastest
+		grip=drift[1]//Normal grip
 	}
 	if(brake>0){
 		if(pedal>0||boosting){//Gas and brake? Drift time!
@@ -79,11 +84,11 @@ function step(){
 		else{//Just brake? Friction!
 			velocity.multiplyScalar(Math.pow(0.1,d))
 		}
-		grip=0.01//Drift
-		turnspeed=0.035//Braking turns moderate, drifts
+		grip=drift[2]//Drift
+		turnspeed=turn[2]//Braking turns moderate, drifts
 	}
 	if(steer!=0){
-		ship.matrix.rotateY(-steer*turnspeed)
+		ship.matrix.rotateY(-steer*turnspeed*(velocity.length()*0.001+1))
 		ship.rotation.setEulerFromRotationMatrix(ship.matrix)
 	}
 	velocity.copy(
@@ -101,7 +106,7 @@ function step(){
 	bottomray=new THREE.Raycaster(
 		ship.position,
 		ship.matrix.rotateAxis(new THREE.Vector3(0,-1,0))
-		,0,3
+		,0,10-fall
 	)
 	intersections=bottomray.intersectObject(track)
 	ship.updateMatrix()
@@ -114,68 +119,79 @@ function step(){
 		if(from.dot(to)>=1-climb){//Shallow enough
 			ship.matrix.translate(new THREE.Vector3(0,-intersections[0].distance,0))
 			var inv=new THREE.Matrix4().getInverse(ship.matrix)
-			if(!from.equals(to)){
-				ship.matrix.rotateByAxis(
-					inv.rotateAxis(from.clone().cross(to)),
-					Math.acos(Math.round(from.dot(to)*100)/100)*(1-1/(velocity.length()*0.002+1.01))
-				)
-				ship.rotation.setEulerFromRotationMatrix(ship.matrix)
-				velocity.sub(intersections[0].face.normal.clone().multiplyScalar(
-					velocity.dot(intersections[0].face.normal)
-				))
-				//rotateAxis takes a vector and rotates it using the matrix.
-				ship.matrix.translate(new THREE.Vector3(0,1,0))
-				ship.rotation.setEulerFromRotationMatrix(ship.matrix)
-				ship.position.getPositionFromMatrix(ship.matrix)
-				//Turn to match the road normal
+			ship.matrix.rotateByAxis(
+				inv.rotateAxis(from.clone().cross(to)),
+				Math.acos(Math.round(from.dot(to)*100)/100)//*(1-1/(velocity.length()*0.002+1.01))
+			)
+			ship.rotation.setEulerFromRotationMatrix(ship.matrix)
+			velocity.sub(intersections[0].face.normal.clone().multiplyScalar(
+				velocity.dot(intersections[0].face.normal)
+			))
+			//rotateAxis takes a vector and rotates it using the matrix.
+			ship.matrix.translate(new THREE.Vector3(0,intersections[0].distance<=float?float:intersections[0].distance,0))
+			ship.rotation.setEulerFromRotationMatrix(ship.matrix)
+			ship.position.getPositionFromMatrix(ship.matrix)
+			//Turn to match the road normal
+			if(intersections[0].distance<=float){
+				fall=0
 			}
 		}
-		fall=0
 	}
-	else{
-		ship.matrix.translate(new THREE.Vector3(0,fall,0))
-		fall+=-9.8*d*0.1
-		ship.position.getPositionFromMatrix(ship.matrix)
-		//Free fall
-	}
+	ship.matrix.translate(new THREE.Vector3(0,fall,0))
+	ship.position.getPositionFromMatrix(ship.matrix)
+	fall+=-9.8*d*0.1
 	to=to||ship.matrix.rotateAxis(new THREE.Vector3(0,-1,0))
 	//Check for front collisions
 	frontray=new THREE.Raycaster(
-		ship.position,
-		ship.matrix.rotateAxis(new THREE.Vector3(0,0,-2))
-		,0,3+velocity.length()*d
+		ship.matrix.rotateAxis(new THREE.Vector3(0,0,1)).add(ship.position),
+		ship.matrix.rotateAxis(new THREE.Vector3(0,0.1,-2))
+		,0,10+velocity.length()*d
 	)
 	rightrearray=new THREE.Raycaster(
 		ship.position,
-		ship.matrix.rotateAxis(new THREE.Vector3(2,0,1))
-		,0,3
+		ship.matrix.rotateAxis(new THREE.Vector3(2,0.1,1))
+		,0,4
 	)
 	leftrearray=new THREE.Raycaster(
 		ship.position,
-		ship.matrix.rotateAxis(new THREE.Vector3(-2,0,1))
-		,0,3
+		ship.matrix.rotateAxis(new THREE.Vector3(-2,0.1,1))
+		,0,4
 	)
 	intersections=frontray.intersectObject(track)
 		.concat(leftrearray.intersectObject(track))
 		.concat(rightrearray.intersectObject(track))
 	intersections.sort(function(a,b){return a.distance-b.distance})
 	if(intersections.length&&!intersections[0].face.normal.equals(to)){
-		if(intersections[0].face.normal.dot(to)<climb){//Wall is steep enough
-			ship.position.add(restrict(intersections[0].face.normal,to).normalize()
-				.multiplyScalar(3-intersections[0].distance))
-				//Keep away
-			velocity=restrict(velocity,intersections[0].face.normal)
-			coolPass.uniforms.damage.value=Math.min(coolPass.uniforms.damage.value+velocity.length()*0.0005,1)
-			//.add(restrict(intersections[0].face.normal,to).multiplyScalar(1))
+		if(intersections[0].distance<2.5+velocity.length()*d){
+			if(intersections[0].face.normal.dot(to)<climb&&intersections[0].face.normal.dot(velocity)<=0){//Wall is steep enough
+				ship.position.add(restrict(intersections[0].face.normal,to).normalize()
+					.multiplyScalar(2.5-intersections[0].distance))
+					//Keep away
+				velocity=restrict(velocity,intersections[0].face.normal)
+				coolPass.uniforms.damage.value=Math.min(coolPass.uniforms.damage.value+velocity.length()*0.0005,1)
+				//.add(restrict(intersections[0].face.normal,to).multiplyScalar(1))
+			}
 		}
 	}
-	
 	ship.position.add(velocity.clone().multiplyScalar(d))
-	var camfollow=0.9//Math.pow(0.01,d)
-	camera.position.x+=steer*turnspeed*10
-	camera.position.x*=camfollow
-	camera.lookAt(new THREE.Vector3(0,0,-5))
+	
 	//Have the camera follow the ship
+	var camfollow=0.95//Math.pow(0.01,d)
+	/*camera.position.x+=steer*turnspeed*10
+	camera.position.x*=camfollow*/
+	front.multiplyScalar(camfollow)
+		.add(ship.matrix.rotateAxis(new THREE.Vector3(0,0,-5)).multiplyScalar(5*(1-camfollow)))
+	camera.up.multiplyScalar(camfollow)
+		.add(ship.matrix.rotateAxis(new THREE.Vector3(0,1,0)).multiplyScalar(1-camfollow))
+	behind.multiplyScalar(camfollow)
+		.add(ship.matrix.rotateAxis(new THREE.Vector3(0,3,10)).multiplyScalar(1-camfollow))
+	camera.position.addVectors(ship.position,behind.clone().multiplyScalar(13-12*(camera.fov-minfov)/(180-minfov)))
+	camera.lookAt(front.clone().add(ship.position))
+	//camera.rotation.copy(ship.rotation)
+	
+	//Adjust the camera fov
+	camera.fov=minfov+(maxfov-minfov)*(velocity.length()/maxspeed)
+	camera.updateProjectionMatrix()
 	
 }
 resize()

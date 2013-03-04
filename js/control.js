@@ -1,7 +1,7 @@
 //Keyboard
 keys=[]
 function keyChange(e){//Picks up any change in keys: keyup and keydown
-	//console.log(e.keyCode)
+	console.log(e.keyCode)
 	var ind=keys.indexOf(e.keyCode)
 	if(e.type=='keydown'){
 		if(ind==-1){
@@ -49,6 +49,12 @@ function keyHandle(code,down){
 		case 32://Space
 		case 79://O
 			boosting=down?1:0
+			break
+		case 36:
+			ship.position.set(0,0,0)
+			ship.rotation.set(0,0,0)
+			velocity.set(0,0,0)
+			fall=0
 			break
 	}
 	pedal=kforwards

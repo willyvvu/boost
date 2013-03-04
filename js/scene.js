@@ -3,10 +3,9 @@
 container=document.getElementById('container')
 renderer=new THREE.WebGLRenderer({clearColor:0x000000,clearAlpha:1})
 container.appendChild(renderer.domElement)
-camera=new THREE.PerspectiveCamera(fov,0,near,far)
+camera=new THREE.PerspectiveCamera(minfov,0,near,far)
 camera.position.copy(camchase)
 scene=new THREE.Scene()
-//scene.add(camera)
 loader=new THREE.JSONLoader()
 
 //Skybox. Wonderful.
@@ -16,7 +15,8 @@ skyBox=new THREE.Mesh(new THREE.CubeGeometry(-100000,-100000,-100000,1,1,1),skyM
 scene.add(skyBox)
 
 ship=new THREE.Object3D()
-ship.add(camera)
+//ship.add(camera)
+scene.add(camera)
 scene.add(ship)
 //Load the stuff
 loader.load('scene/ship/Ship.js',function(geo){
