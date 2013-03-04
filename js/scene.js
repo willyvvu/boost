@@ -54,6 +54,7 @@ loader.load('scene/ship/Boost.js',function(geo){
 	boost.material.map.offset.x=-1
 	ship.add(boost)
 })
+track=new THREE.Object3D()
 loader.load('scene/track/Track.js',function(geo){
 	track=new THREE.Mesh(
 		geo,
