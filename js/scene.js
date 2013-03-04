@@ -57,7 +57,7 @@ loader.load('scene/ship/Boost.js',function(geo){
 loader.load('scene/track/Track.js',function(geo){
 	track=new THREE.Mesh(
 		geo,
-		new THREE.MeshLambertMaterial()
+		new THREE.MeshLambertMaterial({map:THREE.ImageUtils.loadTexture('scene/track/Track.png')})
 	)
 	scene.add(track)
 })
