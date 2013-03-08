@@ -31,7 +31,7 @@ respawning=false
 savingPlace=-1
 function savePlace(){
 	respawnpoint.copy(ship.matrix)
-	console.log('saving place')
+	//console.log('saving place')
 	return savingPlace=setTimeout(savePlace,1000)
 }
 function step(){
@@ -51,8 +51,16 @@ function step(){
 	if(boosting){
 		if(coolPass.uniforms.phase.value==0){
 			coolPass.uniforms.phase.value=0.1
+			boostaudio.currentTime=boostaudio.startTime//Restart the boost sound and play it
+			//boostaudio.play()
 		}
+		boostgain.gain.value=1
 	}
+	else{
+		boostgain.gain.value=Math.round(smooth(boostgain.gain.value,boosting?1:0,0.1)*1000)/1000
+		if(boostgain.gain.value<=0.1){boostaudio.pause()}
+	}
+	
 	coolPass.uniforms.damage.value=
 		smooth(coolPass.uniforms.damage.value,0,0.05)
 	//Exhaust behavior
@@ -62,6 +70,7 @@ function step(){
 		smooth(boost.material.map.offset.x,boosting?0:-1,0.1)
 	coolPass.uniforms.boost.value=
 		smooth(coolPass.uniforms.boost.value,boosting?1:0,0.1)
+	backgroundfilter.frequency.value=Math.round(smooth(backgroundfilter.frequency.value,boosting?800:0,0.1))
 	//Movement
 	var length=velocity.length()
 	var morelength=0
@@ -150,14 +159,14 @@ function step(){
 				}
 			}
 			else{//Off road
-				console.log('off')
+				//console.log('off')
 				clearTimeout(savingPlace)
 				savingPlace=-1
 			}
 		}
 	}
 	else{//Off road
-		console.log('off')
+		//console.log('off')
 		clearTimeout(savingPlace)
 		savingPlace=-1
 	}
@@ -204,7 +213,7 @@ function step(){
 	/*camera.position.x+=steer*turnspeed*10
 	camera.position.x*=camfollow*/
 	front.multiplyScalar(camfollow)
-		.add(model.matrixWorld.rotateAxis(new THREE.Vector3(0,0,-1)).multiplyScalar(50*(1-camfollow)))
+		.add(ship.matrixWorld.rotateAxis(new THREE.Vector3(0,0,-1)).multiplyScalar(50*(1-camfollow)))
 	camera.up.multiplyScalar(camfollow)
 		.add(ship.matrix.rotateAxis(new THREE.Vector3(0,1,0)).multiplyScalar(1-camfollow))
 	behind.multiplyScalar(camfollow)
@@ -240,7 +249,7 @@ front=new THREE.Vector3(0,0,-1)
 behind=camchase.clone().normalize()
 
 resize()
-document.body.onresize=resize
-document.body.onload=render
+window.addEventListener('resize',resize,false)
+window.addEventListener('load',render,false)
 //Somehow, event listeners don't work on body :(
 //Maybe it's not initialized yet?
