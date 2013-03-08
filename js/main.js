@@ -35,6 +35,7 @@ function savePlace(){
 	return savingPlace=setTimeout(savePlace,1000)
 }
 function step(){
+	if(!track){return}
 	//Make the exhaust look like it's alive
 	thrust.material.map.offset.y=Math.random()*0.2-0.1
 	boost.material.map.offset.y=Math.random()*0.2-0.1
@@ -251,5 +252,9 @@ behind=camchase.clone().normalize()
 resize()
 window.addEventListener('resize',resize,false)
 window.addEventListener('load',render,false)
+window.addEventListener('load',function(){
+	document.getElementById('lowerright').style.display=''
+	document.getElementById('loading').style.display='none'
+},false)
 //Somehow, event listeners don't work on body :(
 //Maybe it's not initialized yet?

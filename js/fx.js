@@ -41,7 +41,7 @@ var coolPass=new THREE.ShaderPass({//I'm going to be PRO with some
 		'if(damage>0.0){',
 			'glass+=0.2*vin*damage*texture2D(tHex,mod(0.004*gl_FragCoord,1.0).xy).x;',
 			'color+=2.0*vin*vec4(0.3,-0.0,-0.2,1.0)*damage;};',
-		'if(boost>0.0){color+=vin*boost*vec4(0.6,0.6,1.0,1.0)*0.8;};',
+		'if(boost>0.0){color+=vin*boost*vec4(0.6,0.6,1.0,1.0)*0.9;};',
 		'if(cover>0.0){color+=cover*vec4(1.0,1.0,1.0,1.0);};',
 		'if(glass!=0.0){vc+=normalize(center)*glass;};',
 		'gl_FragColor = texture2D(tDiffuse,vc)+color;',
