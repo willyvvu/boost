@@ -28,6 +28,7 @@ scene.add(camera)
 scene.add(ship)
 //Load the stuff
 model=new THREE.Object3D()
+model.position.y=adhere
 ship.add(model)
 loader.load('scene/ship/Ship.js',function(geo){
 	hull=new THREE.Mesh(
@@ -72,9 +73,10 @@ loader.load('scene/ship/Boost.js',function(geo){
 	model.add(boost)
 })
 track=false
-loader.load('scene/track/Track.js',function(geo){
+//new THREE.SceneLoader()
+loader.load('scene/track/Track.js',function(data){
 	track=new THREE.Mesh(
-		geo,
+		data,//.objects.Track.geometry,
 		new THREE.MeshPhongMaterial({
 			map:THREE.ImageUtils.loadTexture('scene/track/Track.png'),
 			color: 0xFFFFFF,

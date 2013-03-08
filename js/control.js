@@ -61,7 +61,7 @@ function keyHandle(){
 	brake=Math.max(0,Math.min(1,kbrake))
 	boosting=Math.max(0,Math.min(1,kboosting))
 	steer=Math.max(-1,Math.min(1,ksteer))
-	if(krespawn){
+	if(krespawn &&respawning==0){
 		respawning=0.01
 	}
 }

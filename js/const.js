@@ -8,12 +8,13 @@ minfov=65//Field of view
 maxfov=120//Field of view
 near=0.1//Near
 far=10000000//Far
-camchase=new THREE.Vector3(0,3,10)
+camchase=new THREE.Vector3(0,7,10)
 
 //Constants
 friction=0.9
 gravity=0.1
-float=1
+adhere=1.0
+float=1.5
 climb=0.7
 
 //Movement + Handling

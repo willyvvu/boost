@@ -26,7 +26,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -44,16 +44,17 @@
        color-interpolation-filters="sRGB">
       <feTurbulence
          id="feTurbulence3503"
-         numOctaves="3"
-         baseFrequency="0.18039215686274512"
-         result="result0" />
+         numOctaves="1"
+         baseFrequency="0.22941176470588234"
+         result="result0"
+         type="fractalNoise" />
       <feSpecularLighting
          id="feSpecularLighting3505"
-         specularExponent="24.29999924"
-         surfaceScale="2"
+         specularExponent="10.889344262295083"
+         surfaceScale="2.7719298245614254"
          specularConstant="1"
          result="result1"
-         lighting-color="rgb(125,125,125)">
+         lighting-color="#7d7d7d">
         <feDistantLight
            id="feDistantLight3507"
            elevation="45"
@@ -126,14 +127,6 @@
          in2="SourceGraphic"
          operator="atop" />
     </filter>
-    <filter
-       inkscape:collect="always"
-       id="filter3818">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="6.9046165"
-         id="feGaussianBlur3820" />
-    </filter>
   </defs>
   <sodipodi:namedview
      pagecolor="#ffffff"
@@ -149,41 +142,43 @@
      id="namedview12"
      showgrid="false"
      inkscape:snap-bbox="true"
-     inkscape:bbox-nodes="true"
-     inkscape:bbox-paths="true"
-     inkscape:zoom="0.70454631"
-     inkscape:cx="609.1101"
-     inkscape:cy="443.54074"
+     inkscape:bbox-nodes="false"
+     inkscape:bbox-paths="false"
+     inkscape:zoom="0.61816406"
+     inkscape:cx="281.25151"
+     inkscape:cy="505.96606"
      inkscape:window-x="0"
      inkscape:window-y="24"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg2"
-     inkscape:snap-bbox-edge-midpoints="true"
+     inkscape:snap-bbox-edge-midpoints="false"
      inkscape:snap-bbox-midpoints="true"
-     inkscape:snap-page="true" />
+     inkscape:snap-page="true"
+     inkscape:object-paths="false"
+     inkscape:object-nodes="false"
+     inkscape:snap-intersection-paths="false"
+     inkscape:snap-smooth-nodes="false"
+     inkscape:snap-midpoints="false"
+     inkscape:snap-center="true"
+     inkscape:snap-object-midpoints="true"
+     inkscape:snap-nodes="true" />
   <desc
      id="desc4">'Track.blend', Cube.001, (Blender 2.63 (sub 0))</desc>
   <polygon
-     stroke="black"
-     stroke-width="1"
-     fill="rgb(204, 204, 204)"
-     fill-opacity="0.25"
-     points="0.000,660.984 0.000,1024.000 82.418,1024.000 82.418,660.984 "
-     id="polygon10" />
+     points="0,1024 82.418,1024 82.418,660.984 0,660.984 "
+     id="polygon10"
+     style="fill:#99e4ff;fill-opacity:0.92237441;stroke:#000000;stroke-width:1"
+     transform="matrix(0.99999839,0,0,0.99999839,0,0.00164543)" />
   <polygon
-     stroke="black"
-     stroke-width="1"
-     fill="rgb(204, 204, 204)"
-     fill-opacity="0.25"
-     points="1024.000,1024.000 1024.000,660.984 941.582,660.984 941.582,1024.000 "
-     id="polygon8" />
+     points="1024,660.984 941.582,660.984 941.582,1024 1024,1024 "
+     id="polygon8"
+     style="fill:#99e4ff;fill-opacity:0.92237441;stroke:#000000;stroke-width:1"
+     transform="matrix(0.99999839,0,0,0.99999839,0,0.00164543)" />
   <polygon
-     stroke="black"
-     stroke-width="1"
-     fill="rgb(204, 204, 204)"
-     fill-opacity="0.25"
-     points="941.582,660.984 82.418,660.984 82.418,1024.000 941.582,1024.000 "
-     id="polygon6" />
+     points="82.418,660.984 82.418,1024 941.582,1024 941.582,660.984 "
+     id="polygon6"
+     style="fill:#99e4ff;fill-opacity:0.92237441;stroke:#000000;stroke-width:1"
+     transform="matrix(0.99999839,0,0,0.99999839,0,0.00164543)" />
   <rect
      style="fill:#4d4d4d;fill-opacity:1;stroke:none;filter:url(#filter3501)"
      id="rect3049"
@@ -191,50 +186,75 @@
      height="907.28601"
      x="-1023.2113"
      y="116.71399"
-     transform="matrix(0,-1.0012594,-1.129743,0,1156.3568,0)" />
+     transform="matrix(0,-1.0012578,-1.1297412,0,1156.3549,0.00164543)" />
+  <rect
+     style="fill:#99e4ff;fill-opacity:0.92237441;stroke:none;filter:url(#filter3781)"
+     id="rect4033"
+     width="258.11475"
+     height="6.876575"
+     x="-923.3078"
+     y="-515.43744"
+     transform="matrix(0,-1,-1,0,0,0)" />
   <g
-     id="g3785"
-     style="fill:#5eedff;fill-opacity:1;opacity:0.67078189">
-    <rect
-       transform="matrix(0,-1,-1,0,0,0)"
-       y="-515.15588"
-       x="-908.01868"
-       height="6.8765912"
-       width="127.5347"
-       id="rect4033"
-       style="fill:#5eedff;fill-opacity:1;stroke:none;opacity:1;filter:url(#filter3781)" />
-    <path
-       sodipodi:nodetypes="ccccccccc"
-       inkscape:connector-curvature="0"
-       id="use4037"
-       d="m 920.70847,780.01025 -55.65109,76.80345 -194.13417,0 -62.76094,-72.7629 0.75966,18.27239 83.1486,98.3457 160.75793,0.0413 68.86369,-97.23756 z"
-       style="fill:#5eedff;fill-opacity:1;stroke:none;opacity:1;filter:url(#filter3781)" />
+     id="g3801"
+     transform="matrix(0.99999839,0,0,0.99999839,0,0.00164543)">
     <path
        sodipodi:nodetypes="ccccccccccccc"
        inkscape:connector-curvature="0"
        id="path3290"
-       d="m 12.680394,661.72773 0,110.45944 42.429085,19.12232 -0.857272,105.73753 -41.571813,17.6454 0,112.06948 7.715478,0 0,-91.56946 41.571847,-17.80086 0.857272,-145.90485 -42.429006,-19.43325 0,-91.56948 z"
-       style="color:#000000;fill:#5eedff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;opacity:1;filter:url(#filter3781)" />
+       d="m 12.680394,511.37481 0,156.83586 42.429085,26.78227 -0.857272,148.09342 -41.571813,24.71373 0,156.96181 7.715478,0 0,-128.24998 41.571847,-24.93145 0.857272,-204.35082 -42.429006,-27.21775 0,-128.25 z"
+       style="color:#000000;fill:#99e4ff;fill-opacity:0.92237441;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter3781);enable-background:accumulate" />
     <use
-       style="fill:#5eedff;stroke:none;fill-opacity:1;opacity:1;filter:url(#filter3781)"
+       style="fill:#99e4ff;fill-opacity:0.92237441;stroke:none;filter:url(#filter3781)"
        height="1024"
        width="1024"
-       transform="matrix(-1,0,0,1,1023.4351,8.6746673e-6)"
+       transform="matrix(-1,0,0,1,1023.4351,8.7e-6)"
        id="use3311"
        xlink:href="#path3290"
        y="0"
        x="0" />
-    <path
-       style="fill:#5eedff;fill-opacity:1;stroke:none;opacity:1;filter:url(#filter3781)"
-       d="m 436.98887,780.63212 -55.65109,76.80345 -194.13417,0 -62.76094,-72.7629 0.75966,18.27239 83.1486,98.3457 160.75793,0.0413 68.86369,-97.23756 z"
-       id="use3317"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ccccccccc" />
+  </g>
+  <path
+     sodipodi:nodetypes="ccccccccc"
+     inkscape:connector-curvature="0"
+     id="use3317"
+     d="m 436.98816,597.3328 -55.65099,-76.80339 -194.13386,0 -62.76084,72.76279 0.75966,-18.27237 83.14847,-98.34555 160.75766,-0.041 68.86358,97.23745 z"
+     style="fill:#99e4ff;fill-opacity:0.92237441;stroke:none;filter:url(#filter3781)" />
+  <use
+     x="0"
+     y="0"
+     xlink:href="#use3317"
+     id="use3791"
+     transform="matrix(-1,0,0,1,1022.4136,0)"
+     width="1024"
+     height="1024"
+     style="fill:#99e4ff;fill-opacity:0.92237441" />
+  <g
+     id="g3797"
+     transform="matrix(0.99999839,0,0,0.99999839,0.28242736,-90.76011)">
+    <use
+       height="1024"
+       width="1024"
+       transform="translate(0,-422)"
+       id="use3793"
+       xlink:href="#path3290"
+       y="0"
+       x="0" />
+    <use
+       height="1024"
+       width="1024"
+       transform="translate(0,-422)"
+       id="use3795"
+       xlink:href="#use3311"
+       y="0"
+       x="0" />
   </g>
   <use
      x="0"
      y="0"
-     xlink:href="#g3785"
-     id="use3792"
-     style="filter:url(#filter3818);fill:#5eedff;fill-opacity:1" />
+     xlink:href="#rect4033"
+     id="use3805"
+     transform="translate(0,-539.99913)"
+     width="1024"
+     height="1024" />
 </svg>
