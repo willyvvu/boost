@@ -7,15 +7,16 @@ function resize(){
 	composer.setSize(width,height)
 	coolPass.uniforms.aspect.value=camera.aspect
 }
-time=new Date().valueOf()
+d=0.017
+//time=new Date().valueOf()
 function render(){
-	d=(new Date().valueOf()-time)/1000
+	//d=(new Date().valueOf()-time)/1000
 	//renderer.render(scene,camera)
 	step()
 	document.getElementById('speed').innerHTML=Math.round(velocity.length()*speedunit)
 	composer.render()
-	time+=d*1000
-	//setTimeout(render,1000/10)
+	//time+=d*1000
+	//setTimeout(render,1000/2)
 	window.webkitRequestAnimationFrame(render)
 }
 function smooth(value,target,friction){
