@@ -11,12 +11,13 @@ var coolPass=new THREE.ShaderPass({//I'm going to be PRO with some
 		'distort': { type: 'f',value: 0},
 		'damage': { type: 'f',value: 0},
 		'boost': { type: 'f',value: 0},
-		'aspect': { type: 'f',value: 1}
+		'aspect': { type: 'f',value: 1},
+		'cover': { type: 'f',value: 0}
 	},vertexShader: [
 	'varying vec2 v;',
 	'void main() {',
 		'v = uv;',
-		'gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
+		'gl_Position = vec4( position, 1.0 );',
 	'}'
 	].join('\n'),
 	fragmentShader: [
@@ -26,22 +27,22 @@ var coolPass=new THREE.ShaderPass({//I'm going to be PRO with some
 	'uniform float aspect;',
 	'uniform float damage;',
 	'uniform float boost;',
+	'uniform float cover;',
 	'varying vec2 v;',
-	'float bend(float n,float o){',
-		'float p=0.35;',
-		'float x=(n-1.5*o+p);',
-		'if(x<-p||x>p){return 0.0;}',
-		'return -(0.01+0.6*n)*p*(cos(3.14*x/p)+1.0);',
-	'}',
-	'float hex(vec4 pos){',
-		'return 0.1*texture2D(tHex,mod(0.004*pos,1.0).xy).x;',
-	'}',
 	'void main() {',
 		'float glass=0.0;vec4 color=vec4(0.0,0.0,0.0,0.0);vec2 vc=v;',
-		'vec2 center=vec2(aspect,1.0)*(v-0.5);',
-		'if(phase>0.0){glass+=bend(length(center),phase);};',
-		'if(damage>0.0){glass+=damage*hex(gl_FragCoord);color+=vec4(0.3,-0.2,-0.2,1.0)*damage;};',
-		'if(boost>0.0){color+=clamp(length(center),0.0,1.0)*boost*vec4(0.6,0.6,1.0,1.0)*0.8;};',
+		'vec2 center=vec2(1.0,1.0/aspect)*(v-0.5);',
+		'float vin=clamp(length(center),0.0,1.0);',
+		'if(phase>0.0){',
+			'float x=(length(center)-1.5*phase+0.2);',
+			'if(abs(x)<0.2){',
+				'glass+= -(0.01+2.5*length(center))*0.2*(cos(3.14*x/0.2)+1.0);',
+			'}}',
+		'if(damage>0.0){',
+			'glass+=0.2*vin*damage*texture2D(tHex,mod(0.004*gl_FragCoord,1.0).xy).x;',
+			'color+=2.0*vin*vec4(0.3,-0.0,-0.2,1.0)*damage;};',
+		'if(boost>0.0){color+=vin*boost*vec4(0.6,0.6,1.0,1.0)*0.8;};',
+		'if(cover>0.0){color+=cover*vec4(1.0,1.0,1.0,1.0);};',
 		'if(glass!=0.0){vc+=normalize(center)*glass;};',
 		'gl_FragColor = texture2D(tDiffuse,vc)+color;',
 	'}'
@@ -50,3 +51,5 @@ var coolPass=new THREE.ShaderPass({//I'm going to be PRO with some
 coolPass.renderToScreen=true
 composer.addPass(coolPass)
 coolPass.uniforms.tHex.value=hexTexture
+composer.renderTarget1.format=THREE.RGBAFormat
+composer.renderTarget2.format=THREE.RGBAFormat

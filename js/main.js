@@ -26,19 +26,22 @@ function restrict(a,b){//Restricts a into the plane of b
 }
 velocity=new THREE.Vector3()
 fall=0
-
-//Cam follow purposes
-front=new THREE.Vector3(0,0,-5)
-behind=new THREE.Vector3(0,3,10).normalize()
-
+respawnpoint=new THREE.Matrix4()
+respawning=false
+savingPlace=-1
+function savePlace(){
+	respawnpoint.copy(ship.matrix)
+	console.log('saving place')
+	return savingPlace=setTimeout(savePlace,1000)
+}
 function step(){
-	
 	//Make the exhaust look like it's alive
 	thrust.material.map.offset.y=Math.random()*0.2-0.1
 	boost.material.map.offset.y=Math.random()*0.2-0.1
 	//Boost ripple
-	if(coolPass.uniforms.phase.value>0&&coolPass.uniforms.phase.value<1){
-		coolPass.uniforms.phase.value+=d*3
+	var stillboost=coolPass.uniforms.phase.value>0&&coolPass.uniforms.phase.value<1
+	if(stillboost){
+		coolPass.uniforms.phase.value+=d*2
 	}
 	else{
 		if(!boosting){
@@ -62,8 +65,8 @@ function step(){
 	//Movement
 	var length=velocity.length()
 	var morelength=0
-	if(boosting||pedal>0){//Going forwards
-		if(boosting){//Going FAAAAAAST!
+	if(boosting||pedal>0||stillboost){//Going forwards
+		if(boosting||stillboost){//Going FAAAAAAST!
 			grip=1//Strong grip
 			morelength=0.10*(maxspeed-length)//Speed of sound is 340 m/s
 		}
@@ -104,7 +107,7 @@ function step(){
 	
 	//Move the ship
 	bottomray=new THREE.Raycaster(
-		ship.position,
+		new THREE.Vector3(0,2,0).applyProjection(ship.matrix),
 		ship.matrix.rotateAxis(new THREE.Vector3(0,-1,0))
 		,0,10-fall
 	)
@@ -114,28 +117,49 @@ function step(){
 	if(intersections.length){
 		//velocity.y+=Math.max(2*(float-intersections[0].distance),(float-intersections[0].distance))
 		//Bob a bit
+		var dist=intersections[0].distance-2
 		from=ship.matrix.rotateAxis(new THREE.Vector3(0,1,0))
 		to=intersections[0].face.normal
 		if(from.dot(to)>=1-climb){//Shallow enough
-			ship.matrix.translate(new THREE.Vector3(0,-intersections[0].distance,0))
+			ship.matrix.translate(new THREE.Vector3(0,-dist,0))
 			var inv=new THREE.Matrix4().getInverse(ship.matrix)
-			ship.matrix.rotateByAxis(
+			var rotation=new THREE.Matrix4().rotateByAxis(
 				inv.rotateAxis(from.clone().cross(to)),
-				Math.acos(Math.round(from.dot(to)*100)/100)//*(1-1/(velocity.length()*0.002+1.01))
+				Math.acos(Math.round(from.dot(to)*100)/100)
 			)
+			ship.matrix.multiply(rotation)
 			ship.rotation.setEulerFromRotationMatrix(ship.matrix)
-			velocity.sub(intersections[0].face.normal.clone().multiplyScalar(
+			model.matrix.multiply(new THREE.Matrix4().getInverse(rotation))
+			model.rotation.setEulerFromRotationMatrix(model.matrix)
+			/*velocity.sub(intersections[0].face.normal.clone().multiplyScalar(
 				velocity.dot(intersections[0].face.normal)
-			))
+			))*/
 			//rotateAxis takes a vector and rotates it using the matrix.
-			ship.matrix.translate(new THREE.Vector3(0,intersections[0].distance<=float?float:intersections[0].distance,0))
+			ship.matrix.translate(new THREE.Vector3(0,dist<=float?float:dist,0))
 			ship.rotation.setEulerFromRotationMatrix(ship.matrix)
 			ship.position.getPositionFromMatrix(ship.matrix)
+			velocity.copy(restrict(velocity,to))
 			//Turn to match the road normal
-			if(intersections[0].distance<=float){
+			if(dist<=float){//On the road
 				fall=0
 			}
+			if(dist<=float+2){
+				if(savingPlace<0){
+					clearTimeout(savingPlace)
+					savingPlace=savePlace()
+				}
+			}
+			else{//Off road
+				console.log('off')
+				clearTimeout(savingPlace)
+				savingPlace=-1
+			}
 		}
+	}
+	else{//Off road
+		console.log('off')
+		clearTimeout(savingPlace)
+		savingPlace=-1
 	}
 	ship.matrix.translate(new THREE.Vector3(0,fall,0))
 	ship.position.getPositionFromMatrix(ship.matrix)
@@ -180,20 +204,41 @@ function step(){
 	/*camera.position.x+=steer*turnspeed*10
 	camera.position.x*=camfollow*/
 	front.multiplyScalar(camfollow)
-		.add(ship.matrix.rotateAxis(new THREE.Vector3(0,0,-5)).multiplyScalar(5*(1-camfollow)))
+		.add(model.matrixWorld.rotateAxis(new THREE.Vector3(0,0,-1)).multiplyScalar(50*(1-camfollow)))
 	camera.up.multiplyScalar(camfollow)
 		.add(ship.matrix.rotateAxis(new THREE.Vector3(0,1,0)).multiplyScalar(1-camfollow))
 	behind.multiplyScalar(camfollow)
-		.add(ship.matrix.rotateAxis(new THREE.Vector3(0,3,10)).multiplyScalar(1-camfollow))
-	camera.position.addVectors(ship.position,behind.clone().multiplyScalar(13-12*(camera.fov-minfov)/(180-minfov)))
+		.add(ship.matrix.rotateAxis(camchase.clone()).multiplyScalar(1-camfollow))
+	camera.position.addVectors(ship.position,behind.clone().multiplyScalar(8-5*(Math.min(180,camera.fov)-minfov)/(180-minfov)))
 	camera.lookAt(front.clone().add(ship.position))
 	//camera.rotation.copy(ship.rotation)
-	
+	model.rotation.multiplyScalar(camfollow)
 	//Adjust the camera fov
-	camera.fov=minfov+(maxfov-minfov)*(velocity.length()/maxspeed)
+	camera.fov=Math.min(180,minfov+(maxfov-minfov)*(velocity.length()/maxspeed))
 	camera.updateProjectionMatrix()
+	if(respawning>=1){//Back on track
+		ship.position.getPositionFromMatrix(respawnpoint)
+		ship.rotation.setEulerFromRotationMatrix(respawnpoint)
+		velocity.set(0,0,0)
+		fall=0
+		respawning=0
+	}
+	else if(respawning>0){//Respawn animation
+		respawning+=1.25*d
+		coolPass.uniforms.cover.value=respawning
+	}
+	else if(ship.position.distanceTo(track.geometry.boundingSphere.center)>track.geometry.boundingSphere.radius){//Outside
+		respawning=0.01
+	}
+	else{//Normal
+		coolPass.uniforms.cover.value=smooth(coolPass.uniforms.cover.value,0,0.05)
+	}
 	
 }
+//Cam follow purposes
+front=new THREE.Vector3(0,0,-1)
+behind=camchase.clone().normalize()
+
 resize()
 document.body.onresize=resize
 document.body.onload=render
