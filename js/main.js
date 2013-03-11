@@ -36,7 +36,9 @@ function savePlace(){
 	//console.log('saving place')
 	return savingPlace=setTimeout(savePlace,1000)
 }
+t=0
 function step(){
+	t+=0.02
 	if(!track){return}
 	//Make the exhaust look like it's alive
 	thrust.material.map.offset.y=Math.random()*0.2-0.1
@@ -54,16 +56,9 @@ function step(){
 	if(boosting){
 		if(coolPass.uniforms.phase.value==0){
 			coolPass.uniforms.phase.value=0.1
-			boostaudio.currentTime=boostaudio.startTime//Restart the boost sound and play it
-			//boostaudio.play()
+			t=0
 		}
-		boostgain.gain.value=1
 	}
-	else{
-		boostgain.gain.value=Math.round(smooth(boostgain.gain.value,boosting?1:0,0.1)*1000)/1000
-		if(boostgain.gain.value<=0.1){boostaudio.pause()}
-	}
-	
 	coolPass.uniforms.damage.value=
 		smooth(coolPass.uniforms.damage.value,0,0.05)
 	//Exhaust behavior and other smoothing things
@@ -73,7 +68,9 @@ function step(){
 		smooth(boost.material.map.offset.x,boosting?0:-1,0.1)
 	coolPass.uniforms.boost.value=
 		smooth(coolPass.uniforms.boost.value,boosting?1:0,0.1)
-	backgroundfilter.frequency.value=Math.round(smooth(backgroundfilter.frequency.value,boosting?800:0,0.1))
+	backgroundfilter.frequency.value=Math.round(smooth(backgroundfilter.frequency.value,boosting?1600:0,0.1))
+	delaygain.gain.value=smooth(delaygain.gain.value,boosting?1:0,0.1)
+	delay.delayTime.value=0.0005+(Math.cos(t)*0.5+0.5)*0.002
 	if(savingPlace<0){//Floating
 		recover=0
 		model.position.y=smooth(model.position.y,float,0.05)
@@ -103,7 +100,7 @@ function step(){
 	}
 	if(brake>0){
 		if(pedal>0||boosting){//Gas and brake? Drift time!
-			morelength*=0.5//Slightly reduce gas
+			//morelength*=0.5//Slightly reduce gas
 		}
 		else{//Just brake? Friction!
 			velocity.multiplyScalar(Math.pow(0.1,d))
@@ -129,104 +126,11 @@ function step(){
 	}
 	
 	//Move the ship
-	bottomray=new THREE.Raycaster(
-		new THREE.Vector3(0,2,0).applyProjection(ship.matrix),
-		ship.matrix.rotateAxis(new THREE.Vector3(0,-1,0))
-		,0,10-fall
-	)
-	intersections=bottomray.intersectObject(track)
-	ship.updateMatrix()
-	var to=false
-	if(intersections.length){
-		//velocity.y+=Math.max(2*(adhere-intersections[0].distance),(adhere-intersections[0].distance))
-		//Bob a bit
-		var dist=intersections[0].distance-2
-		from=ship.matrix.rotateAxis(new THREE.Vector3(0,1,0))
-		to=intersections[0].face.normal
-		if(from.dot(to)>=1-climb){//Shallow enough
-			ship.matrix.translate(new THREE.Vector3(0,-dist,0))
-			var inv=new THREE.Matrix4().getInverse(ship.matrix)
-			var rotation=new THREE.Matrix4().rotateByAxis(
-				inv.rotateAxis(from.clone().cross(to)),
-				Math.acos(Math.round(from.dot(to)*100)/100)
-			)
-			ship.matrix.multiply(rotation)
-			ship.rotation.setEulerFromRotationMatrix(ship.matrix)
-			model.matrix.multiply(new THREE.Matrix4().getInverse(rotation))
-			model.rotation.setEulerFromRotationMatrix(model.matrix)
-			/*velocity.sub(intersections[0].face.normal.clone().multiplyScalar(
-				velocity.dot(intersections[0].face.normal)
-			))*/
-			//rotateAxis takes a vector and rotates it using the matrix.
-			ship.matrix.translate(new THREE.Vector3(0,dist<=adhere?adhere:dist,0))
-			ship.rotation.setEulerFromRotationMatrix(ship.matrix)
-			ship.position.getPositionFromMatrix(ship.matrix)
-			velocity.copy(restrict(velocity,to))
-			//Turn to match the road normal
-			if(dist<=adhere){//On the road
-				if(fall<0.2){
-					recover+=fall
-				}
-				fall=0
-			}
-			if(dist<=adhere+2){
-				if(savingPlace<0){
-					clearTimeout(savingPlace)
-					savingPlace=savePlace()
-				}
-			}
-			else{//Off road
-				//console.log('off')
-				clearTimeout(savingPlace)
-				savingPlace=-1
-			}
-		}
-	}
-	else{//Off road
-		//console.log('off')
-		clearTimeout(savingPlace)
-		savingPlace=-1
-	}
-	ship.matrix.translate(new THREE.Vector3(0,fall,0))
-	ship.position.getPositionFromMatrix(ship.matrix)
-	fall+=-9.8*d*0.1
-	to=to||ship.matrix.rotateAxis(new THREE.Vector3(0,-1,0))
-	//Check for front collisions
-	frontray=new THREE.Raycaster(
-		ship.matrix.rotateAxis(new THREE.Vector3(0,0,2)).add(ship.position),
-		ship.matrix.rotateAxis(new THREE.Vector3(0,0.1,-2))
-		,0,10+velocity.length()*d
-	)
-	rightrearray=new THREE.Raycaster(
-		ship.position.clone(),
-		ship.matrix.rotateAxis(new THREE.Vector3(2,-0.1,1))
-		,0,4
-	)
-	leftrearray=new THREE.Raycaster(
-		ship.position.clone(),
-		ship.matrix.rotateAxis(new THREE.Vector3(-2,-0.1,1))
-		,0,4
-	)
-	intersections=frontray.intersectObject(track)
-		.concat(leftrearray.intersectObject(track))
-		.concat(rightrearray.intersectObject(track))
-	intersections.sort(function(a,b){return a.distance-b.distance})
-	if(intersections.length&&!intersections[0].face.normal.equals(to)){
-		if(intersections[0].distance<2.5+velocity.length()*d){
-			if(intersections[0].face.normal.dot(to)<climb&&intersections[0].face.normal.dot(velocity)<=0){//Wall is steep enough
-				ship.position.add(restrict(intersections[0].face.normal,to).normalize()
-					.multiplyScalar(2.5-intersections[0].distance))
-					//Keep away
-				velocity=restrict(velocity,intersections[0].face.normal)
-				coolPass.uniforms.damage.value=Math.min(coolPass.uniforms.damage.value+velocity.length()*0.0005,1)
-				//.add(restrict(intersections[0].face.normal,to).multiplyScalar(1))
-			}
-		}
-	}
+	collide()
 	ship.position.add(velocity.clone().multiplyScalar(d))
 	
 	//Have the camera follow the ship
-	var camfollow=0.95//Math.pow(0.01,d)
+	var camfollow=0.7//Math.pow(0.01,d)
 	/*camera.position.x+=steer*turnspeed*10
 	camera.position.x*=camfollow*/
 	front.multiplyScalar(camfollow)
@@ -238,7 +142,8 @@ function step(){
 	camera.position.addVectors(ship.position,behind.clone().multiplyScalar(8-5*(Math.min(180,camera.fov)-minfov)/(180-minfov)))
 	camera.lookAt(front.clone().add(ship.position))
 	//camera.rotation.copy(ship.rotation)
-	model.rotation.multiplyScalar(camfollow)
+	var shipfollow=0.9//Math.pow(0.01,d)
+	model.rotation.multiplyScalar(shipfollow)
 	//Adjust the camera fov
 	camera.fov=Math.min(180,minfov+(maxfov-minfov)*(velocity.length()/maxspeed))
 	camera.updateProjectionMatrix()
@@ -262,7 +167,6 @@ function step(){
 	else{//Normal
 		coolPass.uniforms.cover.value=smooth(coolPass.uniforms.cover.value,0,0.05)
 	}
-	
 }
 //Cam follow purposes
 front=new THREE.Vector3(0,0,-1)

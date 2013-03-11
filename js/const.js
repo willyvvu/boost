@@ -22,14 +22,14 @@ climb=0.7
 maxspeed=200//340
 accel=0.001
 turn=[
-	0.02,//Fast
-	0.03,//Not going
-	0.035//Brake
+	0.02,//I or O pressed
+	0.025,//No keys pressed
+	0.035//J and I pressed, or just J
 ]
 drift=[
-	0.2,//Fast
-	0.2,//Not going
-	0.01//Brake
+	0.2,//I or O pressed
+	0.2,//No keys pressed
+	0.3//J and I pressed, or just J
 ]
 
 //Everyone loves a skybox!

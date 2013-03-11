@@ -75,8 +75,15 @@ loader.load('scene/ship/Boost.js',function(geo){
 track=false
 //new THREE.SceneLoader()
 loader.load('scene/track/Track.js',function(data){
+	/*dat=data
+	scene=dat.scene
+	camera=dat.currentCamera
+	camera.updateProjectionMatrix()
+	return*/
+	//console.log(data)
+	//track=data.objects.Track
 	track=new THREE.Mesh(
-		data,//.objects.Track.geometry,
+		data,
 		new THREE.MeshPhongMaterial({
 			map:THREE.ImageUtils.loadTexture('scene/track/Track.png'),
 			color: 0xFFFFFF,
@@ -90,9 +97,38 @@ loader.load('scene/track/Track.js',function(data){
 			side:THREE.DoubleSide
 		})
 	)
+	//track.rotation.x+=Math.PI/2
+	track.updateMatrix()
+	//new THREE.Matrix4().getInverse
+	//.rotateX(Math.PI/2)
+	//.scale(new THREE.Vector3(-1,-1,-1))
+	//track.geometry.applyMatrix(new THREE.Matrix4().getInverse(track.matrix))
 	track.material.map.anisotropy=renderer.getMaxAnisotropy()
 	track.geometry.computeBoundingSphere()
 	scene.add(track)
+})
+loader.load('scene/track/Structure.js',function(data){
+	structure=new THREE.Mesh(
+		data,
+		new THREE.MeshLambertMaterial({
+			/*color: 0xFFFFFF,
+			shininess: 100.0,
+			ambient: 0x666666,
+			emissive: 0x999999,
+			specular: 0xAAAAAA,*/
+			/*envMap:skyCube,
+			reflectivity:1.0,*/
+			side:THREE.DoubleSide
+		})
+	)
+	//track.rotation.x+=Math.PI/2
+	structure.updateMatrix()
+	//new THREE.Matrix4().getInverse
+	//.rotateX(Math.PI/2)
+	//.scale(new THREE.Vector3(-1,-1,-1))
+	//track.geometry.applyMatrix(new THREE.Matrix4().getInverse(track.matrix))
+	//structure.material.map.anisotropy=renderer.getMaxAnisotropy()
+	scene.add(structure)
 })
 //Lensflare
 flareTexture = THREE.ImageUtils.loadTexture( "scene/flare/lensflare0.png");
