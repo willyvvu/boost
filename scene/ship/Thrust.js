@@ -3,7 +3,7 @@
 	"metadata" :
 	{
 		"formatVersion" : 3.1,
-		"generatedBy"   : "Blender 2.63 Exporter",
+		"generatedBy"   : "Blender 2.65 Exporter",
 		"vertices"      : 4,
 		"faces"         : 3,
 		"normals"       : 4,
@@ -33,7 +33,7 @@
 		"vertexColors" : false
 	}],
 
-	"vertices" : [-0.26103,-0.115381,1.85428,0,0.23843,1.87739,0.26103,-0.115381,1.85428,0,-0.0126732,5.97164],
+	"vertices" : [-0.159509,-0.0719936,1.75694,0.0180169,0.168633,1.77266,0.195543,-0.0719936,1.75694,0.0180169,-0.00214238,4.55716],
 
 	"morphTargets" : [],
 

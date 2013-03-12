@@ -19,17 +19,18 @@ climb=0.7
 
 //Movement + Handling
 //All speeds in m/s
-maxspeed=200//340
-accel=0.001
+maxspeed=223.52//201.168//340
+energy=1
+accel=0.25//meters per second squared
 turn=[
-	0.02,//I or O pressed
-	0.025,//No keys pressed
+	0.025,//I or O pressed
+	0.03,//No keys pressed
 	0.035//J and I pressed, or just J
 ]
 drift=[
-	0.2,//I or O pressed
-	0.2,//No keys pressed
-	0.3//J and I pressed, or just J
+	0.05,//I or O pressed
+	0.05,//No keys pressed
+	0.2//J and I pressed, or just J
 ]
 
 //Everyone loves a skybox!

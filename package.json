@@ -1,9 +1,9 @@
 {
-	"name":"boost",
+	"name":"b00st",
 	"version":"0.0.1",
 	"dependencies":{
-		"socket.io":"0.9.10",
-		"mime":"1.2.7"
+		"mime":"1.2.7",
+		"npm":"1.2.11"
 	},
 	"engines":{
 		"node":"0.8.x"

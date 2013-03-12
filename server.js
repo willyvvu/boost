@@ -1,6 +1,6 @@
 /*Cool just got a whole lot cooler. 2/21/2013 for your reference*/
 var app = require('http').createServer(handler)
-  , io = require('socket.io').listen(app)
+ // , io = require('socket.io').listen(app)
   , fs = require('fs')
   , path = require('path')
   , url = require('url')

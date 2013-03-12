@@ -14,23 +14,30 @@
 			}
 			#container{position:absolute;z-index:0;}
 			#lowerright{position:fixed;right:0;bottom:0;padding:10px;font-size:2cm;z-index:100;}
+			#hudbar{position:fixed;left:20px;bottom:20px;height:80px;z-index:90;}
+			#hudenergy{position:absolute;left:0;right:0;bottom:0;background-color:inherit;}
 			#units{font-size:1cm;}
-			#loading{
+			#loading,#destroyed{
 				position:fixed;left:50%;bottom:50%;
 				width:800px;
 				margin-left:-400px;
 				text-align:center;
-				z-index:-100;
 				font-size:1.5cm;
+			}
+			#loading{
+				z-index:-100;
+			}
+			#destroyed{
+				z-index:100;
 			}
 		</style>
 	</head>
 	<body>
 		<div id="container"></div>
 		<div id="loading">&lt;Transferring data&gt;</div>
+		<div id="destroyed" style="display:none">&lt;Ship destroyed&gt;</div>
 		<div id="lowerright" style="display:none"><span id="speed"></span><span id="units">mph</span></div>
-		<audio src="audio/CoLD SToRAGE - Lost In Music.mp3" id="backgroundaudio"></audio>
-		<audio src="audio/aircraft048.mp3" id="boostaudio" loop="loop"></audio>
+		<div id="hudbar"><div id="hudenergy"></div></div>
 		<script src="js/socket.io.js"></script>
 		<script src="js/three-55.js"></script>
 		<script src="fx/EffectComposer.js"></script>
@@ -43,8 +50,11 @@
 		<script src="js/scene.js"></script>
 		<script src="js/fx.js"></script>
 		<script src="js/control.js"></script>
+		<audio src="audio/CoLD SToRAGE - Lost In Music.mp3" id="backgroundaudio"></audio>
+		<!--<audio src="audio/Tropical Resort - Act 1.mp3" id="backgroundaudio"></audio>-->
 		<script src="js/audio.js"></script>
 		<script src="js/collide.js"></script>
+		<script src="js/hud.js"></script>
 		<script src="js/main.js"></script>
 	</body>
 </html>

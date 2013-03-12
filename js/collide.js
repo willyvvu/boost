@@ -92,8 +92,9 @@ function collide(){
 			//ship.position.add(restrict(norm,to).normalize()
 				//.multiplyScalar(2.5-ship.position.distanceTo(intersections[0].point)))
 				//Keep away
-			velocity=restrict(velocity,norm)
 			coolPass.uniforms.damage.value=Math.min(coolPass.uniforms.damage.value+velocity.length()*0.0005,1)
+			hurt()
+			velocity=restrict(velocity,norm)
 			//.add(restrict(norm,to).multiplyScalar(1))
 		}
 	}
