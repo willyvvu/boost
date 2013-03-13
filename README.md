@@ -4,11 +4,11 @@ Controls
 ====
 To steer left/right, use A/D or Left/Right arrow keys.
 
+To strafe, use Q and E.
+
 To accelerate, use W, Up arrow key, or I.
 
 To brake, use S, Down arrow key, or J.
-
-To drift, accelerate and brake simultaneously.
 
 To boost, use O or the Space Bar.
 

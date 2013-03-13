@@ -45,7 +45,7 @@ function initAudio(){
 	boostgain.gain.value=1.5
 }
 boostbuffer=null
-function playBoost(){
+function playBoostSound(){
 	try{
 		boostsource=context.createBufferSource()
 		boostsource.buffer=boostbuffer
@@ -55,7 +55,7 @@ function playBoost(){
 	catch(e){}
 }
 function audioStep(){
-	backgroundfilter.frequency.value=boosting?1200:Math.round(smooth(backgroundfilter.frequency.value,0,0.1))
-	delaygain.gain.value=boosting?1:smooth(delaygain.gain.value,0,0.1)
+	backgroundfilter.frequency.value=boost?1200:Math.round(smooth(backgroundfilter.frequency.value,0,0.1))
+	delaygain.gain.value=boost?1:smooth(delaygain.gain.value,0,0.1)
 	delay.delayTime.value=0.0005+(Math.cos(t)*0.5+0.5)*0.002
 }

@@ -1,9 +1,28 @@
+//Variables
+accel=0//1 is full acceleration, 0 is no acceleration
+brake=0//1 is for brake
+steer=0//1 is full turn right, -1 is full turn left, 0 is straight
+shift=0//1 is full turn right, -1 is full turn left, 0 is straight
+boost=0//1 is for full boost, 0 is for no boost
+pushing=0//Seconds before temporary boost off a boost pad ends
+
+//Gamepad
+function gamepad(){
+	var g=navigator.webkitGetGamepads()[0]
+	if(g){
+		steer=g.axes[0]
+		brake=g.buttons[6]
+		accel=g.buttons[7]
+		boost=g.buttons[0]>thresh
+		if(g.buttons[8]>thresh){respawn()}
+	}
+}
 //Keyboard
 keys=[]
 function keyChange(e){//Picks up any change in keys: keyup and keydown
-	//console.log(e.keyCode)
 	var ind=keys.indexOf(e.keyCode)
 	if(e.type=='keydown'){
+		//console.log(e.keyCode)
 		if(ind==-1){
 			keys.push(e.keyCode)
 			//Adds a keycode to list keys ONLY if it is not there already
@@ -18,22 +37,19 @@ function keyChange(e){//Picks up any change in keys: keyup and keydown
 		keyHandle(e.keyCode,false)
 	}
 }
-pedal=0//1 is full acceleration, 0 is no acceleration
-brake=0//1 is for brake
-steer=0//1 is full turn right, -1 is full turn left, 0 is straight
-boosting=0//1 is for full boost, 0 is for no boost
 function keyHandle(){
 	var ksteer=0,
-		kpedal=0,
+		kaccel=0,
 		kbrake=0,
-		kboosting=0,
+		kshift=0,
+		kboost=0,
 		krespawn=0
 	for(var k=0;k<keys.length;k++){
 		switch(keys[k]){
 			case 87://W
 			case 38://Up
 			case 73://I
-				kpedal+=1//down?1:0
+				kaccel+=1//down?1:0
 				break
 			case 65://A
 			case 37://Left
@@ -48,19 +64,26 @@ function keyHandle(){
 			case 39://Right
 				ksteer+=1//down?1:0
 				break
+			case 81://Q
+				kshift-=1
+				break
+			case 69://E
+				kshift+=1
+				break
 			case 32://Space
 			case 79://O
-				kboosting=1//down?1:0
+				kboost=1//down?1:0
 				break
 			case 36://Home
 				krespawn=1
 				break
 		}
 	}
-	pedal=Math.max(0,Math.min(1,kpedal))
+	accel=Math.max(0,Math.min(1,kaccel))
 	brake=Math.max(0,Math.min(1,kbrake))
-	boosting=Math.max(0,Math.min(1,kboosting))
+	boost=Math.max(0,Math.min(1,kboost))
 	steer=Math.max(-1,Math.min(1,ksteer))
+	shift=Math.max(-1,Math.min(1,kshift))
 	if(krespawn &&respawning==0){
 		respawning=0.01
 	}

@@ -18,22 +18,18 @@ function collide(){
 		if(from.dot(to)>=1-climb){//Shallow enough
 			ship.matrix.translate(new THREE.Vector3(0,-dist,0))
 			var inv=new THREE.Matrix4().getInverse(ship.matrix)
-			var rotation=new THREE.Matrix4().rotateByAxis(
+			var rotation=new THREE.Matrix4().makeRotationAxis(
 				inv.rotateAxis(from.clone().cross(to)),
-				Math.acos(Math.min(from.dot(to),1))
+				from.angleTo(to)
 			)
 			ship.matrix.multiply(rotation)
 			ship.rotation.setEulerFromRotationMatrix(ship.matrix)
 			model.matrix.multiply(new THREE.Matrix4().getInverse(rotation))
 			model.rotation.setEulerFromRotationMatrix(model.matrix)
-			/*velocity.sub(intersections[0].face.normal.clone().multiplyScalar(
-				velocity.dot(intersections[0].face.normal)
-			))*/
-			//rotateAxis takes a vector and rotates it using the matrix.
-			ship.matrix.translate(new THREE.Vector3(0,dist<=adhere?adhere:dist,0))
+			ship.matrix.translate(new THREE.Vector3(0,adhere,0))
 			ship.rotation.setEulerFromRotationMatrix(ship.matrix)
 			ship.position.getPositionFromMatrix(ship.matrix)
-			velocity.copy(restrict(velocity,to))
+			velocity.projectOnPlane(to)
 			//Turn to match the road normal
 			if(dist<=adhere){//On the road
 				if(fall<0.2){
@@ -94,8 +90,7 @@ function collide(){
 				//Keep away
 			coolPass.uniforms.damage.value=Math.min(coolPass.uniforms.damage.value+velocity.length()*0.0005,1)
 			hurt()
-			velocity=restrict(velocity,norm)
-			//.add(restrict(norm,to).multiplyScalar(1))
+			velocity.projectOnPlane(norm)
 		}
 	}
 }

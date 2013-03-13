@@ -8,27 +8,28 @@ function resize(){
 	coolPass.uniforms.aspect.value=camera.aspect
 }
 d=0.017
+function respawn(){
+	if(respawning==0){
+		respawning=0.01
+	}
+}
 //time=new Date().valueOf()
 function render(){
-	//d=(new Date().valueOf()-time)/1000
-	//renderer.render(scene,camera)
 	step()
 	composer.render()
-	//time+=d*1000
 	//setTimeout(render,1000/2)
 	window.webkitRequestAnimationFrame(render)
 }
 function smooth(value,target,friction){
 	return value+friction*(target-value)
 }
-function restrict(a,b){//Restricts a into the plane of b
-	return a.clone().sub(b.clone().multiplyScalar(b.clone().normalize().dot(a)))
-}
-velocity=new THREE.Vector3()
+velocity=new THREE.Vector3()//Sum of velocities
+thrust=new THREE.Vector3()//Internal thrust
+external=new THREE.Vector3()//External forces
 fall=0
 recover=0
 respawnpoint=new THREE.Matrix4()
-respawning=false
+respawning=0
 savingPlace=-1
 function savePlace(){
 	respawnpoint.copy(ship.matrix)
@@ -37,37 +38,45 @@ function savePlace(){
 }
 t=0
 function step(){
-	t+=0.02
-	if(!track){return}
+	if(!track){return}//No track? No race.
+	
+	gamepad()//For gamepad support
+	t+=0.02//For the flanger
+	
 	//Make the exhaust look like it's alive
-	thrust.material.map.offset.y=Math.random()*0.2-0.1
-	boost.material.map.offset.y=Math.random()*0.2-0.1
-	//Boost ripple
+	modelthrust.material.map.offset.y=Math.random()*0.2-0.1
+	modelboost.material.map.offset.y=Math.random()*0.2-0.1
+	
+	//Handle speedy stuff
+	pushing=Math.max(0,pushing-d)
 	var stillboost=coolPass.uniforms.phase.value>0&&coolPass.uniforms.phase.value<1
 	if(stillboost){
 		coolPass.uniforms.phase.value+=d*2
 	}
-	else{
-		if(!boosting){
-			coolPass.uniforms.phase.value=0
+	if(boost>0){
+		if(coolPass.uniforms.phase.value==0){
+			coolPass.uniforms.phase.value=0.01
+			t=0//Resets the flanger
+			playBoostSound()
+			//energy-=0.05
 		}
 	}
-	if(boosting){
-		if(coolPass.uniforms.phase.value==0){
-			coolPass.uniforms.phase.value=0.1
-			t=0//Resets the flanger
-			playBoost()
+	else{
+		if(!stillboost){
+			coolPass.uniforms.phase.value=0
 		}
 	}
 	coolPass.uniforms.damage.value=
 		smooth(coolPass.uniforms.damage.value,0,0.05)
 	//Exhaust behavior and other smoothing things
-	thrust.material.map.offset.x=
-		smooth(thrust.material.map.offset.x,boosting||pedal>0?0:-1,0.1)
-	boost.material.map.offset.x=
-		smooth(boost.material.map.offset.x,boosting?0:-1,0.1)
+	modelthrust.material.map.offset.x=
+		smooth(modelthrust.material.map.offset.x,-1+Math.max(accel>thresh?accel:0,boost),0.1)
+	modelboost.material.map.offset.x=
+		smooth(modelboost.material.map.offset.x,boost||pushing>0?0:-1,0.1)
 	coolPass.uniforms.boost.value=
-		smooth(coolPass.uniforms.boost.value,boosting?1:0,0.1)
+		smooth(coolPass.uniforms.boost.value,boost?1:0,0.1)
+	coolPass.uniforms.motionblur.value=
+		smooth(coolPass.uniforms.motionblur.value,boost||stillboost||pushing>0?1:0,0.1)
 	audioStep()
 	if(savingPlace<0){//Floating
 		recover=0
@@ -79,49 +88,54 @@ function step(){
 		recover=model.position.y==0?Math.max(0,recover):recover
 	}
 	//Movement
-	var length=velocity.length()
+	var length=thrust.length()
 	var morelength=0
-	if(boosting||pedal>0||stillboost){//Going forwards
-		if(boosting||stillboost){//Going FAAAAAAST!
-			grip=1//Strong grip
+	if(boost||stillboost){//Going FAAAAAAST!
+		grip=1//Strong grip
+		if(length<boostspeed){
 			morelength=0.10*(maxspeed-length)//Speed of sound is 340 m/s
 		}
-		else{//Normal acceleration
-			grip=drift[0]
-			morelength=Math.min(accel,Math.abs(maxspeed-length))//accel*(maxspeed-length)//accel*d
-		}
-		turnspeed=turn[0]//Fastest speed turns slower
+		//energy-=0.001
 	}
-	else{//Not going at all.
-		turnspeed=turn[1]//No thrust turns fastest
-		grip=drift[1]//Normal grip
-	}
-	if(brake>0){
-		if(pedal>0||boosting){//Gas and brake? Drift time!
-			//morelength*=0.5//Slightly reduce gas
+	else{
+		grip=drift
+		if(pushing>0){//Being pushed along
+			if(length<pushspeed){
+				morelength+=Math.min(0.10*(maxspeed-length),pushspeed-length)
+			}
 		}
-		else{//Just brake? Friction!
-			velocity.multiplyScalar(Math.pow(0.1,d))
+		else if(accel>0){//Normal acceleration
+			if(length<accelspeed){
+				morelength+=Math.min(accelconst*accel,maxspeed-length)
+			}
 		}
-		grip=drift[2]//Drift
-		turnspeed=turn[2]//Braking turns moderate, drifts
 	}
-	if(steer!=0){
+	if(brake>thresh){//Braking?
+		if(length>0){
+			morelength-=Math.min(brakeconst*brake,length)
+		}
+	}
+	if(Math.abs(steer)>thresh){//Steering
 		ship.matrix.rotateY(-steer*turnspeed*(velocity.length()*0.001+1))
 		model.rotation.z+=1.5*(-steer*turnspeed)
 		ship.rotation.setEulerFromRotationMatrix(ship.matrix)
 	}
 	model.updateMatrix()
-	velocity.copy(
-		new THREE.Vector3(0,0,-length-morelength*(1/grip))
-		.applyProjection(ship.matrix)
-		.sub(ship.position)
-		.multiplyScalar(grip)
-		.add(velocity.clone().multiplyScalar(1-grip))
+	var newvel=new THREE.Vector3(0,0,-length-morelength*(1/grip))
+	thrust.copy(
+		ship.matrix.rotateAxis(newvel.clone()).multiplyScalar(newvel.length()*grip)
+		.add(thrust.clone().multiplyScalar(1-grip))
 	)//Adjustable skid
-	if(!(boosting||pedal>0)){//Now handle friction
-		velocity.multiplyScalar(Math.pow(friction,d))
+	
+	if(brake>thresh){//Brake friction
+		thrust.multiplyScalar(Math.pow(1-brake*(1-brakeconst),d))
 	}
+	thrust.multiplyScalar(Math.pow(friction,d))//Thrust friction
+	external.multiplyScalar(extfriction)//External friction
+	
+	//Left/right shift
+	$shift=smooth($shift,Math.abs(shift)>thresh?-shift*shiftconst:0,$$shift)
+	velocity.addVectors(thrust.clone().applyAxisAngle(ship.up,$shift),external)
 	
 	//Move the ship
 	collide()
@@ -143,9 +157,12 @@ function step(){
 	var shipfollow=0.9//Math.pow(0.01,d)
 	model.rotation.multiplyScalar(shipfollow)
 	//Adjust the camera fov
-	camera.fov=Math.min(180,minfov+(maxfov-minfov)*(velocity.length()/maxspeed))
+	camera.fov=Math.min(180,minfov+(maxfov-minfov)*(thrust.length()/maxspeed))
 	camera.updateProjectionMatrix()
 	if(respawning>=1){//Back on track
+		if(energy<0){
+			energy=1//Fully healed
+		}
 		ship.position.getPositionFromMatrix(respawnpoint)
 		ship.rotation.setEulerFromRotationMatrix(respawnpoint)
 		velocity.set(0,0,0)
@@ -160,7 +177,7 @@ function step(){
 		coolPass.uniforms.cover.value=respawning
 	}
 	else if(ship.position.distanceTo(track.geometry.boundingSphere.center)>track.geometry.boundingSphere.radius){//Outside
-		respawning=0.01
+		respawning=0.01//Auto-respawn
 	}
 	else{//Normal
 		coolPass.uniforms.cover.value=smooth(coolPass.uniforms.cover.value,0,0.05)
@@ -175,6 +192,7 @@ resize()
 window.addEventListener('resize',resize,false)
 window.addEventListener('load',function(){
 	document.getElementById('lowerright').style.display=''
+	document.getElementById('lowerleft').style.display=''
 	document.getElementById('loading').style.display='none'
 	render()
 },false)
