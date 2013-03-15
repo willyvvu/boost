@@ -1,17 +1,32 @@
 boost
 =====
-Controls
+Keyboard Controls
 ====
-To steer left/right, use A/D or Left/Right arrow keys.
+A/D or Left/Right arrow keys: steer
 
-To strafe, use Q and E.
+Q and E: Airbrakes
 
-To accelerate, use W, Up arrow key, or I.
+W, Up arrow key, or I: Accelerate
 
-To brake, use S, Down arrow key, or J.
+S, Down arrow key, or Q and E: Brake
 
-To boost, use O or the Space Bar.
+O or the Space Bar: Boost
 
+Z and C: Barrel roll (Slightly akward on purpose)
+
+Gamepad controls
+====
+For Xbox controller:
+
+Left analog: Steer
+
+Triggers: Airbrakes
+
+Bumpers: Barrel roll
+
+A: Accelerate
+
+X: Boost
 
 Included graphical effects
 ====
