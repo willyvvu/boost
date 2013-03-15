@@ -1,4 +1,19 @@
-function collide(){
+inair=false
+function collideStep(){
+	//Boost?
+	bottomray=new THREE.Raycaster(
+		new THREE.Vector3(0,2,0).applyProjection(ship.matrix),
+		ship.matrix.rotateAxis(new THREE.Vector3(0,-1,0))
+		,0,5
+	)
+	var intersections=bottomray.intersectObjects(boostpads)
+	if(intersections.length==1&&pushing<0.1){
+		//Hit one.
+		pushing+=padpush
+		$energy=0.1
+	}
+	
+	//Bottom collisions
 	bottomray=new THREE.Raycaster(
 		new THREE.Vector3(0,2,0).applyProjection(ship.matrix),
 		ship.matrix.rotateAxis(new THREE.Vector3(0,-1,0))
@@ -24,16 +39,36 @@ function collide(){
 			)
 			ship.matrix.multiply(rotation)
 			ship.rotation.setEulerFromRotationMatrix(ship.matrix)
+			model.updateMatrix()
 			model.matrix.multiply(new THREE.Matrix4().getInverse(rotation))
 			model.rotation.setEulerFromRotationMatrix(model.matrix)
 			ship.matrix.translate(new THREE.Vector3(0,adhere,0))
 			ship.rotation.setEulerFromRotationMatrix(ship.matrix)
 			ship.position.getPositionFromMatrix(ship.matrix)
 			velocity.projectOnPlane(to)
+			thrust.projectOnPlane(to)
+			external.projectOnPlane(to)
+			if(exportposition){
+				exported.push({position:intersections[0].point.clone(),rotation:ship.rotation.clone()})
+				var stringified=JSON.stringify(exported)
+				console.log(stringified)
+				exportposition=false
+			}
 			//Turn to match the road normal
 			if(dist<=adhere){//On the road
-				if(fall<0.2){
+				if(inair){
+					inair=false
 					recover+=fall
+					if(rollboost>0||rolling!=0){//If did a barrel roll, give some boost
+						if(Math.abs(rolling)<0.5){//More than half a roll
+							rollboost++
+						}
+						rolling=0
+						roll=0
+						pushing+=rollpush*rollboost
+						$energy=rollenergy*rollboost
+						rollboost=0
+					}
 				}
 				fall=0
 			}
@@ -47,6 +82,7 @@ function collide(){
 				//console.log('off')
 				clearTimeout(savingPlace)
 				savingPlace=-1
+				inair=true
 			}
 		}
 	}
@@ -54,6 +90,7 @@ function collide(){
 		//console.log('off')
 		clearTimeout(savingPlace)
 		savingPlace=-1
+		inair=true
 	}
 	ship.matrix.translate(new THREE.Vector3(0,fall,0))
 	ship.position.getPositionFromMatrix(ship.matrix)
@@ -88,9 +125,10 @@ function collide(){
 			//ship.position.add(restrict(norm,to).normalize()
 				//.multiplyScalar(2.5-ship.position.distanceTo(intersections[0].point)))
 				//Keep away
-			coolPass.uniforms.damage.value=Math.min(coolPass.uniforms.damage.value+velocity.length()*0.0005,1)
 			hurt()
 			velocity.projectOnPlane(norm)
+			thrust.projectOnPlane(norm)
+			external.projectOnPlane(norm)
 		}
 	}
 }

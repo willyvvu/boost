@@ -9,7 +9,7 @@ critical=0.3
 function limit(n){
 	return Math.max(0,Math.round(n))
 }
-function updateHud(){
+function hudStep(){
 	if(energy<=0){
 		shipdestroyed.style.display='initial'
 		energy=0
@@ -35,6 +35,6 @@ function updateHud(){
 	//console.log('rgba('+color+',0.3)')
 }
 function hurt(){
-	energy=Math.max(energy-thrust.length()*0.000005,0)
-	hudcolor=Math.max(50,100-thrust.length())
+	energy=Math.max(energy-Math.min(thrust.length()*collisionusage,maxcollisionusage),0)
+	coolPass.uniforms.damage.value=Math.min(coolPass.uniforms.damage.value+velocity.length()*0.01,1)
 }
