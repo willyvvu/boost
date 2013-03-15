@@ -94,14 +94,14 @@ function collideStep(){
 	}
 	ship.matrix.translate(new THREE.Vector3(0,fall,0))
 	ship.position.getPositionFromMatrix(ship.matrix)
-	fall+=-9.8*d*0.1
+	fall+=-9.8*deltatime*0.1
 	to=to||ship.matrix.rotateAxis(new THREE.Vector3(0,1,0))
 	
 	//Check for front collisions
 	frontray=new THREE.Raycaster(
 		ship.matrix.rotateAxis(new THREE.Vector3(0,0,2)).add(ship.position),
 		ship.matrix.rotateAxis(new THREE.Vector3(0,0.1,-2))
-		,0,10+velocity.length()*d
+		,0,10+velocity.length()*deltatime
 	)
 	rightrearray=new THREE.Raycaster(
 		ship.position.clone(),

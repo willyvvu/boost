@@ -1,3 +1,17 @@
+velocity=new THREE.Vector3()//Sum of velocities
+thrust=new THREE.Vector3()//Internal thrust
+external=new THREE.Vector3()//External forces
+fall=0
+recover=0
+respawnpoint=new THREE.Matrix4()
+respawning=0
+savingPlace=-1
+$camboost=0
+boosting=0//Similar to the var pushing
+flangerphase=0
+alreadysaved=true
+startTime=0
+deltatime=0.017
 function resize(){
 	width=window.innerWidth
 	height=window.innerHeight
@@ -7,7 +21,6 @@ function resize(){
 	composer.setSize(width,height)
 	coolPass.uniforms.aspect.value=camera.aspect
 }
-d=0.017
 function respawn(){
 	if(respawning==0){
 		respawning=0.01
@@ -23,32 +36,35 @@ function render(){
 function smooth(value,target,friction){
 	return value+friction*(target-value)
 }
-velocity=new THREE.Vector3()//Sum of velocities
-thrust=new THREE.Vector3()//Internal thrust
-external=new THREE.Vector3()//External forces
-fall=0
-recover=0
-respawnpoint=new THREE.Matrix4()
-respawning=0
-savingPlace=-1
-$camboost=0
-t=0
-boosting=0//Similar to the var pushing
 function savePlace(){
 	respawnpoint.copy(ship.matrix)
 	//console.log('saving place')
 	return savingPlace=setTimeout(savePlace,1000)
 }
 function step(){
+	//Lap timing
+	var nowsaved=ship.position.length()<30
+	if(nowsaved==true){//Energy refill
+		$energy=1-energy
+		if(alreadysaved==false&&startTime!=0){
+			//Record the time
+			addTime(new Date().valueOf()-startTime)
+		}
+		alreadysaved=true
+	}
+	else if(alreadysaved==true&&nowsaved==false){//Start the timer
+		alreadysaved=false
+		startTime=new Date().valueOf()
+	}
 	var $modelz=0
 	if(!track){return}//No track? No race.
 	
 	gamepad()//For gamepad support
-	t+=0.02//For the flanger
+	flangerphase+=0.02//For the flanger
 	
 	
 	//Handle speedy stuff
-	pushing=Math.max(0,pushing-d)
+	pushing=Math.max(0,pushing-deltatime)
 	//Energy business
 	if(energy>1){
 		energy=1
@@ -66,7 +82,7 @@ function step(){
 	if(coolPass.uniforms.phase.value==0){//Ready to boost!
 		if(boost>0){
 			coolPass.uniforms.phase.value=0.01
-			t=0//Resets the flanger
+			flangerphase=0//Resets the flanger
 			playBoostSound()
 			$camboost=0.5
 			energy-=initialboostusage
@@ -77,7 +93,7 @@ function step(){
 		}
 	}
 	else if(coolPass.uniforms.phase.value<1){//In progress
-		coolPass.uniforms.phase.value+=d*2
+		coolPass.uniforms.phase.value+=deltatime*2
 	}
 	else{//Wait to stop
 		coolPass.uniforms.phase.value=1
@@ -142,9 +158,9 @@ function step(){
 	)//Adjustable skid
 	
 	if(Math.min(lbrake,rbrake)>0){//Brake friction
-		thrust.multiplyScalar(Math.pow(1-Math.min(lbrake,rbrake)*(1-brakeconst),d))
+		thrust.multiplyScalar(Math.pow(1-Math.min(lbrake,rbrake)*(1-brakeconst),deltatime))
 	}
-	thrust.multiplyScalar(Math.pow(friction,d))//Thrust friction
+	thrust.multiplyScalar(Math.pow(friction,deltatime))//Thrust friction
 	external.multiplyScalar(extfriction)//External friction
 	
 	//Left/right shift
@@ -157,12 +173,12 @@ function step(){
 	
 	//Move the ship
 	collideStep()
-	ship.position.add(velocity.clone().multiplyScalar(d))
+	ship.position.add(velocity.clone().multiplyScalar(deltatime))
 	model.updateMatrix()
 	
 	//Camera magic
 	$steer*=0.9
-	var camfollow=0.7//Math.pow(0.01,d)
+	var camfollow=0.7
 	front.multiplyScalar(camfollow)
 		.add(model.matrixWorld.rotateAxis(new THREE.Vector3(0,0,-1)).multiplyScalar(1-camfollow))
 	camera.up.multiplyScalar(camfollow)
@@ -179,7 +195,7 @@ function step(){
 	camera.updateProjectionMatrix()
 	camera.position.addVectors(ship.position,behind.clone().multiplyScalar(5-2*speedfraction+2*$camboost))
 	camera.lookAt(front.clone().multiplyScalar(10).add(ship.position))
-	var shipfollow=0.9//Math.pow(0.01,d)
+	var shipfollow=0.9
 	model.rotation.z=smooth(model.rotation.z,$modelz,0.2)
 	if(Math.abs(rolling)<=0.1){//To start rolling, see collide.js
 		if(rolling!=0){
@@ -204,6 +220,8 @@ function step(){
 			energy=1//Fully healed
 			ship.position.set(0,0,0)
 			ship.rotation.set(0,0,0)
+			startTime=0
+			alreadySaved=true
 		}
 		else{
 			ship.position.getPositionFromMatrix(respawnpoint)
@@ -219,7 +237,7 @@ function step(){
 	}
 	
 	else if(respawning>0){//Respawn animation
-		respawning+=2*d
+		respawning+=2*deltatime
 		coolPass.uniforms.cover.value=respawning
 	}
 	else if(ship.position.distanceTo(track.geometry.boundingSphere.center)>track.geometry.boundingSphere.radius){//Outside
@@ -237,8 +255,7 @@ behind=camchase.clone().normalize()
 resize()
 window.addEventListener('resize',resize,false)
 window.addEventListener('load',function(){
-	document.getElementById('lowerright').style.display=''
-	document.getElementById('lowerleft').style.display=''
+	document.getElementById('hudcontainer').style.display=''
 	document.getElementById('loading').style.display='none'
 	render()
 },false)

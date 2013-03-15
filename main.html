@@ -13,9 +13,11 @@
 				font-family:'Orbitron', sans-serif;color:white;
 			}
 			#container{position:absolute;z-index:0;}
-			#lowerright{position:fixed;right:20px;bottom:10px;font-size:2cm;z-index:100;}
-			#lowerleft{position:fixed;left:20px;bottom:10px;font-size:2cm;z-index:100;}
-			#hudbar{position:fixed;left:20px;bottom:20px;height:80px;z-index:90;}
+			#lowerright{position:fixed;right:20px;bottom:10px;font-size:1.7cm;z-index:100;}
+			#lowerleft{position:fixed;left:20px;bottom:10px;font-size:1.7cm;z-index:100;}
+			#topleft{position:fixed;left:20px;top:10px;font-size:1.7cm;z-index:100;}
+			.smaller{opacity:0.7;}
+			#hudbar{position:fixed;left:20px;bottom:20px;height:70px;z-index:90;}
 			#hudenergy{position:absolute;left:0;right:0;bottom:0;background-color:inherit;}
 			#units{font-size:1cm;}
 			#loading,#destroyed{
@@ -37,8 +39,11 @@
 		<div id="container"></div>
 		<div id="loading">&lt;Transferring data&gt;</div>
 		<div id="destroyed" style="display:none">&lt;Ship destroyed&gt;</div>
-		<div id="lowerright" style="display:none"><span id="speed"></span><span id="units">mph</span></div>
-		<div id="lowerleft" style="display:none"></div>
+		<section id="hudcontainer" style="display:none">
+			<div id="lowerright"><span id="speed"></span><span id="units">mph</span></div>
+			<div id="lowerleft"></div>
+			<div id="topleft"><div id="currenttime"></div><div id="lasttime" class="smaller"></div></div>
+		</section>
 		<div id="hudbar"><div id="hudenergy"></div></div>
 		<script src="js/socket.io.js"></script>
 		<script src="js/three-56.js"></script>
@@ -53,7 +58,7 @@
 		<script src="js/fx.js"></script>
 		<script src="js/control.js"></script>
 		<!--<audio src="audio/StatueOfDiveo_-_Starflex.mp3" id="backgroundaudio"></audio>-->
-		<audio src="audio/CoLD SToRAGE - Lost In Music.mp3" id="backgroundaudio"></audio>
+		<!--<audio src="audio/CoLD SToRAGE - Lost In Music.mp3" id="backgroundaudio"></audio>-->
 		<!--<audio src="audio/Tropical Resort - Act 1.mp3" id="backgroundaudio"></audio>-->
 		<script src="js/audio.js"></script>
 		<script src="js/collide.js"></script>
