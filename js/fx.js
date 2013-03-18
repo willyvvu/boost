@@ -1,7 +1,4 @@
 var composer=new THREE.EffectComposer(renderer)
-renderPass=new THREE.RenderPass(scene,camera)
-composer.addPass(renderPass)
-//hexTexture=THREE.ImageUtils.loadTexture('fx/Hex.png')
 var coolPass=new THREE.ShaderPass({//I'm going to be PRO with some
 //CUSTOM SHADERS! WOAH! The coolPass makes everything so much cooler.
 	uniforms:{
@@ -36,7 +33,7 @@ var coolPass=new THREE.ShaderPass({//I'm going to be PRO with some
 	'void main() {',
 		'vec4 color=vec4(0.0,0.0,0.0,0.0);vec2 vc=v;',
 		'vec2 center=vec2(1.0,1.0/aspect)*(v-0.5);',
-		'float vin=clamp(length(v-0.5)-0.25,0.0,1.0);',
+		'float vin=clamp(length(v-0.5)*0.6-0.25,0.0,1.0);',
 		'if(phase>0.01){',
 			'float x=(length(center)-1.5*phase+0.2);',
 			'if(abs(x)<0.2){',
@@ -48,9 +45,8 @@ var coolPass=new THREE.ShaderPass({//I'm going to be PRO with some
 		'if(cover>0.001){color+=cover*vec4(1.0,1.0,1.0,1.0);};',
 		'if(motionblur>0.1){',
 			'vec2 vcm=(vc-0.5);',
-			'gl_FragColor = texture2D(tDiffuse,vc)*(1.0-0.6*motionblur)',
-			'+texture2D(tDiffuse,0.975*vcm+0.5)*0.3*motionblur',
-			'+texture2D(tDiffuse,0.95*vcm+0.5)*0.2*motionblur',
+			'gl_FragColor = texture2D(tDiffuse,vc)*(1.0-0.4*motionblur)',
+			'+texture2D(tDiffuse,0.98*vcm+0.5)*0.4*motionblur',
 			'+color;',
 		'}',
 		'else{',
@@ -61,7 +57,6 @@ var coolPass=new THREE.ShaderPass({//I'm going to be PRO with some
 })
 coolPass.renderToScreen=true
 composer.addPass(coolPass)
-//coolPass.uniforms.tHex.value=hexTexture
 composer.renderTarget1.format=THREE.RGBAFormat
 composer.renderTarget2.format=THREE.RGBAFormat
 function fxStep(){
@@ -70,9 +65,15 @@ function fxStep(){
 	modelboost.material.map.offset.y=Math.random()*0.2-0.1
 	//Exhaust behavior and other smoothing things
 	modelthrust.material.map.offset.x=
-		smooth(modelthrust.material.map.offset.x,-1+Math.max(accel,boost),0.1)
+		smooth(modelthrust.material.map.offset.x,Math.max(accel,boost)-1,0.1)
+	modelthrust.material.opacity=
+		smooth(modelthrust.material.opacity,modelthrust.material.map.offset.x>-0.9?1:0,0.1)
+	boostsprite.material.opacity=
+		smooth(boostsprite.material.opacity,Math.max(accel,boost),0.1)
 	modelboost.material.map.offset.x=
 		smooth(modelboost.material.map.offset.x,boosting>0||pushing>0?0:-1,0.1)
+	modelboost.material.opacity=
+		smooth(modelboost.material.opacity,modelboost.material.map.offset.x>-0.9?1:0,0.1)
 	coolPass.uniforms.damage.value=
 		smooth(coolPass.uniforms.damage.value,0,0.05)
 	coolPass.uniforms.push.value=

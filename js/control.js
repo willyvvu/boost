@@ -20,16 +20,31 @@ function deadZone(n){
 	return 0
 }
 //Gamepad
+ydown=false
 function gamepad(){
 	var g=navigator.webkitGetGamepads()[0]
 	if(g){
-		steer=deadZone(g.axes[0])//Main stick
-		lbrake=deadZone(g.buttons[6])//Triggers
-		rbrake=deadZone(g.buttons[7])
-		accel=deadZone(g.buttons[0])//A
-		boost=deadZone(g.buttons[2])!=0//X
-		roll=deadZone(g.buttons[5])-deadZone(g.buttons[4])//Bumpers roll
-		if(deadZone(g.buttons[8])!=0){respawn()}//Back
+		if(control==1){
+			steer=deadZone(g.axes[0])//Main stick
+			lbrake=deadZone(g.axes[4])//Triggers
+			rbrake=deadZone(g.axes[5])
+			accel=deadZone(g.buttons[0])//A
+			boost=deadZone(g.buttons[1])!=0//B
+			roll=deadZone(g.buttons[5])-deadZone(g.buttons[4])+deadZone(g.buttons[7])//Clicking rolls
+			//console.log(g.buttons)
+		}
+		if(deadZone(g.buttons[3])!=0){
+			if(!ydown){
+				if(control){
+					control=control==1?2:1
+				}
+				ydown=true
+			}
+		}
+		else{
+			ydown=false
+		}
+		if(deadZone(g.buttons[9])!=0){respawn()}//Start
 	}
 }
 exported=[]
@@ -105,12 +120,14 @@ function keyHandle(){
 				break
 		}
 	}
-	accel=Math.max(0,Math.min(1,kaccel))
-	lbrake=Math.max(0,Math.min(1,klbrake))
-	rbrake=Math.max(0,Math.min(1,krbrake))
-	boost=Math.max(0,Math.min(1,kboost))
-	steer=Math.max(-1,Math.min(1,ksteer))
-	roll=Math.max(-1,Math.min(1,kroll))
+	if(control==1){
+		accel=Math.max(0,Math.min(1,kaccel))
+		lbrake=Math.max(0,Math.min(1,klbrake))
+		rbrake=Math.max(0,Math.min(1,krbrake))
+		boost=Math.max(0,Math.min(1,kboost))
+		steer=Math.max(-1,Math.min(1,ksteer))
+		roll=Math.max(-1,Math.min(1,kroll))
+	}
 	if(krespawn &&respawning==0){
 		respawning=0.01
 	}

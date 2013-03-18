@@ -63,6 +63,16 @@ function addTime(n){
 function saveTimes(){
 	localStorage.times=JSON.stringify(times)
 	document.getElementById('lasttime').innerHTML=times.length?formatTime(times.slice(-1)[0]):''
+	if(times.length){
+		var mintime=Infinity
+		for(var min=0;min<times.length;min++){
+			mintime=Math.min(times[min],mintime)
+		}
+		document.getElementById('besttime').innerHTML=formatTime(mintime)
+	}
+	else{
+		document.getElementById('besttime').innerHTML=''
+	}
 }
 if(localStorage.times){
 	times=JSON.parse(localStorage.times)

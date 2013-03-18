@@ -8,14 +8,14 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="1024"
-   height="1024"
-   viewBox="0 0 1024 1024"
+   width="256"
+   height="256"
+   viewBox="0 0 256 256"
    version="1.1"
    id="svg5331"
    inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="Thrust.svg"
-   inkscape:export-filename="/home/william/Documents/Node (10th grade)/Boost/ship/Thrust.png"
+   inkscape:export-filename="/home/william/Documents/Node (10th grade)/Boost/scene/ship/Thrust.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <metadata
@@ -39,6 +39,10 @@
          offset="0"
          id="stop5233" />
       <stop
+         id="stop3904"
+         offset="0.79452056"
+         style="stop-color:#ffffff;stop-opacity:1;" />
+      <stop
          style="stop-color:#ffffff;stop-opacity:0;"
          offset="1"
          id="stop5235" />
@@ -61,7 +65,7 @@
          result="result1" />
       <feFlood
          id="feFlood5423"
-         flood-color="rgb(0,255,249)"
+         flood-color="rgb(193,253,255)"
          result="result2" />
       <feComposite
          id="feComposite5427"
@@ -69,12 +73,16 @@
          in="result2"
          in2="result1"
          result="result3" />
+      <feColorMatrix
+         id="feColorMatrix3920"
+         result="result5"
+         values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0 " />
       <feComposite
          id="feComposite5429"
-         in="SourceGraphic"
-         operator="in"
+         in="result3"
+         operator="over"
          result="result4"
-         in2="result3" />
+         in2="SourceGraphic" />
     </filter>
     <filter
        id="filter5401-4"
@@ -94,7 +102,7 @@
          result="result1" />
       <feFlood
          id="feFlood5423-3"
-         flood-color="rgb(0,255,249)"
+         flood-color="rgb(0,254,248)"
          result="result2" />
       <feComposite
          id="feComposite5427-0"
@@ -104,7 +112,6 @@
          result="result3" />
       <feComposite
          id="feComposite5429-9"
-         in="SourceGraphic"
          operator="in"
          result="result4"
          in2="result3" />
@@ -129,17 +136,47 @@
        y1="512"
        x2="1024"
        y2="512" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5231"
+       id="linearGradient3902"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-1024,0)"
+       x1="0"
+       y1="512"
+       x2="1024"
+       y2="512" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5231"
+       id="linearGradient3912"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-1024,0)"
+       x1="0"
+       y1="512"
+       x2="1024"
+       y2="512" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5231"
+       id="linearGradient3918"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-1024,0)"
+       x1="0"
+       y1="512"
+       x2="1024"
+       y2="512" />
     <mask
        maskUnits="userSpaceOnUse"
-       id="mask5251">
+       id="mask3914">
       <rect
-         y="0"
-         x="-1024"
-         height="1024"
+         transform="scale(-1,1)"
+         style="opacity:0.98000004;color:#000000;fill:url(#linearGradient3918);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         id="rect3916"
          width="1024"
-         id="rect5253"
-         style="opacity:0.98000004;color:#000000;fill:url(#linearGradient5255);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-         transform="scale(-1,1)" />
+         height="1024"
+         x="-1024"
+         y="0" />
     </mask>
   </defs>
   <sodipodi:namedview
@@ -155,9 +192,9 @@
      inkscape:window-height="744"
      id="namedview5339"
      showgrid="false"
-     inkscape:zoom="0.49818947"
-     inkscape:cx="575.8102"
-     inkscape:cy="445.68622"
+     inkscape:zoom="1.7421008"
+     inkscape:cx="119.02363"
+     inkscape:cy="144.09212"
      inkscape:window-x="0"
      inkscape:window-y="24"
      inkscape:window-maximized="1"
@@ -178,11 +215,14 @@
   <desc
      id="desc5333">'Ship.blend', Cube.001, (Blender 2.65 (sub 0))</desc>
   <rect
-     style="opacity:0.98000003999999996;color:#000000;fill:#bdf3ff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;filter:url(#filter5401-4)"
+     style="opacity:0.99765433999999997;color:#000000;fill:#00a7c8;fill-opacity:0.48172757;fill-rule:nonzero;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter5401);enable-background:accumulate"
      id="rect3009"
      width="1024"
      height="1024"
      x="0"
      y="0"
-     mask="url(#mask5251)" />
+     mask="url(#mask3914)"
+     transform="scale(0.25,0.25)"
+     inkscape:export-xdpi="90"
+     inkscape:export-ydpi="90" />
 </svg>

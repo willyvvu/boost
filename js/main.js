@@ -11,14 +11,17 @@ boosting=0//Similar to the var pushing
 flangerphase=0
 alreadysaved=true
 startTime=0
-deltatime=0.017
+deltatime=1/45//0.017
+ships=[]
 function resize(){
 	width=window.innerWidth
 	height=window.innerHeight
-	camera.aspect=width/height
+	camera.aspect=(width)/height
 	camera.updateProjectionMatrix()
-	renderer.setSize(width,height)
-	composer.setSize(width,height)
+	camera2.aspect=(width)/height
+	camera2.updateProjectionMatrix()
+	renderer.setSize(width,height)//Split Screen
+	composer.setSize(width,height)//Split Screen
 	coolPass.uniforms.aspect.value=camera.aspect
 }
 function respawn(){
@@ -29,7 +32,27 @@ function respawn(){
 //time=new Date().valueOf()
 function render(){
 	step()
+	/*renderer.enableScissorTest(true)
+	renderer.setViewport(width/4,0,width/2,height)//Split Screen
+	renderer.setScissor(width/4,0,width/2,height)
+	renderer.render(scene,camera,composer.renderTarget2,true)
+	renderer.setViewport(-width/4,0,width,height)//Split Screen
+	renderer.setScissor(0,0,width/2,height)
 	composer.render()
+	
+	camera2.lookAt(ship.position)
+	camera2.fov=2000/ship.position.distanceTo(camera2.position)
+	camera2.updateProjectionMatrix()
+	
+	renderer.setViewport(width/4,0,width/2,height)//Split Screen
+	renderer.setScissor(width/4,0,width/2,height)
+	renderer.render(scene,camera2,composer.renderTarget2,true)
+	renderer.setViewport(width/4,0,width,height)//Split Screen
+	renderer.setScissor(width/2,0,width,height)*/
+	renderer.render(scene,camera,composer.renderTarget2,true)
+	//renderer.render(scene,camera)
+	composer.render()
+	
 	//setTimeout(render,1000/2)
 	window.webkitRequestAnimationFrame(render)
 }
@@ -60,6 +83,7 @@ function step(){
 	if(!track){return}//No track? No race.
 	
 	gamepad()//For gamepad support
+	collideStep()
 	flangerphase+=0.02//For the flanger
 	
 	
@@ -127,7 +151,7 @@ function step(){
 		energy-=boostusage
 	}
 	else{
-		grip=drift
+		//grip=drift
 		if(pushing>0){//Being pushed along
 			if(length<pushspeed){
 				morelength+=Math.min(0.04*(pushspeed-length),pushspeed-length)
@@ -151,10 +175,10 @@ function step(){
 		$modelz+=-steer*speedsteer*20
 		$steer-=(-steer*speedsteer*0.75)
 	}
-	var newvel=new THREE.Vector3(0,0,-length-morelength*(1/grip))
+	var newvel=new THREE.Vector3(0,0,-length-morelength*(1/drift))
 	thrust.copy(
-		ship.matrix.rotateAxis(newvel.clone()).multiplyScalar(newvel.length()*grip)
-		.add(thrust.clone().multiplyScalar(1-grip))
+		ship.matrix.rotateAxis(newvel.clone()).multiplyScalar(newvel.length()*drift)
+		.add(thrust.clone().multiplyScalar(1-drift))
 	)//Adjustable skid
 	
 	if(Math.min(lbrake,rbrake)>0){//Brake friction
@@ -167,29 +191,29 @@ function step(){
 	var left=ship.matrixWorld.rotateAxis(new THREE.Vector3(1,0,0))
 	$shift=smooth($shift,-(rbrake-lbrake)*(inair?airshiftratio:1)*shiftconst,$$shift)
 	velocity.addVectors(thrust.clone().applyAxisAngle(ship.matrixWorld.rotateAxis(new THREE.Vector3(0,1,0)),$shift),external)
-	external.add(left.clone().multiplyScalar(-$shift*(inair?airshiftratio:1)))
+	external.add(left.clone().multiplyScalar(-$shift*shiftconst2*(inair?airshiftratio:1)))
 	$modelz+=$shift
 	$steer+=$shift*0.05
 	
 	//Move the ship
-	collideStep()
+	applyCollideStep()
 	ship.position.add(velocity.clone().multiplyScalar(deltatime))
 	model.updateMatrix()
 	
 	//Camera magic
-	$steer*=0.9
+	$steer*=0.95
 	var camfollow=0.7
 	front.multiplyScalar(camfollow)
 		.add(model.matrixWorld.rotateAxis(new THREE.Vector3(0,0,-1)).multiplyScalar(1-camfollow))
 	camera.up.multiplyScalar(camfollow)
 		.add(ship.matrixWorld.rotateAxis(new THREE.Vector3(0,1,0)).multiplyScalar(1-camfollow))
-	var behindplace=camera.up.clone().multiplyScalar(0.7).sub(front).add(left.multiplyScalar($steer))
+	var behindplace=camera.up.clone().multiplyScalar(0.7).sub(front.clone().multiplyScalar(1+$camboost)).add(left.multiplyScalar($steer))
 	behind.multiplyScalar(camfollow/2)
 		.add(behindplace.multiplyScalar(1-camfollow/2))
 		
 	
 	//Adjust the camera fov
-	var speedfraction=0.5*thrust.length()/maxspeed
+	var speedfraction=0.75*thrust.length()/maxspeed
 	$camboost=Math.floor($camboost*0.9*1000)/1000
 	camera.fov=speedfraction*(addfov)+minfov+20*$camboost
 	camera.updateProjectionMatrix()
@@ -197,6 +221,7 @@ function step(){
 	camera.lookAt(front.clone().multiplyScalar(10).add(ship.position))
 	var shipfollow=0.9
 	model.rotation.z=smooth(model.rotation.z,$modelz,0.2)
+	model.position.multiplyScalar(0.9)
 	if(Math.abs(rolling)<=0.1){//To start rolling, see collide.js
 		if(rolling!=0){
 			rolling=0

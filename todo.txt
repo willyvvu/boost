@@ -1,6 +1,8 @@
-Separate bars for energy/boost
+? Separate bars for energy/boost
 Rework physics
 Autopilot
 NPCs
 Split screen
-Lap timing
+Ship tuning/upgrades
+Explosions when you die
+Powerups
