@@ -12,7 +12,6 @@ flangerphase=0
 alreadysaved=true
 startTime=0
 deltatime=1/45//0.017
-ships=[]
 function resize(){
 	width=window.innerWidth
 	height=window.innerHeight

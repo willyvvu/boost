@@ -1,8 +1,10 @@
 ? Separate bars for energy/boost
-Rework physics
-Autopilot
-NPCs
-Split screen
-Ship tuning/upgrades
+:) Rework physics
+: Autopilot
+: NPCs
+:) Split screen
+: Ship tuning/upgrades
 Explosions when you die
 Powerups
+Better boost trail
+Streak lines in shader
