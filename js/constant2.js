@@ -5,8 +5,8 @@ mph=3600*100/2.54/12/5280
 deltatime=1/60
 
 //Speeds
-boostspeed=1400/mph//Maximum boost speed
-maxspeed=1400/mph//Maximum overall speed
+boostspeed=1000/mph//Maximum boost speed
+maxspeed=1000/mph//Maximum overall speed
 friction=0.00001
 extfriction=0.9
 
@@ -72,4 +72,15 @@ function addSpark(position,velocity){
 	fromend.opacity=1
 	fromend.color=Math.random()
 	sparks.geometry.vertices.unshift(fromend)
+}
+function addBoostPad(position,rotation){
+	var pad=new THREE.Mesh(
+		resource.padGeo,
+		resource.padMat
+	)
+	pad.position.copy(position)
+	pad.rotation.copy(rotation)
+	pad.boostpad=true
+	boostpads.push(pad)
+	scene.add(pad)
 }

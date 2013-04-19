@@ -26,7 +26,7 @@ resource.hullMat=new THREE.MeshPhongMaterial({
 	//normalMap:resource.hullNormalTex,
 	color: 0xDDDDDD,
 	shininess: 10.0,
-	ambient: 0xAAAAAA,
+	ambient: 0x888888,
 	emissive: 0x000000,
 	specular: 0xFFFFFF,
 	combine:THREE.AddOperation
@@ -104,7 +104,7 @@ sceneloader=new THREE.SceneLoader()
 	resource.trackcollide=data.objects['Plane.002']
 	resource.structureObj=data.objects['Plane.001']
 	//resource.overpassObj=data.objects.Overpass
-})*/
+})
 sceneloader.load('scene/track5/Track.js',function(data){
 	console.log(data)
 	sdata=data
@@ -113,10 +113,25 @@ sceneloader.load('scene/track5/Track.js',function(data){
 	resource.trackcollide=data.objects['Collider']
 	resource.structureObj=data.objects['Buildings']
 	//resource.overpassObj=data.objects.Overpass
+})*/
+sceneloader.load('scene/track7/World.js',function(data){
+	console.log(data)
+	sdata=data
+	resource.trackObj=data.objects['Cube']
+	resource.trackObj.position.y-=100
+	resource.trackObj.scale.multiplyScalar(20)
+	//resource.groundObj=data.objects.Ground
+	resource.trackcollide=data.objects['Cube.001']
+	resource.trackcollide.position.y-=100
+	resource.trackcollide.scale.multiplyScalar(20)
+	resource.structureObj=data.objects['Plane.001']
+	resource.structureObj.position.y-=1000
+	resource.structureObj.scale.multiplyScalar(20)
+	//resource.overpassObj=data.objects.Overpass
 })
 loader.load('scene/trackresource/BoostPad.js',function(geo){resource.padGeo=geo})
 var req=new XMLHttpRequest()
-req.open('GET','scene/track2/Pads.js',true)
+req.open('GET','scene/track5/Pads.js',true)
 req.onload=function(){resource.padData=JSON.parse(req.response)}
 req.send()
 

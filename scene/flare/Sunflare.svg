@@ -113,6 +113,14 @@
          stdDeviation="3.2951853"
          id="feGaussianBlur3784" />
     </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter3783">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.24645951"
+         id="feGaussianBlur3785" />
+    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -121,9 +129,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.95140179"
-     inkscape:cx="192.10007"
-     inkscape:cy="235.79294"
+     inkscape:zoom="1.1762448"
+     inkscape:cx="268.76767"
+     inkscape:cy="254.0041"
      inkscape:document-units="px"
      inkscape:current-layer="g4516"
      showgrid="false"
@@ -154,7 +162,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -177,22 +185,6 @@
        id="g4516"
        style="filter:url(#filter4525);opacity:1">
       <path
-         sodipodi:type="star"
-         style="opacity:0.5884774;color:#000000;fill:url(#radialGradient4458);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:12.47442245;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-         id="path4456"
-         sodipodi:sides="6"
-         sodipodi:cx="128"
-         sodipodi:cy="128"
-         sodipodi:r1="128.00349"
-         sodipodi:r2="2.5600698"
-         sodipodi:arg1="0"
-         sodipodi:arg2="0.52359878"
-         inkscape:flatsided="false"
-         inkscape:rounded="0"
-         inkscape:randomized="0"
-         d="m 256.00349,128 -125.7864,1.28003 61.78466,109.57425 L 128,130.56007 63.998253,238.85428 125.78291,129.28003 -0.00349426,128 125.78291,126.71997 63.998253,17.145722 128,125.43993 192.00175,17.145722 130.21709,126.71997 z"
-         transform="matrix(1.6765555,0.16330297,-0.16330297,1.6765555,61.141492,562.30811)" />
-      <path
          transform="matrix(2.3223984,0,0,2.3223984,-42.429182,500.54298)"
          d="m 256.00349,128 -125.69695,1.11077 77.50233,98.96639 -79.2392,-97.58128 L 99.516543,252.79418 126.40382,130.00154 12.672837,183.53863 125.43993,128 12.672837,72.461365 126.40382,125.99846 99.516543,3.2058206 128.56967,125.50412 207.80887,27.922838 130.30654,126.88923 z"
          inkscape:randomized="0"
@@ -206,24 +198,8 @@
          sodipodi:cx="128"
          sodipodi:sides="7"
          id="path4406"
-         style="color:#000000;fill:url(#radialGradient4414);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:12.47442245;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         style="color:#000000;fill:url(#radialGradient4414);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:12.47442245000000050;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;filter:url(#filter3783)"
          sodipodi:type="star" />
-      <path
-         sodipodi:type="star"
-         style="opacity:0.3374486;color:#000000;fill:url(#radialGradient4438);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:12.47442245;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-         id="path4436"
-         sodipodi:sides="5"
-         sodipodi:cx="128"
-         sodipodi:cy="128"
-         sodipodi:r1="128.00349"
-         sodipodi:r2="2.5600698"
-         sodipodi:arg1="0"
-         sodipodi:arg2="0.62831853"
-         inkscape:flatsided="false"
-         inkscape:rounded="0"
-         inkscape:randomized="0"
-         d="M 256.00349,128 130.07114,129.50477 167.55526,249.73856 127.20889,130.43477 24.442998,203.23857 125.43993,128 24.442998,52.761434 127.20889,125.56523 167.55526,6.2614427 130.07114,126.49523 z"
-         transform="matrix(0.87380499,0.77761752,-0.77761752,0.87380499,242.17647,580.86695)" />
     </g>
     <path
        sodipodi:type="arc"

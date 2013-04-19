@@ -69,8 +69,7 @@ keys=[]
 function keyChange(e){//Picks up any change in keys: keyup and keydown
 	var ind=keys.indexOf(e.keyCode)
 	if(e.type=='keydown'){
-		console.log(e.keyCode)
-		if(e.keyCode==45){exportposition=true}//Insert
+		//if(e.keyCode==45){exportposition=true}//Insert
 		if(ind==-1){
 			keys.push(e.keyCode)
 			//Adds a keycode to list keys ONLY if it is not there already
@@ -106,6 +105,7 @@ function keyHandle(){
 		krearview=0,
 		ksteer2=0,
 		kaccel2=0,
+		kboost2=0,
 		klbrake2=0,
 		krbrake2=0
 	for(var k=0;k<keys.length;k++){
@@ -130,23 +130,20 @@ function keyHandle(){
 				break
 			case 74://J
 				klbrake+=1
+				break
+			case 76://L
 				krbrake+=1
 				break
 			case 40://Down
-				klbrake2+=1
-				krbrake2+=1
+				kboost2+=1
+				/*klbrake2+=1
+				krbrake2+=1*/
 				break
 			case 68://D
 				ksteer+=1
 				break
 			case 39://Right
 				ksteer2+=1
-				break
-			case 81://Q
-				klbrake+=1
-				break
-			case 69://E
-				krbrake+=1
 				break
 			case 90://Z
 				kroll-=1
@@ -178,6 +175,7 @@ function keyHandle(){
 	keyboard2.steer=Math.max(-1,Math.min(1,ksteer2))
 	keyboard2.lbrake=Math.max(-1,Math.min(1,klbrake2))
 	keyboard2.rbrake=Math.max(-1,Math.min(1,krbrake2))
+	keyboard2.boost=Math.max(-1,Math.min(1,kboost2))
 	/*if(krespawn &&respawning==0){
 		respawning=0.01
 	}*/

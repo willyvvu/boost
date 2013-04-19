@@ -1,5 +1,5 @@
 //Sets up the scene, and everything inside it
-/* Object heirarchy
+/* Object hierarchy
  * Scene | Track
  * 		 | Ship | Camera
  * 				| Model | Hull
@@ -19,7 +19,7 @@ scene.add(camera)
 scene.add(camera2)
 loader=new THREE.JSONLoader()
 
-//Skybox. Wonderful.
+//Sky box. Wonderful.
 skyMaterial=new THREE.ShaderMaterial(THREE.ShaderLib.cube)
 skyCube=THREE.ImageUtils.loadTextureCube(skyImages)
 skyMaterial.uniforms.tCube.value=skyCube

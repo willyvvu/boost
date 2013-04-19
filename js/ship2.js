@@ -405,7 +405,7 @@ _Ship={//All useful ship functions
 		var intersections=raycaster.intersectObjects(objects)
 		if(intersections.length&&intersections[0].distance-collisionconst<=distance){
 			//Hit something
-			var normal=intersections[0].face.normal.clone().transformDirection(intersections[0].object.matrixWorld)
+			var normal=intersections[0].face.normal.clone().transformDirection(intersections[0].object.matrix)
 			distance-=intersections[0].distance-collisionconst
 			origin.copy(intersections[0].point).add(
 				_now.clone().normalize().multiplyScalar(-collisionconst))
@@ -421,9 +421,13 @@ _Ship={//All useful ship functions
 					.dot(direction.clone().projectOnPlane(_previousface))<0//This next face contradicts the direction I'm going, aka a bend in a wall.
 			)){//Be wary of less than 90 degree angles
 				_now.multiplyScalar(distance).projectOnVector(_previousface.clone().cross(normal))
-				restrict(this.velocity,_previousface)
+				/*restrict(this.velocity,_previousface)
 				restrict(this.engineforce,_previousface)
-				restrict(this.externalforce,_previousface)
+				restrict(this.externalforce,_previousface)*/
+				var pv=_previousface.clone().cross(normal)
+				this.engineforce.projectOnVector(pv)
+				this.externalforce.projectOnVector(pv)
+				this.velocity.addVectors(this.engineforce,this.externalforce)
 			}
 			else{//No 90 degree issue, or just first ray. Assuming it hit the ground
 				_now.multiplyScalar(distance).projectOnPlane(normal)
@@ -432,7 +436,7 @@ _Ship={//All useful ship functions
 				if(dot>0.5){//Used to be dotu
 					this.grounded=this.aircount
 					var angle=Math.acos(Math.min(Math.max(dot,-1),1))
-					if(angle>Math.PI/2){angle-=Math.PI}
+					//if(angle>Math.PI/2){angle-=Math.PI}
 					if(angle!=0){
 						var inv=new THREE.Matrix4().getInverse(this.main.matrix)
 						this.main.matrix.rotateByAxis(
@@ -445,12 +449,11 @@ _Ship={//All useful ship functions
 					//_now.copy(this.velocity).normalize()
 					//_now.projectOnPlane(new THREE.Vector3(0,1,0))
 				}
+				restrict(this.engineforce,normal)
+				//this.externalforce.set(0,0,0)
+				restrict(this.externalforce,normal)
+				this.velocity.addVectors(this.engineforce,this.externalforce)
 			}
-			restrict(this.engineforce,normal)
-			//this.externalforce.set(0,0,0)
-			restrict(this.externalforce,normal)
-			this.velocity.copy(this.engineforce)
-			restrict(this.velocity,normal)
 			distance=_now.length()
 			if(_times<maxcollisions){
 				return this.solveRay(origin,direction,distance,objects,_times+1,_now,normal)//Continue
@@ -543,22 +546,6 @@ _Ship={//All useful ship functions
 		this.thrust.geometry.vertices.unshift(
 			this.thrust.geometry.vertices.pop().set(0.15,0,1.8).applyProjection(this.holder.matrix))
 		this.thrust.geometry.verticesNeedUpdate=true
-			//Make the exhaust look like it's alive
-		//this.thrust.material.map.offset.y=Math.random()*0.2-0.1
-		//this.boost.material.map.offset.y=Math.random()*0.2-0.1
-		//Exhaust behavior and other smoothing things
-		//this.thrust.material.map.offset.x=
-			//lerp(this.thrust.material.map.offset.x,Math.max(this.controlsmooth.accel,this.controlsmooth.boost)-1,0.1)
-		/*this.thrust.material.opacity=
-			lerp(this.thrust.material.opacity,Math.max(this.controlsmooth.accel,this.controlsmooth.boost)?1:0,0.1)*/
-		//this.shine.material.opacity=//this.boost.material.map.offset.x>-0.9
-			//lerp(this.shine.material.opacity,Math.max(this.controlsmooth.accel,this.controlsmooth.boost)*0.7+0.3,0.1)
-		//this.boost.material.map.offset.x=
-			//lerp(this.boost.material.map.offset.x,this.boosting>0||this.pushing>0?0:-1,0.1)
-		/*this.boost.material.opacity=
-			lerp(this.boost.material.opacity,this.boosting>0||this.pushing>0?1:0,0.1)*/
-		//this.camera.motionblur.value=
-			//lerp(coolPass.uniforms.motionblur.value,boosting>0||pushing>0?1:0,0.1)
 		
 		this.uniforms.motionblur=
 			lerp(this.uniforms.motionblur,this.boosting>0||this.pushing>0?1:0,0.1)

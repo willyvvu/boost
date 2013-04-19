@@ -29,11 +29,11 @@
          id="stop3759" />
       <stop
          id="stop3765"
-         offset="0.15686134"
+         offset="0.08763231"
          style="stop-color:#ffffff;stop-opacity:1;" />
       <stop
-         style="stop-color:#ffffff;stop-opacity:0.19607843;"
-         offset="0.21461056"
+         style="stop-color:#ffffff;stop-opacity:0.07843138;"
+         offset="0.0999556"
          id="stop3767" />
       <stop
          style="stop-color:#ffffff;stop-opacity:0;"
@@ -58,9 +58,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4142136"
-     inkscape:cx="50.1184"
-     inkscape:cy="-30.379162"
+     inkscape:zoom="2.0000001"
+     inkscape:cx="-41.182078"
+     inkscape:cy="-3.2393584"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -70,8 +70,8 @@
      inkscape:bbox-nodes="true"
      inkscape:snap-bbox-midpoints="true"
      inkscape:snap-page="true"
-     inkscape:window-width="1920"
-     inkscape:window-height="1056"
+     inkscape:window-width="1366"
+     inkscape:window-height="744"
      inkscape:window-x="0"
      inkscape:window-y="24"
      inkscape:window-maximized="1" />
@@ -83,7 +83,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -100,7 +100,7 @@
        sodipodi:cy="25"
        sodipodi:rx="25"
        sodipodi:ry="25"
-       d="M 50,25 A 25,25 0 1 1 0,25 25,25 0 1 1 50,25 z"
+       d="M 50,25 C 50,38.807119 38.807119,50 25,50 11.192881,50 0,38.807119 0,25 0,11.192881 11.192881,0 25,0 38.807119,0 50,11.192881 50,25 z"
        transform="matrix(2,0,0,2,0,952.3622)"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />

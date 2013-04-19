@@ -9,6 +9,7 @@ function init(){//Sets up everything, provided that we are all loaded and ready 
 	initSky()//And a sky
 	initFlare()//Lensflare
 	initShips()
+	//initShadow()
 	countdown=4
 	countDown()
 	//All set and ready to go
@@ -19,8 +20,12 @@ function init(){//Sets up everything, provided that we are all loaded and ready 
 function initCore(){
 	container=document.getElementById('container')
 	renderer=new THREE.WebGLRenderer({clearColor:0x000000,clearAlpha:0})
+	renderer.autoClear=false
+	
 	composer=new THREE.EffectComposer(renderer)
 	composer.addPass(coolPass)
+	coolPass.renderToScreen=true
+	
 	composer.renderTarget1.format=THREE.RGBAFormat
 	composer.renderTarget2.format=THREE.RGBAFormat
 
@@ -32,6 +37,7 @@ function initCore(){
 	scene=new THREE.Scene()
 	//scene.add(camera)
 	//scene.add(camera2)
+	
 	resize()
 }
 function resize(){
@@ -43,45 +49,27 @@ function resize(){
 	camera2.updateProjectionMatrix()
 	renderer.setSize(width,height)//Split Screen
 	composer.setSize(width,height)//Split Screen
-	coolPass.uniforms.aspect.value=camera.aspect
+	coolPass.uniforms.resolution.value.set(width,height)
 }
 function initTrack(){
 	trackcollide=resource.trackcollide
 	trackcollide.material=new THREE.MeshNormalMaterial()
 	trackcollide.geometry.computeBoundingSphere()
-	//trackcollide.scale.multiplyScalar(10)
 	trackcollide.visible=false
 	scene.add(trackcollide)
-	/*var n=track.geometry.faces.length
-	var inv=new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0),-Math.PI/2)
-	while(n--){
-		track.geometry.faces[n].normal.applyQuaternion(inv)
-	}*/
 	track=resource.trackObj
 	track.material=resource.trackMat//terrainMap
 	track.material.map.anisotropy=renderer.getMaxAnisotropy()
-	//track.material.normalMap.anisotropy=renderer.getMaxAnisotropy()
-	//track.scale.multiplyScalar(10)
 	scene.add(track)
 	structure=resource.structureObj
-	structure.material.materials[0].wireframe=false
-	//structure.material=resource.terrainMap//new THREE.MeshLambertMaterial()
-	//structure.scale.multiplyScalar(10)
+	//structure.material.materials[0].wireframe=false
 	scene.add(structure)
 }
 function initPads(){
 	boostpads=[]
 	for(var p=0;p<resource.padData.length;p++){
 		var place=resource.padData[p]
-		var padobj=new THREE.Mesh(
-			resource.padGeo,
-			resource.padMat
-		)
-		padobj.position.copy(place.position)
-		padobj.rotation.copy(place.rotation)
-		boostpads.push(padobj)
-		//console.log(padobj)
-		//scene.add(padobj)
+		addBoostPad(place.position,place.rotation)
 	}
 }
 function initLights(){
@@ -89,10 +77,31 @@ function initLights(){
 	
 	//Lights, camera, action!
 	directional=new THREE.DirectionalLight(0xFFFFFF,1.0)
-	directional.position.copy(lightSource)
+	directional.position.copy(lightSource).multiplyScalar(0.01)
 	scene.add(directional)
-	ambient=new THREE.AmbientLight(0x888888)
+	ambient=new THREE.AmbientLight(0x555555)
 	scene.add(ambient)
+}
+function initShadow(){
+	renderer.shadowMapEnabled=true
+	
+	track.castShadow=true
+	track.receiveShadow=true
+	structure.castShadow=true
+	structure.receiveShadow=true
+	me.hull.castShadow=true
+	me.hull.receiveShadow=true
+	you.hull.castShadow=true
+	you.hull.receiveShadow=true
+	
+	directional.castShadow=true
+	directional.shadowDarkness = 0.8
+	directional.shadowMapSoft = true;
+	directional.shadowCameraVisible = true;
+	directional.shadowCameraRight     =  50;
+	directional.shadowCameraLeft      = -50;
+	directional.shadowCameraTop       =  50;
+	directional.shadowCameraBottom    = -50;
 }
 function initSky(){
 	resource.skyMat.uniforms.tCube.value=resource.skyTex
@@ -135,12 +144,12 @@ function simulateSparks(){
 			continue
 		}
 		sparks.geometry.vertices[c].add(
-			sparks.geometry.vertices[c].velocity.clone())
+			sparks.geometry.vertices[c].velocity.multiplyScalar(0.99))
 		sparks.geometry.vertices[c].opacity-=0.01
 		sparks.geometry.colors[c].setRGB(
-			(2*sparks.geometry.vertices[c].opacity),
-			(2*sparks.geometry.vertices[c].opacity)*(1-sparks.geometry.vertices[c].color*0.5),
-			(2*sparks.geometry.vertices[c].opacity)*(0.5-sparks.geometry.vertices[c].color*0.5)
+			(5*sparks.geometry.vertices[c].opacity),
+			(5*sparks.geometry.vertices[c].opacity)*(1-sparks.geometry.vertices[c].color*0.5),
+			(5*sparks.geometry.vertices[c].opacity)*(0.5-sparks.geometry.vertices[c].color*0.5)
 		)
 	}
 	sparks.geometry.verticesNeedUpdate=true
@@ -156,7 +165,7 @@ function initShips(){
 	colliders.push(me.collider)
 	me.main.position.z=25
 	me.main.position.x=3
-	
+		
 	you=new Ship()
 	ships.push(you)
 	scene.add(you.main)
@@ -207,7 +216,6 @@ function countDown(){
 }
 exported=[]
 function render(){
-	//renderer.render(scene,camera)//,composer.renderTarget2,true)
 	time++
 	gamepad()
 	me.controller=controllers[0]||keyboard
@@ -235,6 +243,17 @@ function render(){
 		renderer.setScissor(width/2,0,width,height)
 		you.copyUniforms(coolPass.uniforms)
 		composer.render()
+		/*
+		me.copyUniforms(coolPass.uniforms)
+		renderer.setViewport(0,0,width/2,height)
+		renderer.render(scene,camera,composer.renderTarget2,true)
+		composer.render()
+		
+		you.copyUniforms(coolPass.uniforms)
+		renderer.setViewport(width/2,0,width/2,height)
+		renderer.render(scene,camera2,composer.renderTarget2,true)
+		composer.render()
+		*/
 	}
 	else{
 		me.copyUniforms(coolPass.uniforms)

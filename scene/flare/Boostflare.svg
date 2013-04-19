@@ -179,6 +179,17 @@
          stdDeviation="2.2415285"
          id="feGaussianBlur3821" />
     </filter>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient6027-9"
+       id="radialGradient4476"
+       cx="256.00027"
+       cy="233.26204"
+       fx="256.00027"
+       fy="233.26204"
+       r="266"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.42043056,-5.3779445e-5,4.3445559e-5,0.33964354,148.35969,703.14987)" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -187,9 +198,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.1681672"
-     inkscape:cx="279.97791"
-     inkscape:cy="327.68019"
+     inkscape:zoom="1.0212305"
+     inkscape:cx="150.99651"
+     inkscape:cy="243.16267"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -221,7 +232,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -230,18 +241,6 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-540.36218)">
-    <path
-       sodipodi:type="arc"
-       style="color:#000000;fill:url(#radialGradient6033-8);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:12.47442245;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter3885);enable-background:accumulate"
-       id="path3827"
-       sodipodi:cx="272.94147"
-       sodipodi:cy="364.88919"
-       sodipodi:rx="219.2784"
-       sodipodi:ry="62.915321"
-       d="m 492.21986,364.88919 c 0,34.74717 -98.17428,62.91532 -219.27839,62.91532 -121.10412,0 -219.278399,-28.16815 -219.278399,-62.91532 0,-34.74717 98.174279,-62.91532 219.278399,-62.91532 121.10411,0 219.27839,28.16815 219.27839,62.91532 z"
-       transform="matrix(1.1674657,0,0,1.8128996,-62.649794,226.37532)"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
     <path
        transform="matrix(1.17215,0,0,1.1721498,-52.275293,478.77525)"
        d="M 272.96,261.72 390.98633,483.15285 260.28,268.96 38.847147,386.98633 253.04,256.28 135.01367,34.847147 265.72,249.04 487.15285,131.01367 z"
@@ -274,5 +273,14 @@
        inkscape:randomized="0"
        d="m 283.8933,259.85091 -11.18356,17.66867 -20.89329,-0.85091 -9.70975,-18.51958 11.18356,-17.66867 20.89329,0.85091 z"
        transform="matrix(1.8346855,0,0,1.8346851,-226.52213,307.17861)" />
+    <rect
+       style="opacity:0.45679012;color:#000000;fill:url(#radialGradient4476);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:20;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect3918"
+       width="512"
+       height="512"
+       x="1.4210855e-14"
+       y="540.36218"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
   </g>
 </svg>

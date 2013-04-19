@@ -11,7 +11,7 @@ var coolPass=new THREE.ShaderPass({//I'm going to be PRO with some
 		'push': { type: 'f',value: 0},*/
 		'motionblur': { type: 'f',value: 0},
 		'color': { type: 'v3',value: new THREE.Vector3()},
-		'aspect': { type: 'f',value: 1},
+		'resolution': { type: 'v2',value: new THREE.Vector2()},
 	},vertexShader: [
 	'varying vec2 v;',
 	'void main() {',
@@ -23,7 +23,7 @@ var coolPass=new THREE.ShaderPass({//I'm going to be PRO with some
 	'uniform sampler2D tDiffuse;',
 	//'uniform sampler2D tHex;',
 	'uniform float phase;',
-	'uniform float aspect;',
+	'uniform vec2 resolution;',
 	'uniform vec3 color;',
 	/*'uniform float damage;',
 	'uniform float boost;',
@@ -34,7 +34,7 @@ var coolPass=new THREE.ShaderPass({//I'm going to be PRO with some
 	'void main() {',
 		//'vec4 color=vec4(0.0,0.0,0.0,0.0);',
 		'vec2 vc=v;',
-		'vec2 center=vec2(1.0,1.0/aspect)*(v-0.5);',
+		'vec2 center=vec2(1.0,resolution.y/resolution.x)*(v-0.5);',
 		'float vin=clamp(length(v-0.5)-0.4,0.0,1.0);',
 		'if(phase>0.01){',
 			'float lc=length(center);',
@@ -59,7 +59,29 @@ var coolPass=new THREE.ShaderPass({//I'm going to be PRO with some
 		'else{',
 			'gl_FragColor = texture2D(tDiffuse,vc)+vec4(color,1.0);',
 		'}',
+		
+		//Bloom
+		/*'float bloomcutoff=0.3;',
+		'float bloomamount=0.15;',
+		'gl_FragColor+=clamp(texture2D(tDiffuse,vec2(vc.x+3.0/resolution.x,vc.y+3.0/resolution.y))*(bloomamount+bloomcutoff)-bloomcutoff,0.0,bloomamount);',
+		'gl_FragColor+=clamp(texture2D(tDiffuse,vec2(vc.x,vc.y+3.0/resolution.y))*(bloomamount+bloomcutoff)-bloomcutoff,0.0,bloomamount);',
+		'gl_FragColor+=clamp(texture2D(tDiffuse,vec2(vc.x-3.0/resolution.x,vc.y+3.0/resolution.y))*(bloomamount+bloomcutoff)-bloomcutoff,0.0,bloomamount);',
+		'gl_FragColor+=clamp(texture2D(tDiffuse,vec2(vc.x+3.0/resolution.x,vc.y))*(bloomamount+bloomcutoff)-bloomcutoff,0.0,bloomamount);',
+		'gl_FragColor+=clamp(texture2D(tDiffuse,vec2(vc.x-3.0/resolution.x,vc.y))*(bloomamount+bloomcutoff)-bloomcutoff,0.0,bloomamount);',
+		'gl_FragColor+=clamp(texture2D(tDiffuse,vec2(vc.x+3.0/resolution.x,vc.y-3.0/resolution.y))*(bloomamount+bloomcutoff)-bloomcutoff,0.0,bloomamount);',
+		'gl_FragColor+=clamp(texture2D(tDiffuse,vec2(vc.x,vc.y-3.0/resolution.y))*(bloomamount+bloomcutoff)-bloomcutoff,0.0,bloomamount);',
+		'gl_FragColor+=clamp(texture2D(tDiffuse,vec2(vc.x-3.0/resolution.x,vc.y-3.0/resolution.y))*(bloomamount+bloomcutoff)-bloomcutoff,0.0,bloomamount);',
+		*/
+		// apply gamma correction and exposure
+		//'gl_FragColor = vec4( pow( exposure * gl_FragColor.xyz, vec3( 1.1 ) ), 1.0 );',
+		
+		// Perform tone-mapping
+		'float exposure=1.2;',
+		'float Y = dot(vec4(0.30, 0.59, 0.11, 0.0), gl_FragColor);',
+		'float YD = exposure * (exposure/0.8 + 1.0) / (exposure + 1.0);',
+		'gl_FragColor *= YD;',
+
+		'gl_FragColor = vec4( gl_FragColor.xyz, 1.0 );',
 	'}'
 	].join('\n')
 })
-coolPass.renderToScreen=true
