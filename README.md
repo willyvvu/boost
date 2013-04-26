@@ -6,27 +6,29 @@ A/D or Left/Right arrow keys: steer
 
 J and L: Airbrakes
 
-W, Up arrow key, or I: Accelerate
+W: Accelerate
 
-S, Down arrow key, or Q and E: Brake
+Q and E: Brake
 
 O or the Space Bar: Boost
 
 Z and C: Barrel roll (Slightly akward on purpose)
 
+S: Look back
+
 Gamepad controls
 ====
-For Xbox controller:
+Xbox/Gamecube controller controls
 
-Left analog: Steer
+Left analog pad: Steer
 
 Triggers: Airbrakes
 
-Bumpers: Barrel roll
+Bumpers/Click triggers: Barrel roll
 
 A: Accelerate
 
-X: Boost
+X/B: Boost
 
 Included graphical effects
 ====

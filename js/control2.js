@@ -111,10 +111,11 @@ function keyHandle(){
 	for(var k=0;k<keys.length;k++){
 		switch(keys[k]){
 			case 87://W
-				kpitch-=1
+				//kpitch-=1
+				kaccel+=1
 				break
 			case 73://I
-				kaccel+=1
+				//kaccel+=1
 				break
 			case 38://Up
 				kaccel2+=1
@@ -126,7 +127,8 @@ function keyHandle(){
 				ksteer2-=1
 				break
 			case 83://S
-				kpitch+=1
+				krearview+=1
+				//kpitch+=1
 				break
 			case 74://J
 				klbrake+=1

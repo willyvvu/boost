@@ -2,7 +2,7 @@ function Ship(){
 	this.__proto__=_Ship
 	
 	//Model and scene
-	this.main=new THREE.Object3D()//The object that adheres to the track, always
+	this.main=null//The object that adheres to the track, always
 	this.holder=new THREE.Object3D()//The object that the camera follows, holds the model
 	this.model=new THREE.Object3D()//The object that does barrel rolls
 	this.camera=new THREE.Object3D()//Simulate a followed camera
@@ -11,6 +11,7 @@ function Ship(){
 	this.thrust=null
 	this.boost=null
 	this.shine=null
+	this.quanta=1
 	this.setUpModel()
 	
 	//Rays and directions
@@ -37,6 +38,7 @@ function Ship(){
 	this.camboostsmooth=0
 	this.shiftsmooth=0//The smoothed out side-shifting
 	this.hudColor=new THREE.Vector3()
+	this.hurting=0
 	this.uniforms={
 		phase:0,
 		motionblur:0,
@@ -54,6 +56,7 @@ function Ship(){
 	this.addenergy=0
 	this.gforce=new THREE.Vector3()
 	this.vforce=new THREE.Vector3()
+	this.hitapad=0
 	
 	//Roll
 	this.rolling=0//Which direction rolling
@@ -94,24 +97,32 @@ function Ship(){
 	}
 	this.dynamics={
 		accelerate:2,//How fast to accelerate
-		topspeed:1500/mph,//Speed achievable by acceleration
+		topspeed:400/mph,//Speed achievable by acceleration
+		/* 400 Vector
+		 * 500 Venom
+		 * 600 Flash
+		 * 700 Rapier
+		 * 800 Phantom
+		 */
 		handle:0.5,//Handling
-		turndeg:0.03,//Radians for how fast to turn
-		shiftdeg:0.02//Radians for how fast to shift
+		turndeg:0.025,//Radians for how fast to turn
+		shiftdeg:0.01//Radians for how fast to shift
 	}
 }
 _Ship={//All useful ship functions
 	setUpModel:function(){
 		//Sets up the model
+		this.main=new THREE.Mesh(
+			new THREE.CubeGeometry(3,2,4.5,1,1,1),
+			new THREE.MeshBasicMaterial()
+		)
+		this.main.visible=false
+		this.main.ship=this
+		colliders.push(this.main)
 		this.hull=new THREE.Mesh(
 			resource.hullGeo,
 			resource.hullMat
 		)
-		
-		/*this.thrust=new THREE.Mesh(
-			resource.thrustGeo,
-			resource.thrustMat.clone()
-		)*/
 		this.thrust=new THREE.Ribbon(
 			new THREE.Geometry(),
 			resource.ribbonMat
@@ -121,30 +132,11 @@ _Ship={//All useful ship functions
 			this.thrust.geometry.vertices.push(new THREE.Vector3())
 			this.thrust.geometry.vertices.push(new THREE.Vector3())
 		}
-		//this.thrust.material.map=resource.thrustTex.clone()
-		//this.thrust.material.map.offset.x=-1
-		//this.thrust.material.opacity=0
-		
-		/*this.boost=new THREE.Mesh(
-			resource.boostGeo,
-			resource.thrustMat.clone()
-		)
-		//this.boost.material.map=resource.thrustTex.clone()
-		//this.boost.material.map.offset.x=-1
-		this.boost.material.opacity=0*/
-		
 		this.shine=new THREE.Sprite(resource.shineMat.clone())
-		//this.shine.material.opacity=0
 		this.shine.position.set(0,0,1.9)
 		this.shine.scale.multiplyScalar(2)
 		
-		this.collider=new THREE.Mesh(
-			new THREE.CubeGeometry(2.5,1,3.5,1,1,1),
-			new THREE.MeshBasicMaterial()
-		)
-		this.collider.position.z+=0.5
-		this.collider.visible=false
-		//Get heirarchies sorted out
+		//Get hierarchies sorted out
 		scene.add(this.holder)
 		this.main.add(this.collider)
 		this.holder.add(this.model)
@@ -202,13 +194,7 @@ _Ship={//All useful ship functions
 			var intersections=raycaster.intersectObject(track)
 			if(intersections.length){
 				exported.push({position:intersections[0].point.clone(),rotation:this.main.rotation.clone()})
-				var cube=new THREE.Mesh(
-					new THREE.CubeGeometry(1,1,1),
-					new THREE.MeshNormalMaterial()
-				)
-				cube.position.copy(intersections[0].point)
-				cube.rotation.copy(this.main.rotation)
-				scene.add(cube)
+				addBoostPad(intersections[0].point,this.main.rotation)
 			}
 			
 			this.control.export=false
@@ -232,13 +218,6 @@ _Ship={//All useful ship functions
 				matchleft=normal.clone()
 			}
 		}
-		/*if(this.frontray.intersections.length){
-			this.autoalign=(this.left.angleTo(this.frontray.intersections[0].face.normal.clone()))/Math.PI
-		}
-		else{
-			this.autoalign=0
-		}
-		console.log(this.autoalign)*/
 		if(leftdist&&rightdist){
 			move=this.autoalign-(2*(leftdist/(leftdist+rightdist))-1)
 		}
@@ -248,12 +227,12 @@ _Ship={//All useful ship functions
 		else if(rightdist){
 			if(rightdist<30){move=-0.5}
 		}
-		this.autocontrol.rbrake=Math.min(Math.max(-Math.min(move,0),-1),1)
-		this.autocontrol.lbrake=Math.min(Math.max(Math.max(move,0),-1),1)
+		this.autocontrol.rbrake=Math.min(Math.max(-Math.min(5*move,0),-1),1)
+		this.autocontrol.lbrake=Math.min(Math.max(Math.max(5*move,0),-1),1)
 		if(matchleft){
 			matchleft.projectOnPlane(this.floor)
 			matchleft.normalize()
-			this.autocontrol.steer=Math.min(Math.max(5*(matchleft.angleTo(this.front)-Math.PI/2),-1),1)
+			this.autocontrol.steer=Math.min(Math.max(10*(matchleft.angleTo(this.front)-Math.PI/2),-1),1)
 		}
 		else{
 			this.autocontrol.steer=0//lerp(this.autocontrol.steer,0,0.1)
@@ -264,36 +243,42 @@ _Ship={//All useful ship functions
 			this.autoalign=Math.random()-0.5
 			this.nextautoalign=time+60*5+Math.random()*15
 		}
-		//console.log(leftdist,rightdist,move)
 	},
 	checkControls:function(){
 		if(countdown>0){return}
 		if(this.controller){this.control=this.controller}
 		else{this.control=this.autocontrol}
-		this.controlsmooth.accel=Math.max(0,Math.min(1,this.control.accel))
+		this.controlsmooth.accel=zone?1:Math.max(0,Math.min(1,this.control.accel))
 		this.controlsmooth.lbrake=Math.max(0,Math.min(1,lerp(this.controlsmooth.lbrake,this.control.lbrake*this.control.lbrake,0.5)))
 		this.controlsmooth.rbrake=Math.max(0,Math.min(1,lerp(this.controlsmooth.rbrake,this.control.rbrake*this.control.rbrake,0.5)))
 		this.controlsmooth.pitch=Math.max(-1,Math.min(1,lerp(this.controlsmooth.pitch,this.control.pitch,0.1)))
 		this.controlsmooth.boost=Math.max(0,Math.min(1,this.control.boost))
-		var f=0.2
+		var f=1
 		if(this.control.steer<this.controlsmooth.steer&&this.controlsmooth.steer>0
 			||this.control.steer>this.controlsmooth.steer&&this.controlsmooth.steer<0){
-			f=0.5//Extra speed for returning to center
+			f=0.2//Extra speed for returning to center
 		}
 		var d=this.control.steer-this.controlsmooth.steer
-		this.controlsmooth.steer=Math.max(-1,Math.min(1,this.controlsmooth.steer+(d>0?0.5:-0.5)*(1-1/(1+Math.abs(d)))))
+		this.controlsmooth.steer=Math.max(-1,Math.min(1,this.controlsmooth.steer+(d>0?1:-1)*(1-f/(f+Math.abs(d)))))
 		this.controlsmooth.roll=Math.max(-1,Math.min(1,lerp(this.controlsmooth.roll,this.control.roll,0.5)))
-		if(this.control.respawn){
-			this.control.respawn=0.5
+		if(this.control.respawn||this.energy==0){
+			this.control.respawn=0
 			this.main.position.copy(this.respawnsave.position)
 			this.main.rotation.copy(this.respawnsave.rotation)
+			this.main.updateMatrix()
+			this.energy=1
 			this.velocity.set(0,0,0)
 			this.engineforce.set(0,0,0)
 			this.externalforce.set(0,0,0)
+			this.quanta=1
+		}
+		if(zone&&time%600==0){
+			this.nextQuanta()
 		}
 	},
 	calculateForce:function(){
-		this.vforce.copy(this.engineforce).add(this.externalforce.clone().projectOnPlane(this.up))
+		var handle=this.dynamics.handle
+		this.vforce.copy(this.velocity).multiplyScalar(2)
 		var length=this.engineforce.length()
 		var morelength=0
 		if(this.pushing>0){//Being pushed along
@@ -301,13 +286,15 @@ _Ship={//All useful ship functions
 				morelength+=Math.min(pushrate*(maxspeed-length),maxspeed-length)
 			}
 		}
-		if(this.controlsmooth.boost||this.boosting>0){//Boosting
-			//Boosting is guarenteed for a certain amout of time
+		else if(this.controlsmooth.boost||this.boosting>0){//Boosting
+			//Boosting is guaranteed for a certain amount of time
 			if(this.boosting==0){
 				//Just started
 				this.camboost=1
 				this.uniforms.phase=slightly
+				if(zone){this.nextQuanta()}
 			}
+			this.hurt(boostusage)
 			this.boosting=Math.max(0,this.boosting-0.2)
 			if(this.controlsmooth.boost){
 				this.boosting=1
@@ -315,18 +302,20 @@ _Ship={//All useful ship functions
 			if(length<boostspeed){
 				morelength=Math.min(20,boostspeed-length)//Speed of sound is 340 m/s
 			}
-			this.energy-=boostusage
 		}
-		if(this.controlsmooth.accel){//Normal acceleration
+		else if(this.controlsmooth.accel){//Normal acceleration
 			if(length<this.dynamics.topspeed){
-				morelength+=Math.pow(1-length/this.dynamics.topspeed,0.5)*(this.controlsmooth.accel*this.dynamics.accelerate)
+				morelength+=Math.pow(1-length/this.dynamics.topspeed,0.9)*(this.controlsmooth.accel*this.dynamics.accelerate)
 			}
 		}
 		if(Math.min(this.controlsmooth.lbrake,this.controlsmooth.rbrake)>0){//Braking? Active deccel.
-			if(length>0){
+			if(length>0&&!zone){
 				morelength-=Math.min(brakespeed*Math.min(this.controlsmooth.lbrake,this.controlsmooth.rbrake),length)
 			}
 		}
+		//handle=lerp(this.dynamics.handle,0.1,Math.max(this.controlsmooth.lbrake,this.controlsmooth.rbrake))
+		
+		morelength=Math.max(-length,morelength)
 		var realsteer=(this.grounded?1:airturn)*this.dynamics.turndeg//*(this.engineforce.length()*0.001+1)
 		if(this.controlsmooth.steer){//Steering
 			this.main.matrix.rotateY(-this.controlsmooth.steer*realsteer)
@@ -339,16 +328,15 @@ _Ship={//All useful ship functions
 		}
 		this.main.rotation.setEulerFromRotationMatrix(this.main.matrix)
 		
-		var newvel=new THREE.Vector3(0,0,-length-morelength*(1/this.dynamics.handle))
 		//Adjustable skid
 		this.engineforce.copy(
-			newvel.clone().transformDirection(this.main.matrix).multiplyScalar(newvel.length()*this.dynamics.handle)
-			.add(this.engineforce.clone().multiplyScalar(1-this.dynamics.handle))
+			this.front.clone().multiplyScalar(length*handle+morelength)
+			.add(this.engineforce.clone().multiplyScalar(1-handle))
 		)
-		
 		//Friction stuff
 		var v=this.engineforce.length()
-		this.engineforce.multiplyScalar(Math.max(0,v-(1-this.controlsmooth.accel)*(1-this.boosting)*(1-this.pushing)*v*v*friction)/(v==0?1:v))//Thrust friction
+		this.engineforce.multiplyScalar(Math.max(0,1-
+			(1/(1+morelength))*v*friction))//Thrust friction
 		//this.externalforce.y-=9.8*2//Fall
 		this.externalforce.add(this.up.clone().multiplyScalar(-9.8*(3-this.controlsmooth.pitch)))//Fall
 		//new THREE.Vector3(0,-9.8*2,0))
@@ -362,11 +350,7 @@ _Ship={//All useful ship functions
 		)
 		this.modelrotate+=-this.shiftsmooth*0.02
 		this.pushing=Math.max(0,this.pushing-deltatime)
-		
-		this.vforce.sub(this.engineforce.clone().add(this.externalforce.clone().projectOnPlane(this.up)))
-		var len=this.vforce.length()
-		this.vforce.multiplyScalar(len?Math.min(1,len)/len:0)
-		this.gforce.lerp(this.vforce,0.1)
+		this.vforce.sub(this.velocity)
 	},
 	resolveCollisions:function(){
 		/*this.resolveRay(this.bottomray,10)
@@ -375,26 +359,43 @@ _Ship={//All useful ship functions
 		this.sparknormal=false
 		this.grounded=Math.max(this.grounded-1,0)
 		var forwards=new THREE.Vector3().copy(this.velocity)
-		this.solveRay(this.main.position,forwards,forwards.length()*deltatime,[trackcollide])
+		this.solveRay(this.main.position,forwards,forwards.length()*deltatime,colliders.concat([trackcollide]))
 		if(countdown<=0&&!this.grounded!=!this.wasgrounded){
 			if(this.grounded){
 				//Just landed
 				this.rolling=0
 				if(this.rollboost){
 					this.camboost=1
-					this.pushing+=this.rollboost
+					this.pushing=Math.max(this.pushing,this.rollboost)
 					this.uniforms.phase=slightly
 				}
 				this.rollboost=0
 			}
 		}
 		this.wasgrounded=this.grounded
+		this.hurting=Math.max(0,this.hurting-deltatime)
 		if(this.sparknormal){//Scraping
 			var vel=this.velocity.clone().multiplyScalar(deltatime*0.9)
 			addSpark(this.main.position.clone().sub(vel).sub(this.sparknormal),vel)
+			this.hurt(collisionusage*Math.abs(this.sparknormal.dot(this.front)))
+			this.hurting=hurtduration
 		}
+		if(this.hitapad==2){
+			if(zone){this.nextQuanta()}
+			this.hitapad=1
+			this.uniforms.phase=slightly
+			this.pushing=Math.max(this.pushing,0.3)
+			this.energy=Math.min(1,this.energy+0.05)
+		}
+		this.vforce.sub(this.velocity)
+		var len=this.vforce.length()
+		//this.vforce.multiplyScalar(len?Math.min(1,len)/len:0)
+		this.vforce
+		.transformDirection(new THREE.Matrix4().getInverse(this.main.matrix))//.lerp(this.vforce,0.1)
+		.multiplyScalar(len)
+		this.gforce.lerp(this.vforce,0.1)
 	},
-	solveRay:function(origin,direction,distance,objects,_times,_now,_previousface){
+	solveRay:function(origin,direction,distance,objects,_times,_now,_previousface,_wasfloor){
 		//console.log('solved')
 		//Trace a ray in direction. If it hits a wall, trace again, until distance runs out.
 		_times=_times||1
@@ -405,35 +406,54 @@ _Ship={//All useful ship functions
 		var intersections=raycaster.intersectObjects(objects)
 		if(intersections.length&&intersections[0].distance-collisionconst<=distance){
 			//Hit something
+			for(var c=0;c<intersections.length;c++){
+				if(intersections[c].object.boostpad){
+					if(this.hitapad==0){
+						this.hitapad=2
+					}
+					break
+				}
+			}
+			if(c>=intersections.length&&this.hitapad==1){//No pad
+				this.hitapad=0
+			}
 			var normal=intersections[0].face.normal.clone().transformDirection(intersections[0].object.matrix)
-			distance-=intersections[0].distance-collisionconst
+			distance-=Math.max(intersections[0].distance-collisionconst,0)
 			origin.copy(intersections[0].point).add(
-				_now.clone().normalize().multiplyScalar(-collisionconst))
+				_now.clone().multiplyScalar(-collisionconst))
+			if(_previousface&&normal.equals(_previousface)){
+				//Hit the same face twice.
+				//console.log('Houstin, we have a problem.')
+				/*var l=new THREE.Line(
+					new THREE.Geometry(),
+					new THREE.LineBasicMaterial()
+				)
+				l.geometry.vertices.push(intersections[0].point.clone())
+				l.geometry.vertices.push(intersections[0].point.clone().add(_now))
+				l.geometry.verticesNeedUpdate=true
+				scene.add(l)*/
+				_now.add(normal.clone().multiplyScalar(0.05))
+			}
 			//Sparks!
 			var dot=normal.dot(this.up)
 			if(Math.abs(dot)<0.7){
 				this.sparknormal=normal.clone()
 			}//Wall scrape
 			//Now originating from the point of intersection (and a bit inwards)
-			if(_previousface&&(
-				_previousface.dot(normal)<=0
-				||direction.clone().projectOnPlane(normal)
-					.dot(direction.clone().projectOnPlane(_previousface))<0//This next face contradicts the direction I'm going, aka a bend in a wall.
-			)){//Be wary of less than 90 degree angles
-				_now.multiplyScalar(distance).projectOnVector(_previousface.clone().cross(normal))
-				/*restrict(this.velocity,_previousface)
-				restrict(this.engineforce,_previousface)
-				restrict(this.externalforce,_previousface)*/
-				var pv=_previousface.clone().cross(normal)
-				this.engineforce.projectOnVector(pv)
-				this.externalforce.projectOnVector(pv)
-				this.velocity.addVectors(this.engineforce,this.externalforce)
+			/*if(!intersections[0].face.isfloor){
+				//Wall. Kick it back
+				this.externalforce.add(normal)
+			}*/
+			if(intersections[0].object.ship){//Hit another ship
+				//Compensate for other motion
+				this.engineforce.sub(intersections[0].object.ship.velocity)
+				this.externalforce.sub(intersections[0].object.ship.velocity)
 			}
-			else{//No 90 degree issue, or just first ray. Assuming it hit the ground
-				_now.multiplyScalar(distance).projectOnPlane(normal)
+			if(!_previousface||intersections[0].face.isfloor==_wasfloor){
 				var dotl=normal.dot(this.left)
 				var dotu=normal.dot(new THREE.Vector3(0,1,0))
-				if(dot>0.5){//Used to be dotu
+				if(!_previousface&&intersections[0].face.isfloor){//Used to be dotu
+					//Hit floor
 					this.grounded=this.aircount
 					var angle=Math.acos(Math.min(Math.max(dot,-1),1))
 					//if(angle>Math.PI/2){angle-=Math.PI}
@@ -447,16 +467,40 @@ _Ship={//All useful ship functions
 					}
 					//this.velocity.addVectors(this.engineforce,this.externalforce)
 					//_now.copy(this.velocity).normalize()
-					//_now.projectOnPlane(new THREE.Vector3(0,1,0))
 				}
+				restrict(_now.multiplyScalar(distance),normal)
 				restrict(this.engineforce,normal)
-				//this.externalforce.set(0,0,0)
 				restrict(this.externalforce,normal)
 				this.velocity.addVectors(this.engineforce,this.externalforce)
+				distance=_now.length()
+				/*var debug=new THREE.Mesh(
+					new THREE.CubeGeometry(1,1,.1,1,1,1),
+					new THREE.MeshNormalMaterial()
+				)
+				debug.lookAt(normal)
+				debug.position.copy(intersections[0].point)
+				scene.add(debug)*/
 			}
-			distance=_now.length()
+			else{
+				//Floor-wall collision
+				//console.log('cross')
+				var crossed=_previousface.clone().cross(normal)
+				_now.multiplyScalar(distance).projectOnVector(crossed)
+				this.engineforce.projectOnVector(crossed)
+				this.externalforce.projectOnVector(crossed)
+				this.velocity.addVectors(this.engineforce,this.externalforce)
+				distance=_now.length()
+			}
+			if(intersections[0].object.ship){
+				this.engineforce.add(intersections[0].object.ship.velocity)
+				this.externalforce.add(intersections[0].object.ship.velocity)
+			}
+
+			if(_times==maxcollisions){
+				//console.log('max')
+			}
 			if(_times<maxcollisions){
-				return this.solveRay(origin,direction,distance,objects,_times+1,_now,normal)//Continue
+				return this.solveRay(origin,direction,distance,objects,_times+1,_now,normal,intersections[0].face.isfloor)//Continue
 			}
 			else{
 				return _now
@@ -467,10 +511,10 @@ _Ship={//All useful ship functions
 			return _now
 		}
 	},
-	hurt:function(){
-		var amounthurt=Math.min(this.engineforce.length(),maxcollisionspeed)/maxcollisionspeed
-		this.energy=Math.max(this.energy-Math.min(amounthurt*collisionusage),0)
-		this.hudColor.add(orange.clone().multiplyScalar(amounthurt*deltatime))
+	hurt:function(amount){
+		this.energy=Math.max(this.energy-amount,0)
+		this.hurting=hurtduration
+		//this.hudColor.add(orange.clone().multiplyScalar(amounthurt*deltatime))
 	},
 	modelCam:function(){
 		//Rolling. Needs a better home.
@@ -525,8 +569,8 @@ _Ship={//All useful ship functions
 			this.camera.position.copy(this.holder.position)
 				.add(this.frontsmooth.clone().multiplyScalar(incomp*(-4.5
 					-3*Math.min(this.engineforce.length()*deltatime*0.085,1)*(1-0.2*this.camboostsmooth))))
-				.add(this.upsmooth.clone().multiplyScalar(2*incomp))
-				.add(this.leftsmooth.clone().multiplyScalar(1.5*incomp*camstrafe))//.add(this.gforce)
+				.add(this.upsmooth.clone().multiplyScalar(3*incomp))
+				.add(this.leftsmooth.clone().multiplyScalar(1.5*incomp*camstrafe))
 			this.camera.lookAt(this.holder.position.clone()
 				.add(this.frontsmooth.clone().multiplyScalar(4))
 				.add(this.leftsmooth.clone().multiplyScalar(3*camstrafe)))
@@ -557,8 +601,16 @@ _Ship={//All useful ship functions
 			}
 		}
 	},
-	copyUniforms:function(uniforms){
-		uniforms.motionblur.value=this.uniforms.motionblur
-		uniforms.phase.value=this.uniforms.phase
+	nextQuanta:function(){
+		this.quanta++
+		var q=50/mph
+		this.dynamics.accelerate+=0.5
+		this.dynamics.topspeed+=q
+		maxspeed+=q
+		boostspeed+=q
+	},
+	copyUniforms:function(scale,cool){
+		scale.motionblur.value=this.uniforms.motionblur
+		cool.phase.value=this.uniforms.phase
 	}
 }

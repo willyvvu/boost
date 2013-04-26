@@ -14,26 +14,16 @@
 		"bones"         : 0
 	},
 
-	"scale" : 20.000000,
+	"scale" : 1.000000,
 
 	"materials" : [	{
 		"DbgColor" : 15658734,
 		"DbgIndex" : 0,
-		"DbgName" : "Material.001",
-		"blending" : "NormalBlending",
-		"colorAmbient" : [0.0, 0.0, 0.1430853626591766],
-		"colorDiffuse" : [0.0, 0.0, 0.1430853626591766],
-		"colorSpecular" : [1.0, 1.0, 1.0],
-		"depthTest" : true,
-		"depthWrite" : true,
-		"shading" : "Lambert",
-		"specularCoef" : 71,
-		"transparency" : 1.0,
-		"transparent" : false,
+		"DbgName" : "default",
 		"vertexColors" : false
 	}],
 
-	"vertices" : [20,-20,0,-20,-20,0,20,20,0,-20,20,0],
+	"vertices" : [987.247,-987.247,-68.4811,-987.247,-987.247,-68.4811,987.247,987.247,-68.4811,-987.247,987.247,-68.4811],
 
 	"morphTargets" : [],
 

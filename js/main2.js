@@ -1,9 +1,14 @@
 window.addEventListener('load',init)
 window.addEventListener('resize',resize)
 speed=document.getElementById('speed')
+energy=document.getElementById('energy')
+quanta=document.getElementById('quanta')
+lowerleft=document.getElementById('lowerleft')
+hudcontainer=document.getElementById('hudcontainer')
 function init(){//Sets up everything, provided that we are all loaded and ready to go
 	initCore()//Camera, renderer, scene
 	initTrack()//Track
+	colliders=[]
 	initPads()//Boost pads
 	initLights()//Let there be light!
 	initSky()//And a sky
@@ -23,12 +28,14 @@ function initCore(){
 	renderer.autoClear=false
 	
 	composer=new THREE.EffectComposer(renderer)
+	composer.addPass(scalePass)
+	composer.addPass(savePass)
 	composer.addPass(coolPass)
 	coolPass.renderToScreen=true
 	
 	composer.renderTarget1.format=THREE.RGBAFormat
 	composer.renderTarget2.format=THREE.RGBAFormat
-
+	
 	container.appendChild(renderer.domElement)
 	camera=new THREE.PerspectiveCamera(minfov,0,near,far)
 	//camera.position.copy(camchase)
@@ -50,6 +57,8 @@ function resize(){
 	renderer.setSize(width,height)//Split Screen
 	composer.setSize(width,height)//Split Screen
 	coolPass.uniforms.resolution.value.set(width,height)
+	savePass.renderTarget.width=width
+	savePass.renderTarget.height=height
 }
 function initTrack(){
 	trackcollide=resource.trackcollide
@@ -61,9 +70,9 @@ function initTrack(){
 	track.material=resource.trackMat//terrainMap
 	track.material.map.anisotropy=renderer.getMaxAnisotropy()
 	scene.add(track)
-	structure=resource.structureObj
+	//structure=resource.structureObj
 	//structure.material.materials[0].wireframe=false
-	scene.add(structure)
+	//scene.add(structure)
 }
 function initPads(){
 	boostpads=[]
@@ -122,8 +131,29 @@ function initFlare(){
 	flare.add( resource.flareTex1, 70, 0.7, THREE.AdditiveBlending, flareColor);
 	flare.add( resource.flareTex1, 120, 0.9, THREE.AdditiveBlending, flareColor);
 	flare.add( resource.flareTex1, 70, 1.0, THREE.AdditiveBlending, flareColor);
+	flare.customUpdateCallback=function( object ) {
+		var f, fl = object.lensFlares.length;
+		var flare;
+		var vecX = -object.positionScreen.x * 2;
+		var vecY = -object.positionScreen.y * 2;
+
+
+		for( f = 0; f < fl; f++ ) {
+
+			   flare = object.lensFlares[ f ];
+
+			   flare.x = object.positionScreen.x + vecX * flare.distance;
+			   flare.y = object.positionScreen.y + vecY * flare.distance;
+
+			   flare.rotation = 0;
+
+		}
+
+		object.lensFlares[ 2 ].y += 0.025;
+		object.lensFlares[ 3 ].rotation = object.positionScreen.x * 0.5 + THREE.Math.degToRad( 45 );
+
+	}
 	scene.add(flare);
-	
 	sparks=new THREE.ParticleSystem(
 		new THREE.Geometry(),
 		resource.sparkMat
@@ -157,7 +187,6 @@ function simulateSparks(){
 }
 function initShips(){
 	ships=[]
-	colliders=[]
 	
 	me=new Ship()
 	ships.push(me)
@@ -180,7 +209,7 @@ function initShips(){
 		u.main.position.x+=s%2==0?-3:3
 		colliders.push(u.collider)
 	}
-	
+	me.gforce.x
 	//camera.position.set(0,3,6)
 	//camera.lookAt(new THREE.Vector3(0,0,-10))
 	camera.rotation.y=Math.PI
@@ -215,6 +244,7 @@ function countDown(){
 	setTimeout(countDown,1000)
 }
 exported=[]
+zone=false
 function render(){
 	time++
 	gamepad()
@@ -224,6 +254,16 @@ function render(){
 		ships[s].simulate()
 	}
 	speed.innerText=Math.round(me.engineforce.length()*mph)
+	energy.innerText=Math.round(me.energy*100)
+	lowerleft.style.color=((me.hurting||me.energy<=0.1)&&time%10<=5)!=(me.energy<=0.3)?'#AA0000':''
+	quanta.innerText=me.quanta
+	if(false){
+		hudcontainer.style.top=25+me.gforce.y+'%'
+		hudcontainer.style.left=50+me.gforce.x+'%'
+		var scale=me.gforce.z+100
+		hudcontainer.style.width=scale+'%'
+		hudcontainer.style.height=scale+'%'
+	}
 	simulateSparks()
 	if(false){
 		renderer.enableScissorTest(true)
@@ -256,7 +296,8 @@ function render(){
 		*/
 	}
 	else{
-		me.copyUniforms(coolPass.uniforms)
+		me.copyUniforms(scalePass.uniforms,coolPass.uniforms)
+		scalePass.uniforms.backbuffer.value=savePass.renderTarget
 		renderer.render(scene,camera,composer.renderTarget2,true)
 		composer.render()
 	}

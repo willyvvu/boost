@@ -5,15 +5,16 @@ mph=3600*100/2.54/12/5280
 deltatime=1/60
 
 //Speeds
-boostspeed=1000/mph//Maximum boost speed
-maxspeed=1000/mph//Maximum overall speed
+boostspeed=400/mph//Maximum boost speed
+maxspeed=500/mph//Maximum overall speed
 friction=0.00001
 extfriction=0.9
 
 //Energy usage
-boostusage=0.004
-collisionusage=0.001
+boostusage=0.002
+collisionusage=deltatime/5
 maxcollisionspeed=300/mph//Any faster than this, and a collision won't use more than collisionusage energy
+hurtduration=0.6
 
 //Colors
 orange=new THREE.Vector3(255,130,0)
@@ -27,8 +28,7 @@ pushrate=0.04//How fast the push takes you to full speed
 
 //Turning, braking, shifting, rolling
 brakespeed=5//m/s^2 for braking
-shiftdeg=0.4//Radians for shifting left and right
-shiftspeed=0.9//m/s for shifting left and right
+shiftdeg=0.02//Radians for shifting left and right
 airshift=0.7//How much to decrease shifting while in the air
 
 airturn=0.7//Ratio for how much slower to turn while in the air
@@ -49,10 +49,10 @@ camsmooth=0.1
 
 //Other stuff
 slightly=0.01
-trail=30
+trail=300
 raycaster=new THREE.Raycaster()
-collisionconst=1//Really small, but not 0
-maxcollisions=4
+collisionconst=0.5//Really small, but not 0
+maxcollisions=10
 
 function lerp(value,target,rate){
 	return value+rate*(target-value)
@@ -80,7 +80,18 @@ function addBoostPad(position,rotation){
 	)
 	pad.position.copy(position)
 	pad.rotation.copy(rotation)
-	pad.boostpad=true
+	pad.scale.multiplyScalar(5)
+	var collider=new THREE.Mesh(
+		new THREE.PlaneGeometry(10,10,1,1),
+		new THREE.MeshBasicMaterial()
+	)
+	collider.geometry.applyMatrix(new THREE.Matrix4().rotateX(-Math.PI/2))
+	collider.position.copy(position)
+	collider.rotation.copy(rotation)
+	collider.boostpad=pad
+	collider.visible=false
 	boostpads.push(pad)
 	scene.add(pad)
+	scene.add(collider)
+	colliders.push(collider)
 }
