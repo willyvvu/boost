@@ -1,5 +1,9 @@
 boost
 =====
+Demo
+====
+Try it at http://b00st.herokuapp.com
+
 Keyboard Controls
 ====
 A/D or Left/Right arrow keys: steer
