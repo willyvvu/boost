@@ -1,0 +1,20 @@
+powerups={
+	shield:{
+		name:'Shield',
+		energy:0.2,
+		damage:0,
+		use:function(ship){
+			ship.shield.material.map=resource.shieldTex
+			ship.shielding=5
+		}
+	},
+	autopilot:{
+		name:'Autopilot',
+		energy:0.2,
+		damage:0,
+		use:function(ship){
+			ship.shield.material.map=resource.autopilotTex
+			ship.autopiloting=5
+		}
+	}
+}

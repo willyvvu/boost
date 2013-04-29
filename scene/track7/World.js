@@ -6,8 +6,8 @@
 	"type"          : "scene",
 	"sourceFile"    : "World.blend",
 	"generatedBy"   : "Blender 2.65 Exporter",
-	"objects"       : 4,
-	"geometries"    : 4,
+	"objects"       : 5,
+	"geometries"    : 5,
 	"materials"     : 2,
 	"textures"      : 0
 },
@@ -17,8 +17,8 @@
 
 "objects" :
 {
-	"Cube.002" : {
-		"geometry"  : "geo_Cube.003",
+	"Auto" : {
+		"geometry"  : "geo_Auto",
 		"groups"    : [  ],
 		"material"  : "",
 		"position"  : [ 0, 0, 0 ],
@@ -31,8 +31,22 @@
 		"doubleSided"   : false
 	},
 
-	"Cube.001" : {
-		"geometry"  : "geo_Cube.000",
+	"Ground" : {
+		"geometry"  : "geo_Ground.001",
+		"groups"    : [  ],
+		"material"  : "",
+		"position"  : [ 0, 0, 0 ],
+		"rotation"  : [ -1.5708, 0, 0 ],
+		"quaternion": [ -0.707107, 0, 0, 0.707107 ],
+		"scale"     : [ 1, 1, 1 ],
+		"visible"       : true,
+		"castShadow"    : false,
+		"receiveShadow" : false,
+		"doubleSided"   : false
+	},
+
+	"Collide" : {
+		"geometry"  : "geo_Collide.002",
 		"groups"    : [  ],
 		"material"  : "Material",
 		"position"  : [ 0, 0, 0 ],
@@ -59,8 +73,8 @@
 		"doubleSided"   : false
 	},
 
-	"Cube" : {
-		"geometry"  : "geo_Cube",
+	"Track" : {
+		"geometry"  : "geo_Track",
 		"groups"    : [  ],
 		"material"  : "Material.003",
 		"position"  : [ 0, 0, 0 ],
@@ -77,14 +91,19 @@
 
 "geometries" :
 {
-	"geo_Cube.003" : {
+	"geo_Auto" : {
 		"type" : "ascii",
-		"url"  : "World.Cube.003.js"
+		"url"  : "World.Auto.js"
 	},
 
-	"geo_Cube.000" : {
+	"geo_Ground.001" : {
 		"type" : "ascii",
-		"url"  : "World.Cube.000.js"
+		"url"  : "World.Ground.001.js"
+	},
+
+	"geo_Collide.002" : {
+		"type" : "ascii",
+		"url"  : "World.Collide.002.js"
 	},
 
 	"geo_Backup" : {
@@ -92,9 +111,9 @@
 		"url"  : "World.Backup.js"
 	},
 
-	"geo_Cube" : {
+	"geo_Track" : {
 		"type" : "ascii",
-		"url"  : "World.Cube.js"
+		"url"  : "World.Track.js"
 	}
 },
 

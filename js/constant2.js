@@ -5,16 +5,23 @@ mph=3600*100/2.54/12/5280
 deltatime=1/60
 
 //Speeds
-boostspeed=400/mph//Maximum boost speed
-maxspeed=500/mph//Maximum overall speed
+boostspeed=900/mph//Maximum boost speed
+maxspeed=1000/mph//Maximum overall speed
 friction=0.00001
 extfriction=0.9
 
 //Energy usage
 boostusage=0.002
-collisionusage=deltatime/5
+collisionusage=deltatime/2
 maxcollisionspeed=300/mph//Any faster than this, and a collision won't use more than collisionusage energy
-hurtduration=0.6
+hurtduration=0.5//How long the HUD will flash for getting hurt
+absorbduration=1//How long the HUD will flash for an absorb
+powerupduration=0.5//How long the HUD will flash for an absorb
+fadein=0.5//How fast shields, etc fade in
+fadeout=0.5//How fast shields, etc fade out
+greenhex='#00FF00'
+redhex='#FF0000'
+whitehex='#FFFFFF'
 
 //Colors
 orange=new THREE.Vector3(255,130,0)
@@ -54,8 +61,21 @@ raycaster=new THREE.Raycaster()
 collisionconst=0.5//Really small, but not 0
 maxcollisions=10
 
+//Autopilot
+
+function more(a,b){//a>b when b>0,else, a<b when b<0
+	return a*b>b*b
+}
 function lerp(value,target,rate){
 	return value+rate*(target-value)
+}
+function clamp(value,min,max){
+	return Math.min(Math.max(value,min),max)
+}
+function sign(value){
+	return value?
+	value>0?1:-1
+	:0
 }
 function restrict(vec,plane){//Real simple.
 	if(vec.clone().normalize().dot(plane.clone().normalize())<0){
@@ -73,10 +93,10 @@ function addSpark(position,velocity){
 	fromend.color=Math.random()
 	sparks.geometry.vertices.unshift(fromend)
 }
-function addBoostPad(position,rotation){
+function addBoostPad(position,rotation,powerup){
 	var pad=new THREE.Mesh(
 		resource.padGeo,
-		resource.padMat
+		powerup?resource.poweruppadMat:resource.padMat
 	)
 	pad.position.copy(position)
 	pad.rotation.copy(rotation)
@@ -89,6 +109,7 @@ function addBoostPad(position,rotation){
 	collider.position.copy(position)
 	collider.rotation.copy(rotation)
 	collider.boostpad=pad
+	collider.powerup=!!powerup
 	collider.visible=false
 	boostpads.push(pad)
 	scene.add(pad)

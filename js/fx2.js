@@ -17,16 +17,10 @@ var scalePass=new THREE.ShaderPass({//I'm going to be PRO with some
 	'uniform float motionblur;',
 	'varying vec2 v;',
 	'void main() {',
-		'float vin=clamp(length(v-0.5)*2.5,0.0,0.9);',
-		'if(motionblur>0.1){',
-			'vec2 vcm=(v-0.5);',
-			'float mb=vin*motionblur;',
-			'gl_FragColor = texture2D(tDiffuse,v)*(1.0-mb)',
-			'+texture2D(backbuffer,v)*mb;',
-		'}',
-		'else{',
-			'gl_FragColor = texture2D(tDiffuse,v);',
-		'}',
+		'float vin=length(v-0.5)*10.0;',
+		'vin=vin/(vin+1.0);',
+		'gl_FragColor = texture2D(tDiffuse,v)*(1.0-vin*motionblur)',
+		'+texture2D(backbuffer,v)*vin*motionblur;',
 	'}'
 	].join('\n')
 })
@@ -106,4 +100,4 @@ var coolPass=new THREE.ShaderPass({//I'm going to be PRO with some
 	'}'
 	].join('\n')
 })
-var savePass=new THREE.SavePass(new THREE.WebGLRenderTarget(128,128))
+var savePass=new THREE.SavePass(new THREE.WebGLRenderTarget(512,512))

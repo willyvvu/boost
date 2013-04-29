@@ -6,7 +6,8 @@ keyboard={
 	boost:0,
 	steer:0,
 	pitch:0,
-	roll:0
+	roll:0,
+	use:0
 }
 keyboard2={
 	accel:0,
@@ -15,7 +16,8 @@ keyboard2={
 	boost:0,
 	steer:0,
 	pitch:0,
-	roll:0
+	roll:0,
+	use:0
 }
 controllers=[null,null]
 threshold=0.05
@@ -69,13 +71,13 @@ keys=[]
 function keyChange(e){//Picks up any change in keys: keyup and keydown
 	var ind=keys.indexOf(e.keyCode)
 	if(e.type=='keydown'){
-		//if(e.keyCode==45){exportposition=true}//Insert
 		if(ind==-1){
 			keys.push(e.keyCode)
 			//Adds a keycode to list keys ONLY if it is not there already
 			//This cuts down on redundant repeated event fires, when you
 			//	hold down a key
 			keyHandle(e.keyCode,true)
+			//console.log(e.keyCode)
 			//This function gets called once per keyup/down
 		}
 	}
@@ -83,101 +85,93 @@ function keyChange(e){//Picks up any change in keys: keyup and keydown
 		keys.splice(ind,1)
 		keyHandle(e.keyCode,false)
 	}
-	if(e.keyCode==82&&e.type=='keydown'&&!keyboard.respawn){
-		keyboard.respawn=1
-	}
-	else if(e.keyCode==82&&e.type=='keyup'&&keyboard.respawn){
-		keyboard.respawn=0
-	}
 	if(e.keyCode==45&&e.type=='keydown'){
-		keyboard.export=1
+		keyboard.export=1//Insert
+	}
+	if(e.keyCode==19&&e.type=='keydown'){
+		keyboard.export=2//Pause
 	}
 }
 function keyHandle(){
-	var ksteer=0,
-		kaccel=0,
-		klbrake=0,
-		krbrake=0,
-		kboost=0,
-		kroll=0,
-		krespawn=0,
-		kpitch=0,
-		krearview=0,
-		ksteer2=0,
-		kaccel2=0,
-		kboost2=0,
-		klbrake2=0,
-		krbrake2=0
+	keyboard.accel=0
+	keyboard.lbrake=0
+	keyboard.rbrake=0
+	keyboard.boost=0
+	keyboard.steer=0
+	keyboard.pitch=0
+	keyboard.roll=0
+	keyboard.use=0
+	keyboard.respawn=0
+	keyboard.rearview=0
+	
+	keyboard2.accel=0
+	keyboard2.lbrake=0
+	keyboard2.rbrake=0
+	keyboard2.boost=0
+	keyboard2.steer=0
+	keyboard2.pitch=0
+	keyboard2.roll=0
+	keyboard2.use=0
+	keyboard2.respawn=0
+	keyboard2.rearview=0
+	
 	for(var k=0;k<keys.length;k++){
 		switch(keys[k]){
 			case 87://W
-				//kpitch-=1
-				kaccel+=1
-				break
-			case 73://I
-				//kaccel+=1
-				break
-			case 38://Up
-				kaccel2+=1
+				keyboard.accel+=1
 				break
 			case 65://A
-				ksteer-=1
-				break
-			case 37://Left
-				ksteer2-=1
+				keyboard.steer-=1
 				break
 			case 83://S
-				krearview+=1
-				//kpitch+=1
-				break
-			case 74://J
-				klbrake+=1
-				break
-			case 76://L
-				krbrake+=1
-				break
-			case 40://Down
-				kboost2+=1
-				/*klbrake2+=1
-				krbrake2+=1*/
+				keyboard.rearview+=1
 				break
 			case 68://D
-				ksteer+=1
+				keyboard.steer+=1
+				break
+			case 74://J
+				keyboard.lbrake+=1
+				break
+			case 76://L
+				keyboard.rbrake+=1
+				break
+			case 73://I
+				keyboard.use=1
+				break
+			case 75://J
+				keyboard.use=-1
+				break
+			case 38://Up
+				keyboard2.accel+=1
+				break
+			case 40://Down
+				keyboard2.boost+=1
+				break
+			case 37://Left
+				keyboard2.steer-=1
 				break
 			case 39://Right
-				ksteer2+=1
+				keyboard2.steer+=1
 				break
 			case 90://Z
-				kroll-=1
+				keyboard.roll-=1
 				break
 			case 67://X
-				kroll+=1
+				keyboard.roll+=1
 				break
 			case 32://Space
 			case 79://O
-				kboost=1
+				keyboard.boost=1
 				break
 			case 36://Home
-				krespawn=1
+			case 82://R
+				keyboard.respawn=1
 				break
 			case 186://;
-				krearview=1
+				keyboard.rearview=1
 				break
 		}
 	}
-	keyboard.accel=Math.max(0,Math.min(1,kaccel))
-	keyboard.lbrake=Math.max(0,Math.min(1,klbrake))
-	keyboard.rbrake=Math.max(0,Math.min(1,krbrake))
-	keyboard.boost=Math.max(0,Math.min(1,kboost))
-	keyboard.steer=Math.max(-1,Math.min(1,ksteer))
-	keyboard.roll=Math.max(-1,Math.min(1,kroll))
-	keyboard.pitch=Math.max(-1,Math.min(1,kpitch))
-	keyboard.rearview=krearview
-	keyboard2.accel=Math.max(0,Math.min(1,kaccel2))
-	keyboard2.steer=Math.max(-1,Math.min(1,ksteer2))
-	keyboard2.lbrake=Math.max(-1,Math.min(1,klbrake2))
-	keyboard2.rbrake=Math.max(-1,Math.min(1,krbrake2))
-	keyboard2.boost=Math.max(-1,Math.min(1,kboost2))
 	/*if(krespawn &&respawning==0){
 		respawning=0.01
 	}*/

@@ -2,7 +2,7 @@ window.addEventListener('load',init)
 window.addEventListener('resize',resize)
 speed=document.getElementById('speed')
 energy=document.getElementById('energy')
-quanta=document.getElementById('quanta')
+powerup=document.getElementById('powerup')
 lowerleft=document.getElementById('lowerleft')
 hudcontainer=document.getElementById('hudcontainer')
 function init(){//Sets up everything, provided that we are all loaded and ready to go
@@ -57,15 +57,19 @@ function resize(){
 	renderer.setSize(width,height)//Split Screen
 	composer.setSize(width,height)//Split Screen
 	coolPass.uniforms.resolution.value.set(width,height)
-	savePass.renderTarget.width=width
-	savePass.renderTarget.height=height
+	//savePass.renderTarget.width=width
+	//savePass.renderTarget.height=height
 }
 function initTrack(){
 	trackcollide=resource.trackcollide
-	trackcollide.material=new THREE.MeshNormalMaterial()
+	trackcollide.material=new THREE.MeshBasicMaterial()
 	trackcollide.geometry.computeBoundingSphere()
 	trackcollide.visible=false
 	scene.add(trackcollide)
+	autonav=resource.autonav
+	autonav.material=new THREE.MeshBasicMaterial({side:THREE.DoubleSide})
+	autonav.visible=false
+	scene.add(autonav)
 	track=resource.trackObj
 	track.material=resource.trackMat//terrainMap
 	track.material.map.anisotropy=renderer.getMaxAnisotropy()
@@ -78,7 +82,7 @@ function initPads(){
 	boostpads=[]
 	for(var p=0;p<resource.padData.length;p++){
 		var place=resource.padData[p]
-		addBoostPad(place.position,place.rotation)
+		addBoostPad(place.position,place.rotation,place.powerup)
 	}
 }
 function initLights(){
@@ -217,7 +221,7 @@ function initShips(){
 	//camera2.position.set(0,3,6)
 	//camera2.lookAt(new THREE.Vector3(0,0,-10))
 	camera2.rotation.y=Math.PI
-	you.camera.add(camera2)
+	//you.camera.add(camera2)
 }
 time=0
 counter=document.getElementById('countdown')
@@ -247,6 +251,7 @@ exported=[]
 zone=false
 function render(){
 	time++
+	var flash=time%10<=5
 	gamepad()
 	me.controller=controllers[0]||keyboard
 	//you.controller=controllers[1]||keyboard2
@@ -255,8 +260,17 @@ function render(){
 	}
 	speed.innerText=Math.round(me.engineforce.length()*mph)
 	energy.innerText=Math.round(me.energy*100)
-	lowerleft.style.color=((me.hurting||me.energy<=0.1)&&time%10<=5)!=(me.energy<=0.3)?'#AA0000':''
-	quanta.innerText=me.quanta
+	
+	lowerleft.style.color=
+		(!!me.shielding||!!me.autopiloting)?(flash&&!!me.absorbing?whitehex:greenhex)://Shielding
+		flash&&!!me.absorbing?greenhex:
+		(!me.hurting&&me.energy<=0.3||!flash&&(!!me.hurting||me.energy<=0.1))?redhex:whitehex
+	var autodisengaging=(me.autopiloting>0&&me.autopiloting<=1)
+	powerup.innerText=me.autopiloting?'Autopilot '+(autodisengaging?'Disengaging':'Engaged'):
+	(me.powerup&&powerups[me.powerup].name)
+	powerup.style.color=flash&&(me.poweringup||
+			autodisengaging)?'black':
+		me.autopiloting?greenhex:whitehex	
 	if(false){
 		hudcontainer.style.top=25+me.gforce.y+'%'
 		hudcontainer.style.left=50+me.gforce.x+'%'
@@ -264,6 +278,26 @@ function render(){
 		hudcontainer.style.width=scale+'%'
 		hudcontainer.style.height=scale+'%'
 	}
+	
+	if(resource.shieldTex.offset.x==0){
+		resource.shieldTex.offset.x=1/8
+		resource.absorbTex.offset.x=1/8
+		resource.autopilotTex.offset.x=1/8
+	}
+	else{
+		resource.shieldTex.offset.x=0
+		resource.absorbTex.offset.x=0
+		resource.autopilotTex.offset.x=0
+	}
+	resource.shieldTex.offset.y+=1/16
+	resource.absorbTex.offset.y+=1/16
+	resource.autopilotTex.offset.y+=1/16
+	if(resource.shieldTex.offset.y>=1){
+		resource.shieldTex.offset.y=0
+		resource.absorbTex.offset.y=0
+		resource.autopilotTex.offset.y=0
+	}
+	
 	simulateSparks()
 	if(false){
 		renderer.enableScissorTest(true)

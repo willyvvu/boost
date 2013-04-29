@@ -1,17 +1,25 @@
 loader=new THREE.JSONLoader()
 resource={
 	hullTex:THREE.ImageUtils.loadTexture('scene/ship/Ship Simple.png'),
-	thrustTex:THREE.ImageUtils.loadTexture('scene/ship/Thrust.png'),
+	//thrustTex:THREE.ImageUtils.loadTexture('scene/ship/Thrust.png'),
 	shineTex:THREE.ImageUtils.loadTexture('scene/flare/Boostflare.png'),
 	trackTex:THREE.ImageUtils.loadTexture('scene/trackresource/TrackSimple.png'),
 	terrainTex:THREE.ImageUtils.loadTexture('scene/track6/Terrain.png'),
 	//trackSpecularTex:THREE.ImageUtils.loadTexture('scene/trackresource/Track Specular.png'),
 	//trackNormalTex:THREE.ImageUtils.loadTexture('scene/trackresource/Track Normal.png'),
 	padTex:THREE.ImageUtils.loadTexture('scene/trackresource/Pad2.png'),
+	poweruppadTex:THREE.ImageUtils.loadTexture('scene/trackresource/Pad2Powerup.png'),
 	flareTex:THREE.ImageUtils.loadTexture('scene/flare/Sunflare.png'),
 	flareTex1:THREE.ImageUtils.loadTexture('scene/flare/Hexflare.png'),
-	sparkTex:THREE.ImageUtils.loadTexture('scene/flare/Spark.png')
+	sparkTex:THREE.ImageUtils.loadTexture('scene/flare/Spark.png'),
+	shieldTex:THREE.ImageUtils.loadTexture('scene/ship/Shield.png'),
+	autopilotTex:THREE.ImageUtils.loadTexture('scene/ship/Autopilot.png'),
+	absorbTex:THREE.ImageUtils.loadTexture('scene/ship/Absorb.png')
 }
+resource.shieldTex.wrapS=resource.shieldTex.wrapT=
+resource.autopilotTex.wrapS=resource.autopilotTex.wrapT=
+resource.absorbTex.wrapS=resource.absorbTex.wrapT=THREE.RepeatWrapping
+//resource.shieldTex.repeat.set(2,2)
 var skyPrefix='scene/skybox/'
 var skyImages=[skyPrefix+'px.jpg',skyPrefix+'nx.jpg',
     skyPrefix+'py.jpg',skyPrefix+'ny.jpg',
@@ -31,13 +39,13 @@ resource.hullMat=new THREE.MeshLambertMaterial({
 	combine:THREE.AddOperation
 	//envMap:skyCube,
 })
-resource.thrustMat=new THREE.MeshBasicMaterial({
+/*resource.thrustMat=new THREE.MeshBasicMaterial({
 	transparent:true,
 	blending:THREE.AdditiveBlending,
 	//side:THREE.DoubleSide,
 	map:resource.thrustTex,
 	depthWrite:false
-})
+})*/
 resource.shineMat=new THREE.SpriteMaterial({
 	useScreenCoordinates:false,
 	color:0xFFFFFF,
@@ -71,8 +79,10 @@ resource.terrainMap=new THREE.MeshPhongMaterial({
 resource.padMat=new THREE.MeshBasicMaterial({
 	map:resource.padTex,
 	transparent:true
-	//blending:THREE.AdditiveBlending,
-	//side:THREE.DoubleSide
+})
+resource.poweruppadMat=new THREE.MeshBasicMaterial({
+	map:resource.poweruppadTex,
+	transparent:true
 })
 resource.ribbonMat=new THREE.MeshBasicMaterial({
 	color:0xCCCCFF,
@@ -90,41 +100,45 @@ resource.sparkMat=new THREE.ParticleBasicMaterial({
 	vertexColors:true,
 	transparent:true
 })
-loader.load('scene/ship/Ship.js',function(geo){resource.hullGeo=geo})
-//loader.load('scene/ship/Thrust.js',function(geo){resource.thrustGeo=geo})
-//loader.load('scene/ship/Boost.js',function(geo){resource.boostGeo=geo})
-//loader.load('scene/track6/SchoolCollide.js',function(geo){resource.trackcollideGeo=geo})
-sceneloader=new THREE.SceneLoader()
-/*sceneloader.load('scene/track6/School.js',function(data){
-	console.log(data)
-	sdata=data
-	resource.trackObj=data.objects['Plane']
-	//resource.groundObj=data.objects.Ground
-	resource.trackcollide=data.objects['Plane.002']
-	resource.structureObj=data.objects['Plane.001']
-	//resource.overpassObj=data.objects.Overpass
+resource.shieldMat=new THREE.MeshBasicMaterial({
+	map:resource.shieldTex,
+	blending:THREE.AdditiveBlending,
+	depthWrite:false,
+	transparent:true
 })
-sceneloader.load('scene/track5/Track.js',function(data){
-	console.log(data)
-	sdata=data
+resource.absorbMat=new THREE.MeshBasicMaterial({
+	map:resource.absorbTex,
+	blending:THREE.AdditiveBlending,
+	depthWrite:false,
+	transparent:true
+})
+
+sceneloader=new THREE.SceneLoader()
+sceneloader.load('scene/ship/Ship.js',function(data){
+	resource.hullObj=data.objects['Hull']
+	resource.shieldObj=data.objects['Shield']
+	resource.absorbObj=data.objects['Absorb']
+})
+sceneloader.load('scene/track7/World.js',function(data){
 	resource.trackObj=data.objects['Track']
 	//resource.groundObj=data.objects.Ground
-	resource.trackcollide=data.objects['Collider']
-	resource.structureObj=data.objects['Buildings']
-	//resource.overpassObj=data.objects.Overpass
-})*/
-sceneloader.load('scene/track7/World.js',function(data){
-	console.log(data)
-	sdata=data
-	resource.trackObj=data.objects['Cube']
-	//resource.groundObj=data.objects.Ground
-	resource.trackcollide=data.objects['Cube.001']
+	resource.autonav=data.objects['Auto']
+	resource.trackcollide=data.objects['Collide']
 	//Precompute floor
 	var fs=resource.trackcollide.geometry.faces
 	for(var f=0;f<fs.length;f++){
 		fs[f].isfloor=
-			fs[f].vertexColors[0].equals(fs[f].vertexColors[1])&&
-			fs[f].vertexColors[1].equals(fs[f].vertexColors[2])
+			!fs[f].vertexColors[0].b&&
+			!fs[f].vertexColors[1].b&&
+			!fs[f].vertexColors[2].b
+		fs[f].align=
+			fs[f].vertexColors[0].r
+			+fs[f].vertexColors[1].r
+			+fs[f].vertexColors[2].r
+			-fs[f].vertexColors[0].g
+			-fs[f].vertexColors[1].g
+			-fs[f].vertexColors[2].g
+		fs[f].align/=-3
 	}
 	//resource.structureObj=data.objects['Plane.001']
 	//resource.overpassObj=data.objects.Overpass
