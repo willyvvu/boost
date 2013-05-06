@@ -10,8 +10,8 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="1024"
-   height="1024"
+   width="512"
+   height="512"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
@@ -23,13 +23,24 @@
      id="defs4">
     <linearGradient
        inkscape:collect="always"
+       id="linearGradient3799">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0"
+         id="stop3801" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:0;"
+         offset="1"
+         id="stop3803" />
+    </linearGradient>
+    <linearGradient
        id="linearGradient5081">
       <stop
          style="stop-color:#ffffff;stop-opacity:1;"
          offset="0"
          id="stop5083" />
       <stop
-         style="stop-color:#ffffff;stop-opacity:0;"
+         style="stop-color:#ffffff;stop-opacity:0.30000001;"
          offset="1"
          id="stop5085" />
     </linearGradient>
@@ -152,16 +163,111 @@
        y1="1024"
        x2="512"
        y2="0" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5081"
+       id="linearGradient3066"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.125,0,0,0.49999992,0,540.36223)"
+       x1="512"
+       y1="1024"
+       x2="512"
+       y2="0" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5081"
+       id="linearGradient3076"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.125,0,0,0.49999992,0,540.36223)"
+       x1="512"
+       y1="1024"
+       x2="512"
+       y2="0" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3799"
+       id="linearGradient3805"
+       x1="64"
+       y1="512"
+       x2="64"
+       y2="64"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3799"
+       id="linearGradient3811"
+       gradientUnits="userSpaceOnUse"
+       x1="64"
+       y1="512"
+       x2="64"
+       y2="64"
+       gradientTransform="translate(0,-540.3621)" />
     <mask
        maskUnits="userSpaceOnUse"
-       id="mask5091">
+       id="mask3807">
       <rect
-         style="color:#000000;fill:url(#linearGradient5095);fill-opacity:1;stroke:none;stroke-width:10;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-         id="rect5093"
+         style="color:#000000;fill:url(#linearGradient3811);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:6;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         id="rect3809"
          width="128"
-         height="1024"
+         height="448"
          x="0"
-         y="28.362152" />
+         y="-476.36209"
+         transform="scale(1,-1)" />
+    </mask>
+    <filter
+       inkscape:collect="always"
+       id="filter4440"
+       x="-0.11867366"
+       width="1.2373473"
+       y="-0.030543493"
+       height="1.061087">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="6.3292603"
+         id="feGaussianBlur4442" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4520"
+       x="-0.1204023"
+       width="1.2408046"
+       y="-0.13301115"
+       height="1.2660223">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="6.2809518"
+         id="feGaussianBlur4522" />
+    </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5081"
+       id="linearGradient4525"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.125,0,0,0.49999992,1.664e-5,540.36228)"
+       x1="512"
+       y1="1024"
+       x2="512"
+       y2="0" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5081"
+       id="linearGradient4535"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.125,0,0,0.49999992,0,540.36223)"
+       x1="512"
+       y1="1024"
+       x2="512"
+       y2="0" />
+    <mask
+       maskUnits="userSpaceOnUse"
+       id="mask4531">
+      <rect
+         style="color:#000000;fill:url(#linearGradient4535);fill-opacity:1;stroke:none;stroke-width:10;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         id="rect4533"
+         width="128"
+         height="511.99991"
+         x="4.6730507e-13"
+         y="540.36218" />
     </mask>
   </defs>
   <sodipodi:namedview
@@ -171,21 +277,21 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.43271484"
-     inkscape:cx="159.37586"
-     inkscape:cy="472.47587"
+     inkscape:zoom="1.0295742"
+     inkscape:cx="109.54108"
+     inkscape:cy="201.13835"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
-     inkscape:window-width="1366"
-     inkscape:window-height="744"
+     inkscape:window-width="1280"
+     inkscape:window-height="1000"
      inkscape:window-x="0"
      inkscape:window-y="24"
      inkscape:window-maximized="1"
-     inkscape:snap-bbox="false"
-     inkscape:bbox-paths="false"
-     inkscape:bbox-nodes="false"
-     inkscape:snap-bbox-edge-midpoints="false"
+     inkscape:snap-bbox="true"
+     inkscape:bbox-paths="true"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-bbox-edge-midpoints="true"
      inkscape:snap-bbox-midpoints="true"
      inkscape:snap-global="true"
      inkscape:snap-object-midpoints="true"
@@ -196,7 +302,8 @@
      inkscape:object-nodes="false"
      inkscape:snap-smooth-nodes="false"
      inkscape:snap-page="true"
-     inkscape:snap-center="true">
+     inkscape:snap-center="true"
+     inkscape:snap-midpoints="false">
     <inkscape:grid
        type="xygrid"
        id="grid3074"
@@ -223,39 +330,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-28.362153)">
-    <use
-       x="0"
-       y="0"
-       xlink:href="#use5023"
-       id="use5025"
-       transform="translate(128,63.999988)"
-       width="1024"
-       height="1024" />
-    <use
-       x="0"
-       y="0"
-       xlink:href="#use5025"
-       id="use5027"
-       transform="translate(128,-63.999988)"
-       width="1024"
-       height="1024" />
-    <use
-       x="0"
-       y="0"
-       xlink:href="#use5019"
-       id="use5021"
-       transform="translate(128,63.999988)"
-       width="1024"
-       height="1024" />
-    <use
-       x="0"
-       y="0"
-       xlink:href="#use5021"
-       id="use5023"
-       transform="translate(128,-63.999988)"
-       width="1024"
-       height="1024" />
+     transform="translate(0,-540.3622)">
     <use
        x="0"
        y="0"
@@ -277,13 +352,14 @@
        y="0"
        xlink:href="#g5005"
        id="use5015"
-       transform="translate(128,-63.999989)"
+       transform="translate(127.99998,-64.000043)"
        width="1024"
        height="1024" />
     <g
        id="g5005"
-       style="opacity:0.34156379"
-       mask="url(#mask5091)">
+       style="opacity:0.3415638"
+       mask="url(#mask4531)"
+       transform="translate(1.664e-5,5.44e-5)">
       <path
          transform="matrix(0,-1.0223696,0.99999972,0,-895.99973,1053.7938)"
          d="m 64.000002,896 55.425628,32 -1e-5,64 -55.425622,32 -55.4256247,-32 1.7e-6,-64 z"
@@ -298,8 +374,9 @@
          sodipodi:cx="64"
          sodipodi:sides="6"
          id="path4989"
-         style="color:#000000;fill:#94e0ff;fill-opacity:1;stroke:none;stroke-width:10;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-         sodipodi:type="star" />
+         style="color:#000000;fill:#94e0ff;fill-opacity:1;stroke:none;stroke-width:10;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;filter:url(#filter4520)"
+         sodipodi:type="star"
+         mask="none" />
       <use
          height="1024"
          width="1024"
@@ -323,54 +400,16 @@
          id="use4995"
          xlink:href="#use4993"
          y="0"
-         x="0" />
-      <use
-         height="1024"
-         width="1024"
-         transform="translate(0,-128)"
-         id="use4997"
-         xlink:href="#use4995"
-         y="0"
-         x="0" />
-      <use
-         height="1024"
-         width="1024"
-         transform="translate(0,-128)"
-         id="use4999"
-         xlink:href="#use4997"
-         y="0"
-         x="0" />
-      <use
-         height="1024"
-         width="1024"
-         transform="translate(0,-128)"
-         id="use5001"
-         xlink:href="#use4999"
-         y="0"
-         x="0" />
-      <use
-         height="1024"
-         width="1024"
-         transform="translate(0,-128)"
-         id="use5003"
-         xlink:href="#use5001"
-         y="0"
-         x="0" />
-      <use
          x="0"
-         y="0"
-         xlink:href="#use5003"
-         id="use5069"
-         transform="translate(-1.2800001e-6,1024)"
-         width="1024"
-         height="1024" />
+         mask="none" />
     </g>
     <g
        id="g4796"
        style="fill:#94e0ff;fill-opacity:1"
-       transform="matrix(1,0,0,-1,0,1080.7243)">
+       transform="matrix(1,0,0,-1,0,1080.7243)"
+       mask="url(#mask3807)">
       <path
-         transform="translate(3e-6,28.362156)"
+         transform="matrix(0.927536,0,0,0.927536,4.6376991,32.999852)"
          d="m 128,64 -32,55.42563 -64,0 L 0,64 32,8.5743742 l 64,0 z"
          inkscape:randomized="0"
          inkscape:rounded="0"
@@ -388,7 +427,7 @@
       <use
          height="1024"
          width="1024"
-         transform="matrix(0.80029797,0,0,0.80029797,12.780929,146.44491)"
+         transform="matrix(0.67655991,0,0,0.67655991,20.700165,157.87362)"
          id="use4780"
          xlink:href="#path4778"
          y="0"
@@ -397,7 +436,7 @@
       <use
          height="1024"
          width="1024"
-         transform="matrix(0.94970506,0,0,0.94970506,3.218876,139.0831)"
+         transform="matrix(0.72108884,0,0,0.72108884,17.850315,189.46146)"
          id="use4784"
          xlink:href="#use4780"
          y="0"
@@ -406,56 +445,12 @@
       <use
          height="1024"
          width="1024"
-         transform="matrix(0.84806493,0,0,0.84806493,9.7238442,180.92842)"
+         transform="matrix(0.73737899,0,0,0.73737899,16.807745,219.48721)"
          id="use4786"
          xlink:href="#use4784"
          y="0"
          x="0"
          style="fill:#94e0ff;fill-opacity:1" />
-      <use
-         height="1024"
-         width="1024"
-         transform="matrix(0.86169481,0,0,0.86169481,8.8515311,192.24924)"
-         id="use4788"
-         xlink:href="#use4786"
-         y="0"
-         x="0"
-         style="fill:#94e0ff;fill-opacity:1" />
-      <use
-         height="1024"
-         width="1024"
-         transform="matrix(0.8235106,0,0,0.8235106,11.295321,236.00922)"
-         id="use4790"
-         xlink:href="#use4788"
-         y="0"
-         x="0"
-         style="fill:#94e0ff;fill-opacity:1" />
-      <use
-         height="1024"
-         width="1024"
-         transform="matrix(0.71175229,0,0,0.71175229,18.447853,339.10173)"
-         id="use4792"
-         xlink:href="#use4790"
-         y="0"
-         x="0"
-         style="fill:#94e0ff;fill-opacity:1" />
-      <use
-         height="1024"
-         width="1024"
-         transform="matrix(0.53876863,0,0,0.53876863,29.518807,524.82603)"
-         id="use4794"
-         xlink:href="#use4792"
-         y="0"
-         x="0"
-         style="fill:#94e0ff;fill-opacity:1" />
-      <use
-         x="0"
-         y="0"
-         xlink:href="#use4794"
-         id="use5067"
-         transform="translate(1.2704345e-6,-1024)"
-         width="1024"
-         height="1024" />
     </g>
     <use
        x="0"
@@ -478,38 +473,6 @@
        y="0"
        xlink:href="#use4808"
        id="use4810"
-       transform="translate(128,-63.999988)"
-       width="1024"
-       height="1024" />
-    <use
-       x="0"
-       y="0"
-       xlink:href="#use4810"
-       id="use4812"
-       transform="translate(128,63.999988)"
-       width="1024"
-       height="1024" />
-    <use
-       x="0"
-       y="0"
-       xlink:href="#use4812"
-       id="use4814"
-       transform="translate(128,-63.999988)"
-       width="1024"
-       height="1024" />
-    <use
-       x="0"
-       y="0"
-       xlink:href="#use4814"
-       id="use4816"
-       transform="translate(128,63.999988)"
-       width="1024"
-       height="1024" />
-    <use
-       x="0"
-       y="0"
-       xlink:href="#use4816"
-       id="use4818"
        transform="translate(128,-63.999988)"
        width="1024"
        height="1024" />

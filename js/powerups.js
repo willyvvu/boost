@@ -1,6 +1,7 @@
 powerups={
 	shield:{
 		name:'Shield',
+		probability:0.2,
 		energy:0.2,
 		damage:0,
 		use:function(ship){
@@ -10,11 +11,42 @@ powerups={
 	},
 	autopilot:{
 		name:'Autopilot',
+		probability:0.2,
 		energy:0.2,
 		damage:0,
 		use:function(ship){
 			ship.shield.material.map=resource.autopilotTex
 			ship.autopiloting=5
+		}
+	},
+	residue:{
+		name:'Residue',
+		probability:0.4,
+		energy:0.3,
+		damage:0.1,
+		use:function(ship){
+			ship.dropping=1
+		}
+	},
+	emp:{
+		name:'EMP',
+		probability:0.2,
+		energy:0.2,
+		damage:0.1,
+		use:function(ship){
+			ship.uniforms.phase=slightly
+			for(var r=0;r<residuals.length;r++){
+				if(residuals[r].position.distanceTo(ship.main.position)<emprange){
+					removeResidue(residuals[r].collider)
+				}
+			}
+			for(var s=0;s<ships.length;s++){
+				var dist=ships[s].main.position.distanceTo(ship.main.position)
+				if(!(ships[s]===ship)&&dist<=emprange){
+					ships[s].slow(empslow)
+					ships[s].hurt(0.2)
+				}
+			}
 		}
 	}
 }

@@ -10,8 +10,8 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="1024"
-   height="1024"
+   width="512"
+   height="512"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
@@ -21,6 +21,18 @@
    inkscape:export-ydpi="90">
   <defs
      id="defs4">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3875">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0"
+         id="stop3877" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:0;"
+         offset="1"
+         id="stop3879" />
+    </linearGradient>
     <linearGradient
        inkscape:collect="always"
        id="linearGradient5930">
@@ -56,26 +68,6 @@
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient5930"
-       id="linearGradient6132"
-       gradientUnits="userSpaceOnUse"
-       x1="64"
-       y1="28.362152"
-       x2="64"
-       y2="1052.3622" />
-    <mask
-       maskUnits="userSpaceOnUse"
-       id="mask6128">
-      <rect
-         style="color:#000000;fill:url(#linearGradient6132);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:9.64870167;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-         id="rect6130"
-         width="128"
-         height="1024.0001"
-         x="3.5527137e-15"
-         y="28.362152" />
-    </mask>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient5930"
        id="linearGradient6616"
        gradientUnits="userSpaceOnUse"
        x1="64"
@@ -101,25 +93,113 @@
        y1="1024"
        x2="64"
        y2="0" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5930"
+       id="linearGradient3103"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1,0,0,0.49999994,0,14.181078)"
+       x1="64"
+       y1="28.362152"
+       x2="64"
+       y2="1052.3622" />
     <mask
        maskUnits="userSpaceOnUse"
-       id="mask4137">
-      <g
-         id="g4139">
-        <path
-           transform="translate(0,28.362153)"
-           inkscape:connector-curvature="0"
-           id="path4141"
-           d="M 0,64 128,0 128,1024 0,1088 z"
-           style="fill:url(#linearGradient4145);fill-opacity:1;stroke:none" />
-        <path
-           transform="translate(0,28.362153)"
-           inkscape:connector-curvature="0"
-           id="path4143"
-           d="M 0,64 128,0 0,-64 z"
-           style="fill:#ffffff;fill-opacity:1;stroke:none" />
-      </g>
+       id="mask3099">
+      <rect
+         y="28.362152"
+         x="3.5527137e-15"
+         height="512"
+         width="128"
+         id="rect3101"
+         style="color:#000000;fill:url(#linearGradient3103);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:9.64870167;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
     </mask>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3875"
+       id="linearGradient4065"
+       gradientUnits="userSpaceOnUse"
+       x1="64"
+       y1="0"
+       x2="64"
+       y2="512" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3875-7"
+       id="linearGradient4065-5"
+       gradientUnits="userSpaceOnUse"
+       x1="64"
+       y1="0"
+       x2="64"
+       y2="512" />
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3875-7">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0"
+         id="stop3877-3" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:0;"
+         offset="1"
+         id="stop3879-3" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3875-7"
+       id="linearGradient4125"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(3.7487793e-7,-540.36217)"
+       x1="64"
+       y1="0"
+       x2="64"
+       y2="512" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3875-7"
+       id="linearGradient4135"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(3.7487793e-7,-540.36217)"
+       x1="64"
+       y1="0"
+       x2="64"
+       y2="512" />
+    <mask
+       maskUnits="userSpaceOnUse"
+       id="mask4131">
+      <rect
+         style="opacity:0.50612248;color:#000000;fill:url(#linearGradient4135);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:4;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         id="rect4133"
+         width="128"
+         height="512"
+         x="0"
+         y="-540.36212"
+         transform="scale(1,-1)" />
+    </mask>
+    <filter
+       inkscape:collect="always"
+       id="filter3823"
+       x="-0.44843842"
+       width="1.8968768"
+       y="-0.083574015"
+       height="1.167148">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="18.560407"
+         id="feGaussianBlur3825" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter3859"
+       x="-0.62542384"
+       width="2.2508477"
+       y="-0.1324638"
+       height="1.2649276">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="25.885652"
+         id="feGaussianBlur3861" />
+    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -128,11 +208,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.37828624"
-     inkscape:cx="65.614303"
-     inkscape:cy="385.29305"
+     inkscape:zoom="0.81771703"
+     inkscape:cx="-48.558946"
+     inkscape:cy="228.4104"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="g5646"
      showgrid="true"
      inkscape:window-width="1366"
      inkscape:window-height="744"
@@ -147,12 +227,13 @@
      inkscape:snap-global="true"
      inkscape:snap-object-midpoints="false"
      inkscape:snap-nodes="true"
-     inkscape:snap-grids="true"
-     inkscape:object-paths="true"
+     inkscape:snap-grids="false"
+     inkscape:object-paths="false"
      inkscape:snap-intersection-paths="true"
      inkscape:object-nodes="true"
      inkscape:snap-smooth-nodes="true"
-     inkscape:snap-page="true">
+     inkscape:snap-page="true"
+     inkscape:snap-center="false">
     <inkscape:grid
        type="xygrid"
        id="grid3074"
@@ -171,7 +252,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -179,13 +260,37 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-28.362153)">
+     transform="translate(0,-540.36215)">
+    <use
+       x="0"
+       y="0"
+       xlink:href="#g5646"
+       id="use5665"
+       transform="matrix(-1,0,0,1,256,-7.3004921e-6)"
+       width="1024"
+       height="1024" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use5665"
+       id="use5667"
+       transform="matrix(-1,0,0,1,512,0)"
+       width="1024"
+       height="1024" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use5667"
+       id="use5669"
+       transform="matrix(-1,0,0,1,768,0)"
+       width="1024"
+       height="1024" />
     <g
        id="g5646"
        transform="matrix(1,0,0,-1,0,1080.7243)">
       <g
          id="g5895"
-         mask="url(#mask6128)"
+         mask="url(#mask3099)"
          style="fill:#94ffb4;fill-opacity:1;stroke:none">
         <path
            sodipodi:type="star"
@@ -274,79 +379,9 @@
            width="1024"
            height="1024"
            style="fill:#94ffb4;fill-opacity:1;stroke:none" />
-        <use
-           x="0"
-           y="0"
-           xlink:href="#use5612"
-           inkscape:transform-center-x="21.333333"
-           id="use5624"
-           transform="translate(0,384.00001)"
-           width="1024"
-           height="1024"
-           style="fill:#94ffb4;fill-opacity:1;stroke:none" />
-        <use
-           x="0"
-           y="0"
-           xlink:href="#use5614"
-           inkscape:transform-center-x="-21.333333"
-           id="use5626"
-           transform="translate(0,384.00001)"
-           width="1024"
-           height="1024"
-           style="fill:#94ffb4;fill-opacity:1;stroke:none" />
-        <use
-           x="0"
-           y="0"
-           xlink:href="#use5616"
-           inkscape:transform-center-x="21.333333"
-           id="use5628"
-           transform="translate(0,384.00001)"
-           width="1024"
-           height="1024"
-           style="fill:#94ffb4;fill-opacity:1;stroke:none" />
-        <use
-           x="0"
-           y="0"
-           xlink:href="#use5618"
-           inkscape:transform-center-x="-21.333333"
-           id="use5630"
-           transform="translate(0,384.00001)"
-           width="1024"
-           height="1024"
-           style="fill:#94ffb4;fill-opacity:1;stroke:none" />
-        <use
-           x="0"
-           y="0"
-           xlink:href="#use5620"
-           inkscape:transform-center-x="21.333333"
-           id="use5632"
-           transform="translate(-2.2975286e-7,383.99998)"
-           width="1024"
-           height="1024"
-           style="fill:#94ffb4;fill-opacity:1;stroke:none" />
-        <use
-           x="0"
-           y="0"
-           xlink:href="#use5622"
-           inkscape:transform-center-x="-21.333333"
-           id="use5634"
-           transform="translate(-2.2975286e-7,383.99998)"
-           width="1024"
-           height="1024"
-           style="fill:#94ffb4;fill-opacity:1;stroke:none" />
-        <use
-           x="0"
-           y="0"
-           xlink:href="#use5624"
-           inkscape:transform-center-x="21.333333"
-           id="use5636"
-           transform="translate(-2.2975286e-7,383.99998)"
-           width="1024"
-           height="1024"
-           style="fill:#94ffb4;fill-opacity:1;stroke:none" />
       </g>
       <g
-         mask="url(#mask4137)"
+         mask="url(#mask4131)"
          id="g6193"
          style="opacity:0.50612248;fill:none;stroke:#00e765;stroke-opacity:1">
         <path
@@ -399,46 +434,6 @@
         <use
            x="0"
            y="0"
-           xlink:href="#use6394"
-           inkscape:transform-center-x="14.166721"
-           id="use6396"
-           transform="translate(0,128.00001)"
-           width="1024"
-           height="1024"
-           style="fill:none;stroke:#00e765;stroke-opacity:1" />
-        <use
-           x="0"
-           y="0"
-           xlink:href="#use6396"
-           inkscape:transform-center-x="14.166721"
-           id="use6398"
-           transform="translate(0,128)"
-           width="1024"
-           height="1024"
-           style="fill:none;stroke:#00e765;stroke-opacity:1" />
-        <use
-           x="0"
-           y="0"
-           xlink:href="#use6398"
-           inkscape:transform-center-x="14.166721"
-           id="use6400"
-           transform="translate(0,127.99997)"
-           width="1024"
-           height="1024"
-           style="fill:none;stroke:#00e765;stroke-opacity:1" />
-        <use
-           x="0"
-           y="0"
-           xlink:href="#use6400"
-           inkscape:transform-center-x="14.166721"
-           id="use6402"
-           transform="translate(0,128.00001)"
-           width="1024"
-           height="1024"
-           style="fill:none;stroke:#00e765;stroke-opacity:1" />
-        <use
-           x="0"
-           y="0"
            xlink:href="#path6195"
            inkscape:transform-center-x="-14.166721"
            id="use6404"
@@ -466,123 +461,99 @@
            width="1024"
            height="1024"
            style="fill:none;stroke:#00e765;stroke-opacity:1" />
+      </g>
+      <g
+         style="fill:#94ffb4;fill-opacity:1;stroke:none;filter:url(#filter3823)"
+         mask="url(#mask3099)"
+         id="g3029">
+        <path
+           inkscape:transform-center-x="14.166721"
+           transform="matrix(0.88541995,0,0,0.76679624,28.666454,43.287196)"
+           d="M 0,63.999997 96.000003,8.5743756 95.999997,119.42563 z"
+           inkscape:randomized="0"
+           inkscape:rounded="0"
+           inkscape:flatsided="true"
+           sodipodi:arg2="4.1887902"
+           sodipodi:arg1="3.1415927"
+           sodipodi:r2="32"
+           sodipodi:r1="64"
+           sodipodi:cy="64"
+           sodipodi:cx="64"
+           sodipodi:sides="3"
+           id="path3031"
+           style="color:#000000;fill:#94ffb4;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:10;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+           sodipodi:type="star" />
         <use
-           x="0"
-           y="0"
-           xlink:href="#use6408"
-           inkscape:transform-center-x="-14.166721"
-           id="use6410"
-           transform="translate(0,128)"
-           width="1024"
+           style="fill:#94ffb4;fill-opacity:1;stroke:none"
            height="1024"
-           style="fill:none;stroke:#00e765;stroke-opacity:1" />
-        <use
-           x="0"
+           width="1024"
+           transform="matrix(-1,0,0,1,128,63.999993)"
+           id="use3033"
+           inkscape:transform-center-x="-21.333333"
+           xlink:href="#path5608"
            y="0"
-           xlink:href="#use6410"
-           inkscape:transform-center-x="-14.166721"
-           id="use6412"
+           x="0" />
+        <use
+           style="fill:#94ffb4;fill-opacity:1;stroke:none"
+           height="1024"
+           width="1024"
            transform="translate(0,128.00001)"
-           width="1024"
-           height="1024"
-           style="fill:none;stroke:#00e765;stroke-opacity:1" />
-        <use
-           x="0"
+           id="use3035"
+           inkscape:transform-center-x="21.333333"
+           xlink:href="#path5608"
            y="0"
-           xlink:href="#use6412"
-           inkscape:transform-center-x="-14.166721"
-           id="use6414"
+           x="0" />
+        <use
+           style="fill:#94ffb4;fill-opacity:1;stroke:none"
+           height="1024"
+           width="1024"
+           transform="translate(0,128.00001)"
+           id="use3037"
+           inkscape:transform-center-x="-21.333333"
+           xlink:href="#use5610"
+           y="0"
+           x="0" />
+        <use
+           style="fill:#94ffb4;fill-opacity:1;stroke:none"
+           height="1024"
+           width="1024"
            transform="translate(0,128)"
-           width="1024"
-           height="1024"
-           style="fill:none;stroke:#00e765;stroke-opacity:1" />
-        <use
-           x="0"
+           id="use3039"
+           inkscape:transform-center-x="21.333333"
+           xlink:href="#use5612"
            y="0"
-           xlink:href="#use6414"
-           inkscape:transform-center-x="-14.166721"
-           id="use6416"
-           transform="translate(0,127.99997)"
-           width="1024"
-           height="1024"
-           style="fill:none;stroke:#00e765;stroke-opacity:1" />
+           x="0" />
         <use
-           x="0"
-           y="0"
-           xlink:href="#use6416"
-           inkscape:transform-center-x="-14.166721"
-           id="use6422"
-           transform="translate(0,127.99997)"
-           width="1024"
+           style="fill:#94ffb4;fill-opacity:1;stroke:none"
            height="1024"
-           style="fill:none;stroke:#00e765;stroke-opacity:1" />
+           width="1024"
+           transform="translate(0,128)"
+           id="use3041"
+           inkscape:transform-center-x="-21.333333"
+           xlink:href="#use5614"
+           y="0"
+           x="0" />
         <use
-           x="0"
-           y="0"
-           xlink:href="#use6404"
-           inkscape:transform-center-x="-14.166721"
-           id="use6424"
-           transform="translate(0,-128.00001)"
-           width="1024"
+           style="fill:#94ffb4;fill-opacity:1;stroke:none"
            height="1024"
-           style="fill:none;stroke:#00e765;stroke-opacity:1" />
+           width="1024"
+           transform="translate(0,384.00001)"
+           id="use3043"
+           inkscape:transform-center-x="21.333333"
+           xlink:href="#path5608"
+           y="0"
+           x="0" />
+        <use
+           style="fill:#94ffb4;fill-opacity:1;stroke:none"
+           height="1024"
+           width="1024"
+           transform="translate(0,384.00001)"
+           id="use3045"
+           inkscape:transform-center-x="-21.333333"
+           xlink:href="#use5610"
+           y="0"
+           x="0" />
       </g>
     </g>
-    <use
-       x="0"
-       y="0"
-       xlink:href="#g5646"
-       id="use5665"
-       transform="matrix(-1,0,0,1,256,-7.3004921e-6)"
-       width="1024"
-       height="1024" />
-    <use
-       x="0"
-       y="0"
-       xlink:href="#use5665"
-       id="use5667"
-       transform="matrix(-1,0,0,1,512,0)"
-       width="1024"
-       height="1024" />
-    <use
-       x="0"
-       y="0"
-       xlink:href="#use5667"
-       id="use5669"
-       transform="matrix(-1,0,0,1,768,0)"
-       width="1024"
-       height="1024" />
-    <use
-       x="0"
-       y="0"
-       xlink:href="#use5669"
-       id="use5671"
-       transform="matrix(-1,0,0,1,1024,0)"
-       width="1024"
-       height="1024" />
-    <use
-       x="0"
-       y="0"
-       xlink:href="#use5671"
-       id="use5673"
-       transform="matrix(-1,0,0,1,1280,0)"
-       width="1024"
-       height="1024" />
-    <use
-       x="0"
-       y="0"
-       xlink:href="#use5673"
-       id="use5675"
-       transform="matrix(-1,0,0,1,1536,0)"
-       width="1024"
-       height="1024" />
-    <use
-       x="0"
-       y="0"
-       xlink:href="#use5675"
-       id="use5677"
-       transform="matrix(-1,0,0,1,1792,0)"
-       width="1024"
-       height="1024" />
   </g>
 </svg>

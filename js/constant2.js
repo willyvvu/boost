@@ -1,14 +1,15 @@
 //Unit conversion
 mph=3600*100/2.54/12/5280
+kph=3600/1000
 
 //Global stuff
 deltatime=1/60
 
 //Speeds
-boostspeed=900/mph//Maximum boost speed
-maxspeed=1000/mph//Maximum overall speed
+boostspeed=1100/mph//Maximum boost speed
+maxspeed=1200/mph//Maximum overall speed
 friction=0.00001
-extfriction=0.9
+extfriction=0.99
 
 //Energy usage
 boostusage=0.002
@@ -56,10 +57,15 @@ camsmooth=0.1
 
 //Other stuff
 slightly=0.01
-trail=300
+trail=20
 raycaster=new THREE.Raycaster()
 collisionconst=0.5//Really small, but not 0
 maxcollisions=10
+blow=2//Seconds before blowing up
+//Powerups
+residueslow=50*mph
+emprange=400
+empslow=300*mph/deltatime
 
 //Autopilot
 
@@ -83,15 +89,42 @@ function restrict(vec,plane){//Real simple.
 	}
 }
 function addSpark(position,velocity){
-	sparks.geometry.verticesNeedUpdate=true
-	var fromend=sparks.geometry.vertices.pop()
-	fromend.copy(position)
-	fromend.velocity.set(Math.random()-0.5,Math.random()-0.5,Math.random()-0.5)
-	fromend.velocity.multiplyScalar(0.1)
-	fromend.velocity.add(velocity)
-	fromend.opacity=1
-	fromend.color=Math.random()
-	sparks.geometry.vertices.unshift(fromend)
+	var current=sparks.geometry.vertices[currentspark]
+	current.copy(position)
+	current.velocity.set(Math.random()-0.5,Math.random()-0.5,Math.random()-0.5)
+	if(typeof velocity=='number'){
+		current.velocity.multiplyScalar(velocity)
+	}
+	else{
+		current.velocity.multiplyScalar(0.1)
+		current.velocity.add(velocity)
+	}
+	current.opacity=1
+	current.color=Math.random()
+	currentspark++
+	if(currentspark>=sparks.geometry.vertices.length){currentspark=0}
+}
+function addSmoke(position,fireball){
+	var current=smoke.geometry.vertices[currentsmoke]
+	current.copy(position)
+	current.velocity.set(Math.random()-0.5,Math.random()-0.5,Math.random()-0.5)
+	current.velocity.multiplyScalar(0.02)
+	resource.smokeMat.attributes.opacity.value[currentsmoke]=fireball?1.1:1
+	currentsmoke++
+	if(currentsmoke>=smoke.geometry.vertices.length){currentsmoke=0}
+}
+function addEmitter(position,velocity,life,fireball){
+	var emit=new THREE.Vector3().copy(position)
+	emit.velocity=velocity
+	emit.life=life
+	emit.fireball=fireball
+	emitters.push(emit)
+}
+function smartpop(list,item){
+	var ind=list.indexOf(item)
+	if(ind!=-1){
+		list.splice(ind,1)
+	}
 }
 function addBoostPad(position,rotation,powerup){
 	var pad=new THREE.Mesh(
@@ -102,10 +135,10 @@ function addBoostPad(position,rotation,powerup){
 	pad.rotation.copy(rotation)
 	pad.scale.multiplyScalar(5)
 	var collider=new THREE.Mesh(
-		new THREE.PlaneGeometry(10,10,1,1),
+		new THREE.CubeGeometry(15,5,15),
 		new THREE.MeshBasicMaterial()
 	)
-	collider.geometry.applyMatrix(new THREE.Matrix4().rotateX(-Math.PI/2))
+	//collider.geometry.applyMatrix(new THREE.Matrix4().rotateX(-Math.PI/2))
 	collider.position.copy(position)
 	collider.rotation.copy(rotation)
 	collider.boostpad=pad
@@ -115,4 +148,51 @@ function addBoostPad(position,rotation,powerup){
 	scene.add(pad)
 	scene.add(collider)
 	colliders.push(collider)
+}
+function addResidue(position){
+	var residue=new THREE.Sprite(
+		//resource.residueGeo,
+		resource.residueMat.clone()
+	)
+	residue.position.copy(position)
+	var collider=new THREE.Mesh(
+		new THREE.CubeGeometry(5,5,5),
+		new THREE.MeshBasicMaterial()
+	)
+	collider.position.copy(position)
+	collider.visible=false
+	residue.exploding=0
+	collider.residue=residue
+	residue.collider=collider
+	scene.add(collider)
+	residuals.push(residue)
+	colliders.push(collider)
+	scene.add(residue)
+}
+function removeResidue(object){
+	scene.remove(object)
+	//scene.remove(object.residue)
+	smartpop(colliders,object)
+	object.residue.exploding=slightly
+	//smartpop(residuals,object.residue)
+}
+function entity(text){
+	for(var e in entityTable){
+		text=text.replace(new RegExp(e,'g'),'&'+entityTable[e]+';')
+	}
+	return text.replace(/\n/g,'<br>')
+}
+// all HTML4 entities as defined here: http://www.w3.org/TR/html4/sgml/entities.html
+// added: amp, lt, gt, quot and apos
+entityTable = {
+	'À':'Agrave',
+	'à':'agrave',
+	'È':'Egrave',
+	'è':'egrave',
+	'É':'Eacute',
+	'é':'eacute',
+	'ô':'ocirc',
+	'â':'acirc',
+	"'":'apos',
+	'\"':'quot'
 }
