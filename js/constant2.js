@@ -61,7 +61,7 @@ trail=20
 raycaster=new THREE.Raycaster()
 collisionconst=0.5//Really small, but not 0
 maxcollisions=10
-blow=2//Seconds before blowing up
+blow=0//Seconds before blowing up
 //Powerups
 residueslow=50*mph
 emprange=400

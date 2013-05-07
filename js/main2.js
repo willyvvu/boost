@@ -5,6 +5,7 @@ infoelem=document.getElementById('info')
 reticle=document.getElementById('reticle')
 mouse={lookx:0,looky:0,down:false}
 paused=false
+racing=false
 window.onmousedown=function(ev){
 	mouse.down=true
 	mouse.lookx=2*ev.pageX/window.innerWidth-1
@@ -44,18 +45,39 @@ function init(){//Sets up everything, provided that we are all loaded and ready 
 	initSky()//And a sky
 	initFlare()//Lensflare
 	initParticles()
+	initBeforeRace()
 	initShips()
-	//initShadow()
 	countdown=4
-	countDown()
-	//All set and ready to go
-	document.getElementById('hudcontainer').style.display=''
 	document.getElementById('loading').style.display='none'
 	render()
 }
+function initBeforeRace(){
+	flyover=new THREE.Object3D()
+	flyphase=330
+	flyover.eulerOrder='YXZ'
+	scene.add(flyover)
+	flyover.add(camera)
+}
+function startRace(){
+	camera.position.set(0,0,0)
+	camera.rotation.set(0,Math.PI,0)
+	me.camera.add(camera)
+	
+	racing=true
+	paused=false
+	//initShadow()
+	countDown()
+	//All set and ready to go. Wait to start.
+	document.getElementById('hudcontainer').style.display=''
+}
 function initCore(){
 	container=document.getElementById('container')
-	renderer=new THREE.WebGLRenderer({clearColor:0x000000,clearAlpha:0})
+	try{
+		renderer=new THREE.WebGLRenderer({clearColor:0x000000,clearAlpha:0})
+	}
+	catch(e){
+		alert(':( Uh oh. We have a problem that could be any of the below.\n\n1. You are not using a supported browser. Chrome is preferred.\n2. If you are using Chrome, WebGL could be disabled due to unknown or insufficient hardware.\n3. Your graphics card does not support WebGL. Can\'t help you there.')
+	}
 	renderer.autoClear=false
 	var maxaniso=renderer.getMaxAnisotropy()
 	for(var c in resource){
@@ -114,7 +136,8 @@ function initTrack(){
 	scene.add(resource.objGround)
 	resource.obj0.material=new THREE.MeshPhongMaterial({
 		map:resource.tex0,
-		envMap:resource.skyTex
+		envMap:resource.skyTex,
+		reflectivity:0.8
 	})
 	scene.add(resource.obj0)
 	resource.obj1.material=new THREE.MeshPhongMaterial({
@@ -285,31 +308,27 @@ function initShips(){
 	ships.push(me)
 	scene.add(me.main)
 	colliders.push(me.collider)
-	me.main.position.z=25
-	me.main.position.x=3
-		
+	me.main.position.set(3,5,25)
+	me.respawnsave.position.copy(me.main.position)
+	
 	you=new Ship()
 	ships.push(you)
 	scene.add(you.main)
 	colliders.push(you.collider)
-	you.main.position.z=20
-	you.main.position.x=-3
+	you.main.position.set(-3,5,20)
+	you.respawnsave.position.copy(you.main.position)
 	for(var s=1;s<=0;s++){
 		u=new Ship()
 		ships.push(u)
 		scene.add(u.main)
-		u.main.position.z=20-5*s
-		u.main.position.x+=s%2==0?-3:3
+		u.main.position.set(s%2==0?-3:3,5,20-5*s)
+		u.respawnsave.position.copy(u.main.position)
 		colliders.push(u.collider)
 	}
-	//camera.position.set(0,3,6)
-	//camera.lookAt(new THREE.Vector3(0,0,-10))
-	camera.rotation.y=Math.PI
-	me.camera.add(camera)
-	//camera2.position.set(0,3,6)
-	//camera2.lookAt(new THREE.Vector3(0,0,-10))
-	camera2.rotation.y=Math.PI
-	you.camera.add(camera2)
+	//camera.rotation.y=Math.PI
+	//me.camera.add(camera)
+	//camera2.rotation.y=Math.PI
+	//you.camera.add(camera2)
 }
 time=0
 counter=document.getElementById('countdown')
@@ -341,28 +360,52 @@ function render(){
 	}
 	gamepad()
 	me.controller=controllers[0]||keyboard
+	if(me.controller===controllers[0]&&mouse.down){
+		me.controller.lookx=mouse.lookx//Be able to look
+		me.controller.looky=mouse.looky
+	}
 	//you.controller=controllers[1]||keyboard2
 	for(var s=0;s<ships.length;s++){
 		ships[s].simulate()
 	}
-	me.updateHUD(mehud)
-	raycaster.ray.origin.getPositionFromMatrix(camera.matrixWorld)
-	raycaster.ray.direction.set(0,0,-1).transformDirection(camera.matrixWorld)
-	var intersections=raycaster.intersectObjects(info)
-	if(intersections.length){
-		var priority=-1
-		for(var c=0;c<intersections.length;c++){
-			if(intersections[c].object.priority>priority||priority==-1){
-				priority=intersections[c].object.priority
-				infoelem.innerHTML=intersections[c].object.info
+	if(racing){
+		me.updateHUD(mehud)
+		if(me.lookaway>0.01){
+			raycaster.ray.origin.getPositionFromMatrix(camera.matrixWorld)
+			raycaster.ray.direction.set(0,0,-1).transformDirection(camera.matrixWorld)
+			var intersections=raycaster.intersectObjects(info)
+			if(intersections.length){
+				var priority=-1
+				for(var c=0;c<intersections.length;c++){
+					if(intersections[c].object.priority>priority||priority==-1){
+						priority=intersections[c].object.priority
+						infoelem.innerHTML=intersections[c].object.info
+					}
+				}
+			}
+			else{
+				infoelem.innerHTML=entity('Mettez votre réticule sur un objet pour apprendre plus')
 			}
 		}
+		infoelem.style.opacity=clamp(10*me.lookaway,0,1)
+		reticle.style.opacity=clamp(10*me.lookaway,0,1)
 	}
 	else{
-		infoelem.innerHTML=entity('Mettez votre réticule sur un objet pour apprendre plus')
+		if(flyphase%20>10){
+			flyover.position.set(0,0,0)
+			camera.position.set(0,0,1200+200*Math.sin(flyphase*0.1/Math.SQRT2))
+			flyover.rotation.set(Math.sin(flyphase*0.1)*0.4-0.6,flyphase*0.1,0)
+		}else{
+			flyover.position.set(0,0,25)
+			camera.position.set(0,0,20)
+			flyover.rotation.set(Math.sin((flyphase+233248)*0.1)*0.1-0.2,(flyphase+2348)*0.1,0)
+		}
+		flyphase+=deltatime
+		var control=controllers[0]||keyboard
+		if(control.accel!=0){
+			startRace()
+		}
 	}
-	infoelem.style.opacity=clamp(10*me.lookaway,0,1)
-	reticle.style.opacity=clamp(10*me.lookaway,0,1)
 	if(!paused){
 		fxStep()
 		simulateParticles()
@@ -398,7 +441,7 @@ function render(){
 		
 	}
 	else{
-		me.copyUniforms(coolPass.uniforms,scalePass.uniforms)
+		if(racing){me.copyUniforms(coolPass.uniforms,scalePass.uniforms)}
 		scalePass.uniforms.backbuffer.value=savePass.renderTarget
 		renderer.render(scene,camera,composer.renderTarget2,true)
 		composer.render()

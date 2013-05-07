@@ -44,6 +44,16 @@ function Ship(){
 		motionblur:0,
 	}
 	
+	//Mechanics
+	this.lap=0
+	this.lapstate=0//0: on track, 1: before line, 2: after line
+	/*Lap logic:
+	 * If enter 1,
+	 *  if was in 2, lap--
+	 * 
+	 * If enter 2
+	 *  if was in 1, lap++
+	*/
 	this.powerup=''
 	this.poweringup=0
 	this.absorbing=0
@@ -90,8 +100,8 @@ function Ship(){
 		 * 800 Phantom
 		 */
 		mass:2000,//Kilograms
-		handle:0.5,//Handling
-		turndeg:0.028,//Radians for how fast to turn
+		handle:0.1,//Handling
+		turndeg:0.032,//Radians for how fast to turn
 		shiftdeg:0.01//Radians for how fast to shift
 	}
 }
@@ -162,6 +172,8 @@ _Ship={//All useful ship functions
 		this.leftsmooth.copy(this.left)
 		this.frontsmoothless.copy(this.front)
 		this.quanta=1
+		this.lap=0
+		this.lapstate=0
 	},
 	simulate:function(){
 		if(!paused){
@@ -174,6 +186,7 @@ _Ship={//All useful ship functions
 			//this.main.position.add(this.velocity.clone().multiplyScalar(deltatime))
 			this.resolveCollisions()
 			this.modelFX()
+			this.checkLap()
 		}
 		this.modelCam()
 	},
@@ -256,6 +269,7 @@ _Ship={//All useful ship functions
 		}
 		this.control.lookx=this.controller.lookx//Be able to look
 		this.control.looky=this.controller.looky
+		this.control.rearview=this.controller.rearview
 		if(!paused){
 			this.controlsmooth.accel=zone?1:clamp(this.control.accel,0,1)
 			this.controlsmooth.lbrake=clamp(lerp(this.controlsmooth.lbrake,this.control.lbrake*this.control.lbrake,0.5),0,1)
@@ -312,12 +326,12 @@ _Ship={//All useful ship functions
 				Math.abs(this.controlsmooth.looky)),0,1)
 		if(!paused&&(this.lookaway>0.1||mouse.down)&&this.velocity.length()>40){
 			this.shield.material.map=resource.autopilotTex
-			this.autopiloting=Infinity//Math.max(this.autopiloting,2)
+			this.autopiloting=1.5//Math.max(this.autopiloting,2)
 		}
 	},
 	calculateForce:function(){
 		var morelength=0,length=this.engineforce.length(),handle=this.dynamics.handle
-		if(this.dying<blow){//Dead physics
+		if(this.dying==0){//Dead physics
 			this.vforce.copy(this.velocity).multiplyScalar(2)
 			if(this.pushing>0){//Being pushed along
 				if(length<maxspeed){
@@ -332,7 +346,7 @@ _Ship={//All useful ship functions
 					this.uniforms.phase=slightly
 					if(zone){this.nextQuanta()}
 				}
-				this.hurt(boostusage)
+				this.hurt(boostusage,0,true)
 				this.boosting=Math.max(0,this.boosting-0.2)
 				if(this.controlsmooth.boost){
 					this.boosting=1
@@ -352,7 +366,7 @@ _Ship={//All useful ship functions
 				}
 			}
 			//handle=lerp(this.dynamics.handle,0.1,Math.max(this.controlsmooth.lbrake,this.controlsmooth.rbrake))
-			morelength=Math.max(-length,morelength/this.dynamics.mass)
+			morelength=Math.max(-length*handle,morelength/this.dynamics.mass)
 		
 			var realsteer=(this.grounded?1:airturn)*this.dynamics.turndeg//*(this.engineforce.length()*0.001+1)
 			if(this.controlsmooth.steer){//Steering
@@ -379,7 +393,7 @@ _Ship={//All useful ship functions
 			if(this.angularAxis==false){//BOOM!
 				//this.engineforce.set(0,0,0)
 				this.hull.material.map=resource.hullToastTex
-				this.externalforce.set(Math.random()-0.5,100,Math.random()-0.5)
+				this.externalforce.set(Math.random()-0.5,80,Math.random()-0.5)
 				this.angularAxis=new THREE.Quaternion().setFromEuler(
 					new THREE.Vector3(Math.random()-0.5,Math.random()-0.5,Math.random()-0.5).multiplyScalar(0.5)
 				,'XYZ')
@@ -428,7 +442,7 @@ _Ship={//All useful ship functions
 			if(this.grounded){
 				//Just landed
 				this.rolling=0
-				if(this.dying<blow&&this.rollboost){
+				if(this.dying==0&&this.rollboost){
 					this.camboost=1
 					this.pushing=Math.max(this.pushing,this.rollboost)
 					this.uniforms.phase=slightly
@@ -569,7 +583,7 @@ _Ship={//All useful ship functions
 					this.grounded=this.aircount
 					var angle=Math.acos(clamp(dot,-1,1))
 					//if(angle>Math.PI/2){angle-=Math.PI}
-					if(this.dying<blow&&angle!=0){
+					if(this.dying==0&&angle!=0){
 						var inv=new THREE.Matrix4().getInverse(this.main.matrix)
 						this.main.matrix.rotateByAxis(
 							normal.clone().cross(this.up).transformDirection(inv),
@@ -620,14 +634,42 @@ _Ship={//All useful ship functions
 			return _now
 		}
 	},
-	hurt:function(amount,shake){
-		if(!this.shielding&&!this.autopiloting){
+	checkLap:function(){
+		var incylinder=
+			this.main.position.x>-35&&
+			this.main.position.x<35&&
+			this.main.position.y>-35&&
+			this.main.position.y<35
+		if(incylinder&&
+			this.main.position.z<35&&
+			this.main.position.z>0
+		){
+			if(this.lapstate==2){
+				this.lap=Math.max(this.lap-1,0)
+			}
+			this.lapstate=1
+		}
+		else if(incylinder&&
+			this.main.position.z<=0&&
+			this.main.position.z>-35
+		){
+			if(this.lapstate==1){
+				this.lap++
+			}
+			this.lapstate=2
+		}
+		else{
+			this.lapstate=0
+		}
+	},
+	hurt:function(amount,shake,override){
+		if(override||!this.shielding&&!this.autopiloting){
 			this.energy=Math.max(this.energy-amount,0)
+			this.hurting=hurtduration
 		}
 		if(shake&&this.dying==0){
 			this.camerahit.set(Math.random()-0.5,Math.random()-0.5,0).multiplyScalar(shake)
 		}
-		this.hurting=hurtduration
 		//this.hudColor.add(orange.clone().multiplyScalar(amounthurt*deltatime))
 	},
 	heal:function(amount){
@@ -644,7 +686,7 @@ _Ship={//All useful ship functions
 		var camstrafe=this.modelrotate*Math.min(this.engineforce.length()*deltatime*0.08,1)
 		this.camera.up.copy(this.upsmooth).lerp(
 			new THREE.Vector3(0,1,0),
-			clamp(this.dying/blow+this.lookaway*10,0,1)
+			clamp((this.dying==0?0:1)+this.lookaway*10,0,1)
 		)
 		if(!this.control.rearview||this.dying>0){
 			//Normal camera
@@ -660,17 +702,17 @@ _Ship={//All useful ship functions
 				this.camera.children[0].updateProjectionMatrix()
 			}
 			var togo=this.holder.position.clone().add(
-					this.frontsmooth.clone().multiplyScalar(-2*(clamp(this.dying/blow,0,1))+incomp*(-4.5
+					this.frontsmooth.clone().multiplyScalar(-2*(clamp(this.dying==0?0:1,0,1))+incomp*(-4.5
 						-3*Math.min(this.engineforce.length()*deltatime*0.085,1)*(1-0.2*this.camboostsmooth)))
 					.add(this.upsmooth.clone().multiplyScalar(3*incomp))
 					.add(this.leftsmooth.clone().multiplyScalar(1.5*incomp*camstrafe)))
-			if(this.dying<blow){
+			if(this.dying==0){
 				this.camera.position.copy(togo)
 			}
 			this.camera.lookAt(this.holder.position.clone()
 				.add(this.frontsmooth.clone().multiplyScalar(4))
 				.add(this.leftsmooth.clone().multiplyScalar(3*camstrafe))
-				.lerp(this.main.position,clamp(this.dying/blow,0,1)))
+				.lerp(this.main.position,clamp(this.dying==0?0:1,0,1)))
 			this.camera.rotation.add(this.camerahit)
 			this.camera.rotation.x+=Math.PI/2*this.controlsmooth.looky
 			this.camera.rotation.y-=Math.PI*this.controlsmooth.lookx
@@ -745,21 +787,18 @@ _Ship={//All useful ship functions
 			this.shine.material.opacity=1
 		}
 		if(this.energy<0.3){
-			if(this.dying<blow){
+			if(this.dying==0){
 				addSmoke(this.front.clone().multiplyScalar(-2).add(this.main.position))
 			}
 			else{
 				addSmoke(this.main.position.clone())
 			}
 		}
-		if(this.energy<=0&&this.dying<blow){
-			addSpark(this.front.clone().multiplyScalar(-2).add(this.main.position),0.1)
-		}
 		//Perform death
 		if(this.energy<=0||this.dying>0){
 			this.dying+=deltatime
 		}
-		if(this.dying>4){
+		if(this.dying>2){
 			this.dying=0
 			this.respawn()
 		}
@@ -783,12 +822,15 @@ _Ship={//All useful ship functions
 		var speed=element.getElementsByClassName('speed')[0]
 		var energy=element.getElementsByClassName('energy')[0]
 		var lowerleft=element.getElementsByClassName('lowerleft')[0]
+		var currentlap=element.getElementsByClassName('currentlap')[0]
 		
 		speed.innerText=Math.round(this.engineforce.length()*kph)
 		energy.innerText=Math.round(this.energy*100)
 		
+		currentlap.innerText=Math.max(1,this.lap)
+		
 		lowerleft.style.color=
-			(!!this.shielding||!!this.autopiloting)?(flash&&!!this.absorbing?whitehex:greenhex)://Shielding
+			(!!this.shielding||!!this.autopiloting)?(flash&&(!!this.hurting||!!this.absorbing)?whitehex:greenhex)://Shielding
 			flash&&!!this.absorbing?greenhex:
 			(!this.hurting&&this.energy<=0.3||!flash&&(!!this.hurting||this.energy<=0.1))?redhex:whitehex
 		var autodisengaging=(this.autopiloting>0&&this.autopiloting<=1)

@@ -213,13 +213,13 @@ sceneloader.load('scene/track7/World.js',function(data){
 	//resource.structureObj=data.objects['Plane.001']
 	//resource.overpassObj=data.objects.Overpass
 	resource.obj0.info=entity("Les Tours\n(l'Habitation)\n\nTous les 50.000 habitants habiteraient dans les tours. En Mars, l'espace serait très limité, donc il n'y aurait pas les maisons individuelles! Chaque mètre couterait cher!")
-	resource.obj1.info=entity("Les Fermes Verticales\n(De la Nature)\n\nParce que l'espace étaient limité, on cultiverait les plantes sur les toits (roofs) des gratte-ciels et dans les énormes fermes verticales. Les plantes assistait de faire l'oxygène. Aussi, les plantes terraformeraient la Mars en une planète habitable.")
-	resource.obj2.info=entity("Le Garde-Meuble\n(De la Culture)\n\nCette grande garde-meuble garderait toute l'information culturelle et historique. Une note culturelle, par exemple, lirait, \"Tous les gens qui habiteraient en Mars devraient visiter la terre au moins d'une fois d'une vie\" . Aussi, il garde les nourritures et l'eau en trop. Aussi, il garde une section de l'internet.")
+	resource.obj1.info=entity("Les Fermes Verticales\n(De la Nature)\n\nParce que l'espace étaient limité, on cultiverait les plantes sur les toits (roofs) des tours et dans les énormes fermes verticales. Les plantes assistait de faire l'oxygène. Aussi, les plantes terraformeraient la Mars en une planète habitable.")
+	resource.obj2.info=entity("Le Garde-Meuble\n(De la Culture)\n\nCette grande garde-meuble garderait une section de l'internet, avec toute l'information culturelle et historique. Une note culturelle, par exemple, lirait, \"Tous les gens qui habiteraient en Mars devraient visiter la terre au moins d'une fois d'une vie\" . Aussi, il garde les nourritures et l'eau en trop.")
 	resource.obj3.info=entity("La Mine\n(Du commerce)\n\nEn Mars, on utilisait une autre type de monnaie. L'économie serait basé sur quelques minérals rares dans la terre martienne. On les enlèverait et à cette mine, et après, on les enverrait à la terre.")
 	resource.obj4.info=entity("Les Évaporateurs\n(l'Habitation)\n\n L'eau serait fait avec l'évaportation. L'eau est essentiel pour la vie de tous les habitants.")
 	resource.objP.info=entity("Les Panneaux Solaires\n(Des Services Municipaux)\n\nPrès de 100% d'énergie viendrait des panneaux solaires. Ce serait une bonne forme d'energie.")
 	resource.objP1.info=entity("La Plate-Forme d'Atterrissage\n(Des loisirs)\n\nPendant les vacances, quelques habitants feraient un voyage interstellaire ou un voyage à la terre. Aussi, on pourrait jouer dans une équipe de courses en voiture volants. Les voitures iraient vite, n'est-ce pas?")
-	resource.objI0.info=entity("Le Dôme\n(l'Habitation)\n\nPour retenir l'oxygène et la temperature, il y avait un dôme de verre autour de la ville. Sans-dôme, les habitants mourraient")
+	resource.objI0.info=entity("Le Dôme\n(l'Habitation)\n\nPour retenir l'oxygène et la temperature, il y avait un dôme de verre autour de la ville. Sans-dôme, les habitants mourraient.")
 	resource.objI1.info=entity("L'École Primaire et La Lycée\n(De l'Éducation)\n\nLes enfants étudieraient dans ces bâtiments. À l'intérieur de chaque bâtiment, il y avait une grande chambre de réalité virtuelle, qui montraient l'information que le garde-meuble garderait. Les universités seraient des laboratoires en espace.")
 	resource.trackcollide.info=entity("La rue\n(Du Transport)\n\nMaintenant, on inventerait les voitures volants, qu'irait à plus de 1500 kph! Mais, à grande vitesse, ce n'étaient pas un human qui conduisait, c'étaient le pilote automatique! En général, les rues étaient élevé, loin de la terre.")
 	resource.obj0.priority=2
@@ -240,8 +240,14 @@ sceneloader.load('scene/track7/World.js',function(data){
 	resource.objP,
 	resource.objP1,
 	resource.objI0,
-	resource.objI1,
-	resource.trackcollide]
+	resource.objI1]
+	for(var c=0;c<info.length;c++){
+		info[c].geometry.computeFaceNormals()
+		info[c].geometry.computeVertexNormals()
+		info[c].geometry.normalsNeedUpdate=true
+		info[c].geometry.verticesNeedUpdate=true
+	}
+	info.push(resource.trackcollide)
 })
 loader.load('scene/trackresource/Pad2.js',function(geo){resource.padGeo=geo})
 var req=new XMLHttpRequest()

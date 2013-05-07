@@ -72,7 +72,7 @@ function gamepad(){
 				controllers[c].rearview=deadZone(g.buttons[7])
 				//controllers[c].respawn=deadZone(g.buttons[9])
 				var cpaused=deadZone(g.buttons[9])!=0
-				if(cpaused&&(cpaused!=controllers[c].paused)){
+				if(cpaused&&(cpaused!=controllers[c].paused)&&racing){
 					paused=!paused
 				}
 				controllers[c].paused=cpaused
@@ -90,7 +90,7 @@ keys=[]
 function keyChange(e){//Picks up any change in keys: keyup and keydown
 	var ind=keys.indexOf(e.keyCode)
 	if(e.type=='keydown'){
-		if(e.keyCode==19){//Pause
+		if(e.keyCode==19&&racing){//Pause
 			paused=!paused
 		}
 		if(ind==-1){
