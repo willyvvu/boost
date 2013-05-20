@@ -6,8 +6,8 @@
 	"type"          : "scene",
 	"sourceFile"    : "World.blend",
 	"generatedBy"   : "Blender 2.65 Exporter",
-	"objects"       : 14,
-	"geometries"    : 14,
+	"objects"       : 15,
+	"geometries"    : 15,
 	"materials"     : 3,
 	"textures"      : 0
 },
@@ -171,6 +171,20 @@
 		"doubleSided"   : false
 	},
 
+	"Center" : {
+		"geometry"  : "geo_Center",
+		"groups"    : [  ],
+		"material"  : "",
+		"position"  : [ 0, -6.93297e-06, 202.549 ],
+		"rotation"  : [ -1.5708, 0, 0 ],
+		"quaternion": [ -0.707107, 0, 0, 0.707107 ],
+		"scale"     : [ 1, 1, 1 ],
+		"visible"       : true,
+		"castShadow"    : false,
+		"receiveShadow" : false,
+		"doubleSided"   : false
+	},
+
 	"Collide" : {
 		"geometry"  : "geo_Backup.000",
 		"groups"    : [  ],
@@ -270,6 +284,11 @@
 	"geo_Ground.001" : {
 		"type" : "ascii",
 		"url"  : "World.Ground.001.js"
+	},
+
+	"geo_Center" : {
+		"type" : "ascii",
+		"url"  : "World.Center.js"
 	},
 
 	"geo_Backup.000" : {

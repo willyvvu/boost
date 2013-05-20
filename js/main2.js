@@ -3,9 +3,8 @@ window.addEventListener('resize',resize)
 mehud=document.getElementById('hudcontainer')
 infoelem=document.getElementById('info')
 reticle=document.getElementById('reticle')
-mouse={lookx:0,looky:0,down:false}
-paused=false
-racing=false
+counter=document.getElementById('countdown')
+/*mouse={lookx:0,looky:0,down:false}
 window.onmousedown=function(ev){
 	mouse.down=true
 	mouse.lookx=2*ev.pageX/window.innerWidth-1
@@ -31,15 +30,21 @@ window.onmousemove=function(ev){
 	}
 	keyboard.lookx=mouse.lookx
 	keyboard.looky=mouse.looky
-}
+}*/
 function init(){//Sets up everything, provided that we are all loaded and ready to go
-	initCore()//Camera, renderer, scene
-	initTrack()//Track
+	time=0
+	zone=true
+	paused=false
+	racing=false
+	
 	colliders=[]
+	rescolliders=[]
 	residuals=[]
 	exported=[]
 	emitters=[]
-	zone=false
+	missiles=[]
+	initCore()//Camera, renderer, scene
+	initTrack()//Track
 	initPads()//Boost pads
 	initLights()//Let there be light!
 	initSky()//And a sky
@@ -73,7 +78,7 @@ function startRace(){
 function initCore(){
 	container=document.getElementById('container')
 	try{
-		renderer=new THREE.WebGLRenderer({clearColor:0x000000,clearAlpha:0})
+		renderer=new THREE.WebGLRenderer({antialias:true})
 	}
 	catch(e){
 		alert(':( Uh oh. We have a problem that could be any of the below.\n\n1. You are not using a supported browser. Chrome is preferred.\n2. If you are using Chrome, WebGL could be disabled due to unknown or insufficient hardware.\n3. Your graphics card does not support WebGL. Can\'t help you there.')
@@ -84,8 +89,8 @@ function initCore(){
 		resource[c].anisotropy=maxaniso
 	}
 	composer=new THREE.EffectComposer(renderer)
-	composer.addPass(scalePass)
-	composer.addPass(savePass)
+	//composer.addPass(scalePass)
+	//composer.addPass(savePass)
 	composer.addPass(coolPass)
 	coolPass.renderToScreen=true
 	
@@ -126,71 +131,12 @@ function initTrack(){
 	autonav.material=new THREE.MeshBasicMaterial({side:THREE.DoubleSide})
 	autonav.visible=false
 	scene.add(autonav)
-	track=resource.trackObj
-	track.material=resource.trackMat//terrainMap
-	scene.add(track)
-	
-	resource.objGround.material=new THREE.MeshPhongMaterial({
-		map:resource.texGround
-	})
-	scene.add(resource.objGround)
-	resource.obj0.material=new THREE.MeshPhongMaterial({
-		map:resource.tex0,
-		envMap:resource.skyTex,
-		reflectivity:0.8
-	})
-	scene.add(resource.obj0)
-	resource.obj1.material=new THREE.MeshPhongMaterial({
-		shininess: 10.0,
-		map:resource.tex1,
-		envMap:resource.skyTex
-	})
-	scene.add(resource.obj1)
-	resource.obj2.material=new THREE.MeshPhongMaterial({
-		shininess: 10.0,
-		map:resource.tex2
-	})
-	scene.add(resource.obj2)
-	resource.obj3.material=new THREE.MeshPhongMaterial({
-		shininess: 10.0,
-		map:resource.tex2
-	})
-	scene.add(resource.obj3)
-	resource.obj4.material=new THREE.MeshPhongMaterial({
-		shininess: 10.0,
-		map:resource.tex4,
-		envMap:resource.skyTex
-	})
-	scene.add(resource.obj4)
-	resource.objP.material=new THREE.MeshPhongMaterial({
-		shininess: 10.0,
-		map:resource.texP,
-		envMap:resource.skyTex,
-		side:THREE.DoubleSide
-	})
-	scene.add(resource.objP)
-	resource.objP1.material=new THREE.MeshPhongMaterial({
-		shininess: 10.0
-	})
-	scene.add(resource.objP1)
-	resource.objI0.material=new THREE.MeshPhongMaterial({
-		shininess: 10.0,
-		wireframe:true
-	})
-	scene.add(resource.objI0)
-	resource.objI1.material=new THREE.MeshPhongMaterial({
-		shininess: 10.0,
-		map:resource.texI1
-	})
-	scene.add(resource.objI1)
-	//structure=resource.structureObj
-	//structure.material.materials[0].wireframe=false
-	//scene.add(structure)
+	currenttrack.init()
 }
 function initPads(){
 	boostpads=[]
-	for(var p=0;p<resource.padData.length;p++){
-		var place=resource.padData[p]
+	for(var p=0;p<currenttrack.pads.length;p++){
+		var place=currenttrack.pads[p]
 		addBoostPad(place.position,place.rotation,place.powerup)
 	}
 }
@@ -226,9 +172,11 @@ function initShadow(){
 	directional.shadowCameraBottom    = -50;
 }
 function initSky(){
-	resource.skyMat.uniforms.tCube.value=resource.skyTex
-	skyBox=new THREE.Mesh(new THREE.CubeGeometry(-100000,-100000,-100000,1,1,1),resource.skyMat)
-	scene.add(skyBox)
+	if(!zone){
+		resource.skyMat.uniforms.tCube.value=resource.skyTex
+		skyBox=new THREE.Mesh(new THREE.CubeGeometry(-100000,-100000,-100000,1,1,1),resource.skyMat)
+		scene.add(skyBox)
+	}
 }
 function initFlare(){
 	var flareColor=new THREE.Color(0xFFFF66)
@@ -275,7 +223,7 @@ function initParticles(){
 		new THREE.Geometry(),
 		resource.sparkMat
 	)
-	for(var c=0;c<200;c++){
+	for(var c=0;c<256;c++){
 		var vertex=new THREE.Vector3(0,0,0)
 		vertex.velocity=new THREE.Vector3(0,0,0)
 		vertex.opacity=0
@@ -291,7 +239,7 @@ function initParticles(){
 		new THREE.Geometry(),
 		resource.smokeMat
 	)
-	for(var c=0;c<1000;c++){
+	for(var c=0;c<1024;c++){
 		var vertex=new THREE.Vector3(0,-1000000,0)
 		vertex.opacity=0
 		vertex.velocity=new THREE.Vector3(0,0,0)
@@ -330,8 +278,6 @@ function initShips(){
 	//camera2.rotation.y=Math.PI
 	//you.camera.add(camera2)
 }
-time=0
-counter=document.getElementById('countdown')
 function countDown(){
 	countdown--
 	switch(countdown){
@@ -360,17 +306,17 @@ function render(){
 	}
 	gamepad()
 	me.controller=controllers[0]||keyboard
-	if(me.controller===controllers[0]&&mouse.down){
+	/*if(me.controller===controllers[0]&&mouse.down){
 		me.controller.lookx=mouse.lookx//Be able to look
 		me.controller.looky=mouse.looky
-	}
+	}*/
 	//you.controller=controllers[1]||keyboard2
 	for(var s=0;s<ships.length;s++){
 		ships[s].simulate()
 	}
 	if(racing){
 		me.updateHUD(mehud)
-		if(me.lookaway>0.01){
+		/*if(me.lookaway>0.01){
 			raycaster.ray.origin.getPositionFromMatrix(camera.matrixWorld)
 			raycaster.ray.direction.set(0,0,-1).transformDirection(camera.matrixWorld)
 			var intersections=raycaster.intersectObjects(info)
@@ -388,7 +334,7 @@ function render(){
 			}
 		}
 		infoelem.style.opacity=clamp(10*me.lookaway,0,1)
-		reticle.style.opacity=clamp(10*me.lookaway,0,1)
+		reticle.style.opacity=clamp(10*me.lookaway,0,1)*/
 	}
 	else{
 		if(flyphase%20>10){
@@ -441,14 +387,31 @@ function render(){
 		
 	}
 	else{
-		if(racing){me.copyUniforms(coolPass.uniforms,scalePass.uniforms)}
-		scalePass.uniforms.backbuffer.value=savePass.renderTarget
 		renderer.render(scene,camera,composer.renderTarget2,true)
 		composer.render()
+		//renderer.render(scene,camera)
 	}
 	window.webkitRequestAnimationFrame(render)
 }
 function fxStep(){
+	//Uniforms
+	if(racing){me.copyUniforms(coolPass.uniforms)}
+	//scalePass.uniforms.backbuffer.value=savePass.renderTarget
+	
+	//Trippy Colors
+	var amt=1-((time+100)%150)/150
+	var linepos=amt*1000-100
+	resource.zoneMaterial.uniforms.line.value=
+	resource.zoneTrackMaterial.uniforms.line.value=linepos*(Math.abs(linepos)*0.01+1)
+	resource.zoneTrackMaterial.uniforms.wave.value=Math.min(resource.zoneTrackMaterial.uniforms.wave.value+10,emprange)
+	if((time+100)%150==0){
+		resource.zoneMaterial.uniforms.closeColor.value.copy(resource.zoneMaterial.uniforms.farColor.value)
+		resource.zoneMaterial.uniforms.farColor.value.setHSL(Math.random(),1,0.5)
+		resource.zoneTrackMaterial.uniforms.closeColor.value.copy(resource.zoneTrackMaterial.uniforms.farColor.value)
+		resource.zoneTrackMaterial.uniforms.farColor.value.setHSL(Math.random(),1,0.5)
+	}
+	
+	//Shield and autopilot move
 	if(time%2==0){
 		if(resource.shieldTex.offset.x==0){
 			resource.shieldTex.offset.x=1/4
@@ -534,5 +497,26 @@ function simulateParticles(){
 		emitters[c].add(emitters[c].velocity)
 		emitters[c].velocity.multiplyScalar(0.99)
 		emitters[c].velocity.y-=0.01
+	}
+	for(var m=0;m<missiles.length;m++){
+		missiles[m].life-=deltatime
+		if(missiles[m].life<=0){
+			missiles.splice(m,1)
+			m--
+			continue
+		}
+		addSmoke(missiles[m],true)
+		var dist=missiles[m].velocity.length()
+		var solved=solveRay(missiles[m],missiles[m].velocity,dist,rescolliders.concat([trackcollide]))
+		if(solved){
+			missiles[m].velocity.copy(solved).multiplyScalar(dist)
+		}
+		else{
+			for(var s=0;s<20;s++){
+				addSpark(missiles[m],0.7)
+			}
+			missiles.splice(m,1)
+			m--
+		}
 	}
 }

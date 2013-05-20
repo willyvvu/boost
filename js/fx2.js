@@ -1,10 +1,98 @@
+var zoneDefaultColor=0x555555
+resource.zoneMaterial=new THREE.ShaderMaterial({
+	uniforms:{
+		line:{type:'f',value:0},
+		closeColor:{type:'c',value:new THREE.Color(zoneDefaultColor)},
+		farColor:{type:'c',value:new THREE.Color(zoneDefaultColor)}
+	},
+	vertexShader:[
+		'varying vec4 pos;',
+		'void main(){',
+			'gl_Position=projectionMatrix*',
+				'modelViewMatrix*',
+				'vec4(position,1.0);',
+			'pos=gl_Position;',
+		'}'
+	].join('\n'),
+	fragmentShader:[
+		'varying vec4 pos;',
+		'uniform float line;',
+		'uniform vec3 closeColor;',
+		'uniform vec3 farColor;',
+		'void main(){',
+			'vec3 color;',
+			'float linecol;',
+			'if(pos.z<line){',
+				'color=closeColor;',
+				'linecol=0.0;',
+			'}',
+			'else{',
+				'color=farColor;',
+				'linecol=clamp(1.0-0.02*(pos.z-line),0.0,1.0);',
+			'}',
+			'gl_FragColor=vec4(vec3((pos.z)/(pos.z*pos.z+10000.0)*200.0)*color',
+				'+linecol,1.0);',
+		'}'
+	].join('\n')
+})
+resource.zoneTrackMaterial=new THREE.ShaderMaterial({
+	uniforms:{
+		line:{type:'f',value:0},
+		wave:{type:'f',value:emprange},
+		wavepos:{type:'v3',value:new THREE.Vector3()},
+		map:{type:'t',value:null},
+		closeColor:{type:'c',value:new THREE.Color(zoneDefaultColor)},
+		farColor:{type:'c',value:new THREE.Color(zoneDefaultColor)}
+	},
+	vertexShader:[
+		'varying vec4 pos;',
+		'varying vec2 uvpos;',
+		'varying float wavemag;',
+		'uniform float wave;',
+		'uniform vec3 wavepos;',
+		'void main(){',
+			'float dist=length(position-vec3(-wavepos.x,wavepos.z-200.0,wavepos.y));',//-wavepos.x
+			'wavemag=100.0/(abs(dist-wave)*abs(dist-wave)+100.0)*clamp(1.0-(dist-400.0)/100.0,0.0,1.0);',
+			'uvpos=uv;',
+			'gl_Position=projectionMatrix*',
+				'modelViewMatrix*',
+				'vec4(position+vec3(0.0,0.0,-10.0)*wavemag,1.0);',
+			'pos=gl_Position;',
+		'}'
+	].join('\n'),
+	fragmentShader:[
+		'varying vec2 uvpos;',
+		'varying vec4 pos;',
+		'varying float wavemag;',
+		'uniform float line;',
+		'uniform vec3 closeColor;',
+		'uniform vec3 farColor;',
+		'uniform sampler2D map;',
+		'void main(){',
+			'vec3 color;',
+			'float linecol;',
+			'if(pos.z<line){',
+				'color=closeColor;',
+				'linecol=0.0;',
+			'}',
+			'else{',
+				'color=farColor;',
+				'linecol=clamp(1.0-0.02*(pos.z-line),0.0,1.0);',
+			'}',
+			'gl_FragColor=texture2D(map,uvpos)+vec4((pos.z)/(pos.z*pos.z+10000.0)*100.0*color',
+				'+wavemag*sin(uvpos.x*160.0)*sin(uvpos.y*160.0)',
+				'+linecol,1.0);',//Line
+		'}'
+	].join('\n')
+})
 var scalePass=new THREE.ShaderPass({//I'm going to be PRO with some
 //Scales up the image. For use with motion blur.
 	uniforms:{
 		'tDiffuse': { type: 't', value: null },
 		'backbuffer': { type: 't', value: null },
 		'motionblur': { type: 'f',value: 0}
-	},vertexShader: [
+	},
+	vertexShader: [
 	'varying vec2 v;',
 	'void main() {',
 		'v = uv;',
@@ -13,6 +101,7 @@ var scalePass=new THREE.ShaderPass({//I'm going to be PRO with some
 	].join('\n'),
 	fragmentShader: [
 	'uniform sampler2D tDiffuse;',
+	'uniform sampler2D tDepth;',
 	'uniform sampler2D backbuffer;',
 	'uniform float motionblur;',
 	'varying vec2 v;',
@@ -28,19 +117,13 @@ var coolPass=new THREE.ShaderPass({//I'm going to be PRO with some
 //CUSTOM SHADERS! WOAH! The coolPass makes everything so much cooler.
 	uniforms:{
 		'tDiffuse': { type: 't', value: null },
-		//'tDiffuse2': { type: 't', value: null },
-		//'tHex': { type: 't', value: null},
 		'phase': { type: 'f',value: 0},
-		/*'distort': { type: 'f',value: 0},
-		'damage': { type: 'f',value: 0},
-		'boost': { type: 'f',value: 0},
-		'cover': { type: 'f',value: 0}
-		'push': { type: 'f',value: 0},*/
 		'motionblur': { type: 'f',value: 0},
-		//'color': { type: 'v3',value: new THREE.Vector3()},
 		'resolution': { type: 'v2',value: new THREE.Vector2()},
-	},vertexShader: [
+	},
+	vertexShader: [
 	'varying vec2 v;',
+	'varying vec3 pos;',
 	'void main() {',
 		'v = uv;',
 		'gl_Position = vec4( position, 1.0 );',
@@ -59,6 +142,7 @@ var coolPass=new THREE.ShaderPass({//I'm going to be PRO with some
 	'uniform float cover;',*/
 	'uniform float motionblur;',
 	'varying vec2 v;',
+	'varying vec3 pos;',
 	'void main() {',
 		//'vec4 color=vec4(0.0,0.0,0.0,0.0);',
 		'vec2 vc=v;',
@@ -73,8 +157,16 @@ var coolPass=new THREE.ShaderPass({//I'm going to be PRO with some
 		'if(boost>0.001){color+=vin*boost*vec4(0.6,0.6,1.0,1.0);};',
 		'if(push>0.001){color+=vin*push*vec4(0.0,1.0,0.0,1.0);};',
 		'if(cover>0.001){color+=cover*vec4(1.0,1.0,1.0,1.0);};',*/
-		'gl_FragColor = texture2D(tDiffuse,vc);',
-		
+		'if(motionblur>0.01){',
+			'vec2 center=vc-0.5;',
+			'gl_FragColor=texture2D(tDiffuse,vc)*(1.0-0.6*motionblur)',
+				'+texture2D(tDiffuse,(center*1.05)+0.5)*0.3*motionblur',
+				'+texture2D(tDiffuse,(center*1.10)+0.5)*0.2*motionblur',
+				'+texture2D(tDiffuse,(center*1.15)+0.5)*0.1*motionblur;',
+		'}',
+		'else{',
+			'gl_FragColor=texture2D(tDiffuse,vc);',
+		'}',
 		//Bloom
 		/*'float bloomcutoff=0.3;',
 		'float bloomamount=0.15;',
@@ -95,9 +187,20 @@ var coolPass=new THREE.ShaderPass({//I'm going to be PRO with some
 		'float Y = dot(vec4(0.30, 0.59, 0.11, 0.0), gl_FragColor);',
 		'float YD = exposure * (exposure/0.8 + 1.0) / (exposure + 1.0);',
 		'gl_FragColor *= YD;',
-
+	
 		'gl_FragColor = vec4( gl_FragColor.xyz, 1.0 );',
+		
+		//Strange stuff goes here
+		/*'float a=clamp(2.0-4.0*abs(strange),0.0,1.0);',
+		'float b=clamp(2.0-4.0*abs(strange-0.5),0.0,1.0);',
+		'float c=clamp(1.5-4.0*abs(strange-0.875),0.0,1.0);',
+		'gl_FragColor=vec4(',
+			'a*gl_FragColor.x+c*gl_FragColor.y+b*gl_FragColor.z,',
+			'b*gl_FragColor.x+a*gl_FragColor.y+c*gl_FragColor.z,',
+			'c*gl_FragColor.x+b*gl_FragColor.y+a*gl_FragColor.z,',
+			'1.0);',*/
+
 	'}'
 	].join('\n')
 })
-var savePass=new THREE.SavePass(new THREE.WebGLRenderTarget(512,512))
+//var savePass=new THREE.SavePass(new THREE.WebGLRenderTarget(2,2))

@@ -88,9 +88,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.874216"
-     inkscape:cx="274.04908"
-     inkscape:cy="204.97775"
+     inkscape:zoom="0.94486823"
+     inkscape:cx="44.726546"
+     inkscape:cy="199.03505"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -117,7 +117,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -128,7 +128,7 @@
      transform="translate(0,-540.36218)">
     <path
        sodipodi:type="star"
-       style="color:#000000;fill:#505050;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;filter:url(#filter3757)"
+       style="color:#000000;fill:#1e1e1e;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;filter:url(#filter3757)"
        id="path2987"
        sodipodi:sides="6"
        sodipodi:cx="256"

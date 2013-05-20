@@ -38,18 +38,6 @@
        inkscape:vp_z="1024 : 512 : 1"
        inkscape:persp3d-origin="512 : 341.33333 : 1"
        id="perspective3119" />
-    <filter
-       inkscape:collect="always"
-       id="filter4049"
-       x="-0.69864716"
-       width="2.3972943"
-       y="-0.012613806"
-       height="1.0252276">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="5.3818906"
-         id="feGaussianBlur4051" />
-    </filter>
     <pattern
        patternUnits="userSpaceOnUse"
        width="50"
@@ -175,7 +163,7 @@
          id="feFlood4980"
          result="result1"
          flood-opacity="0"
-         flood-color="rgb(128,128,128)"
+         flood-color="rgb(255,255,255)"
          in="fbSourceGraphic" />
       <feBlend
          id="feBlend4982"
@@ -183,17 +171,15 @@
          mode="normal"
          result="result2" />
       <feComposite
-         id="feComposite4984"
-         in2="fbSourceGraphic"
-         k2="0"
+         id="feComposite4986"
+         in2="result2"
          operator="arithmetic"
          result="result7"
-         k1="3.9480093676814958"
-         k3="0" />
-      <feComposite
-         id="feComposite4986"
-         in2="fbSourceGraphic"
-         operator="in" />
+         k1="8.3655913978494638"
+         k2="-2.6881720430107521"
+         k3="10"
+         in="result2"
+         k4="-9.913978494623656" />
     </filter>
   </defs>
   <sodipodi:namedview
@@ -203,9 +189,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.69301987"
-     inkscape:cx="174.15019"
-     inkscape:cy="556.80125"
+     inkscape:zoom="0.60584906"
+     inkscape:cx="154.91058"
+     inkscape:cy="576.21055"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -223,8 +209,8 @@
      inkscape:snap-center="true"
      inkscape:snap-object-midpoints="true"
      inkscape:snap-global="true"
-     inkscape:window-width="1920"
-     inkscape:window-height="1056"
+     inkscape:window-width="1366"
+     inkscape:window-height="744"
      inkscape:window-x="0"
      inkscape:window-y="24"
      inkscape:window-maximized="1">
@@ -270,7 +256,7 @@
        height="1024"
        width="1024"
        id="rect4916"
-       style="opacity:1;color:#000000;fill:#c4c4c4;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:5;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;filter:url(#filter4918)" />
+       style="opacity:1;color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:5;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;filter:url(#filter4918)" />
     <rect
        style="fill:none;stroke:none"
        width="64"

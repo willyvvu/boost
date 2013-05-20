@@ -16,8 +16,8 @@ _Control={
 		this.respawn=0
 		this.rearview=0
 		this.ex=0
-		this.lookx=0
-		this.looky=0
+		//this.lookx=0
+		//this.looky=0
 	},
 	copy:function(obj){
 		this.accel=obj.accel
@@ -31,8 +31,39 @@ _Control={
 		this.respawn=obj.respawn
 		this.rearview=obj.rearview
 		this.ex=obj.ex
-		this.lookx=obj.lookx
-		this.looky=obj.looky
+		//this.lookx=obj.lookx
+		//this.looky=obj.looky
+	},
+	autopilot:function(obj){
+		this.accel=obj.accel
+		this.lbrake=obj.lbrake
+		this.rbrake=obj.rbrake
+		//this.boost=obj.boost
+		this.steer=obj.steer
+		this.pitch=obj.pitch
+		this.roll=obj.roll
+		//this.use=obj.use
+		//this.respawn=obj.respawn
+		//this.rearview=obj.rearview
+		//this.ex=obj.ex
+		//this.lookx=obj.lookx
+		//this.looky=obj.looky
+	},
+	assist:function(obj){
+		var stopping=Math.min(this.lbrake,this.rbrake)
+		//this.accel=obj.accel
+		this.lbrake=obj.lbrake+stopping
+		this.rbrake=obj.rbrake+stopping
+		//this.boost=obj.boost
+		this.steer=obj.steer
+		//this.pitch=obj.pitch
+		//this.roll=obj.roll
+		//this.use=obj.use
+		//this.respawn=obj.respawn
+		//this.rearview=obj.rearview
+		//this.ex=obj.ex
+		//this.lookx=obj.lookx
+		//this.looky=obj.looky
 	}
 }
 //Variables
@@ -62,8 +93,8 @@ function gamepad(){
 				controllers[c].zero()
 				controllers[c].steer=deadZone(g.axes[0])+deadZone(g.axes[6])//Main stick
 				controllers[c].pitch=deadZone(g.axes[1])+deadZone(g.axes[7])
-				controllers[c].lookx=deadZone(g.axes[5])//C stick
-				controllers[c].looky=deadZone(g.axes[2])
+				//controllers[c].lookx=deadZone(g.axes[5])//C stick
+				//controllers[c].looky=deadZone(g.axes[2])
 				controllers[c].lbrake=deadZone((g.axes[3]+1)/2)//Triggers
 				controllers[c].rbrake=deadZone((g.axes[4]+1)/2)
 				controllers[c].accel=deadZone(g.buttons[1])//A
@@ -111,8 +142,8 @@ function keyChange(e){//Picks up any change in keys: keyup and keydown
 function keyHandle(){
 	keyboard.zero()
 	keyboard2.zero()
-	keyboard.lookx=mouse.lookx
-	keyboard.looky=mouse.looky
+	//keyboard.lookx=mouse.lookx
+	//keyboard.looky=mouse.looky
 	for(var k=0;k<keys.length;k++){
 		switch(keys[k]){
 			case 87://W

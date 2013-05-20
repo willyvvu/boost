@@ -1,4 +1,21 @@
 powerups={
+	rockets:{
+		name:'Rockets',
+		probability:0.3,
+		energy:0.2,
+		damage:0.2,
+		use:function(ship){
+			for(var dir=-2;dir<=2;dir++){
+				var offset=ship.left.clone().multiplyScalar(dir*0.2)
+				var missile=ship.up.clone().multiplyScalar(1).add(ship.main.position).add(offset)
+				missile.life=2
+				missile.owner=ship
+				missile.velocity=ship.front.clone().multiplyScalar(ship.control.rearview?-10:10)
+				missile.velocity.add(offset)
+				missiles.push(missile)
+			}
+		}
+	},
 	shield:{
 		name:'Shield',
 		probability:0.2,
@@ -21,7 +38,7 @@ powerups={
 	},
 	residue:{
 		name:'Residue',
-		probability:0.4,
+		probability:0.2,
 		energy:0.3,
 		damage:0.1,
 		use:function(ship){
@@ -30,11 +47,12 @@ powerups={
 	},
 	emp:{
 		name:'EMP',
-		probability:0.2,
+		probability:0.1,
 		energy:0.2,
 		damage:0.1,
 		use:function(ship){
-			ship.uniforms.phase=slightly
+			resource.zoneTrackMaterial.uniforms.wavepos.value.copy(ship.main.position)
+			resource.zoneTrackMaterial.uniforms.wave.value=0
 			for(var r=0;r<residuals.length;r++){
 				if(residuals[r].position.distanceTo(ship.main.position)<emprange){
 					removeResidue(residuals[r].collider)

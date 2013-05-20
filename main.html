@@ -78,6 +78,35 @@
 			*{
 				-webkit-user-select:none;
 			}
+			.radar{
+				width:80px;
+				margin-left:-40px;
+				position:absolute;
+				bottom:60px;
+				font-size:50px;
+				text-align:center;
+				left:50%;
+				z-index:100;
+			}
+			.warnfront,.warnbehind,.topcenter{
+				left:0;
+				right:0;
+				height:1cm;
+				position:absolute;
+				font-size:0.7cm;
+				text-align:center;
+				z-index:100;
+			}
+			.warnfront{
+				top:80px;
+			}
+			.warnbehind{
+				bottom:80px;
+			}
+			.topcenter{
+				font-size:1cm;
+				top:20px;
+			}
 		</style>
 	</head>
 	<body>
@@ -88,9 +117,13 @@
 		<div id="reticle">[&nbsp;&nbsp;&nbsp;]</div>
 		<section id="hudcontainer" style="display:none">
 			<div class="center">
-				<div class="lowerright"><span class="speed"></span><span id="units">kph</span></div>
+				<div class="radar">|||</div>
+				<div class="lowerright"><span class="speed"></span><span id="units">mph</span></div>
 				<div class="lowerleft"><span class="energy"></span>%</div>
 				<div class="topright"><span class="powerup"></span></div>
+				<div class="topcenter"></div>
+				<div class="warnfront"></div>
+				<div class="warnbehind"></div>
 				<div class="topleft">
 					<div>
 						<span>Lap </span>
@@ -103,7 +136,7 @@
 			</div>
 		</section>
 		<script src="js/socket.io.js"></script>
-		<script src="js/three-57.js"></script>
+		<script src="js/three-58.js"></script>
 		<script src="fx/EffectComposer.js"></script>
 		<script src="fx/ShaderPass.js"></script>
 		<script src="fx/MaskPass.js"></script>
@@ -121,6 +154,7 @@
 		<script src="js/collide.js"></script>
 		<script src="js/hud.js"></script>
 		<script src="js/main.js"></script>-->
+		<script src="scene/track7/track.js"></script>
 		<script src="js/powerups.js"></script>
 		<script src="js/constant2.js"></script>
 		<script src="js/ship2.js"></script>
