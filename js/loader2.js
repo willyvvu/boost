@@ -2,7 +2,6 @@ loader=new THREE.JSONLoader()
 resource={
 	hullTex:'scene/ship2/Ship.png',
 	hullToastTex:'scene/shipresource/Toast.png',
-	shineTex:'scene/flare/Boostflare.png',
 	padTex:'scene/trackresource/Pad2.png',
 	poweruppadTex:'scene/trackresource/Pad2Powerup.png',
 	flareTex:'scene/flare/Sunflare.png',
@@ -12,7 +11,13 @@ resource={
 	autopilotTex:'scene/shipresource/Autopilot.png',
 	absorbTex:'scene/shipresource/Absorb.png',
 	residueTex:'scene/residue/Glow.png',
-	smokeTex:'scene/flare/Smoke.png'
+	residueMaskTex:'scene/residue/GlowMask.png',
+	smokeTex:'scene/flare/Smoke.png',
+	signTex:'scene/trackresource/Sign.png',
+	engineTex:'scene/shipresource/Engine.png',
+	engineFlareTex:'scene/flare/Engineflare.png',
+	circleFlareTex:'scene/flare/CircleFlare.png',
+	fragmentTex:'scene/residue/Fragment.png'
 }
 for(var c in resource){
 	resource[c]=THREE.ImageUtils.loadTexture(resource[c])
@@ -44,15 +49,13 @@ resource.hullMat=new THREE.MeshLambertMaterial({
 	map:resource.thrustTex,
 	depthWrite:false
 })*/
-resource.shineMat=new THREE.SpriteMaterial({
-	useScreenCoordinates:false,
-	color:0xFFFFFF,
+resource.signMat=new THREE.MeshBasicMaterial({
+	map:resource.signTex,
+	//blending:THREE.AdditiveBlending,
+	side:THREE.DoubleSide,
 	depthWrite:false,
-	blending:THREE.AdditiveBlending,
-	map:resource.shineTex,
 	transparent:true
 })
-
 resource.padMat=new THREE.MeshBasicMaterial({
 	map:resource.padTex,
 	transparent:true
@@ -77,6 +80,19 @@ resource.sparkMat=new THREE.ParticleBasicMaterial({
 	vertexColors:true,
 	transparent:true
 })
+resource.engineMat=new THREE.MeshBasicMaterial({
+	color:0xFFFFFF,
+	map:resource.engineTex,
+	blending:THREE.AdditiveBlending,
+	transparent:true,
+	depthWrite:false
+})
+/*resource.residueMat=new THREE.ParticleBasicMaterial({
+	blending:THREE.AdditiveBlending,
+	color:0xFFFFFF,
+	depthWrite:false,
+	map:resource.residueTex
+})*/
 resource.smokeMat=new THREE.ShaderMaterial({
 	uniforms:{
 		texture:{type:"t",value:resource.smokeTex}
@@ -91,7 +107,7 @@ resource.smokeMat=new THREE.ShaderMaterial({
 			'vOpacity=opacity;',
 			'vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );',
 
-			'gl_PointSize = (1500.0-1000.0*opacity) / length( mvPosition.xyz );',
+			'gl_PointSize = (2000.0-1000.0*opacity) / length( mvPosition.xyz );',
 			//'gl_PointSize = size * ( 300.0 / length( mvPosition.xyz ) );',
 
 			'gl_Position = projectionMatrix * mvPosition;',
@@ -116,6 +132,87 @@ resource.smokeMat=new THREE.ShaderMaterial({
 	depthWrite:false,
 	transparent:true
 })
+resource.fragmentMat=new THREE.ShaderMaterial({
+	uniforms:{
+		texture:{type:"t",value:resource.fragmentTex}
+	},
+	attributes:{
+		opacity:{type:'f',value:[]},
+		phase:{type:'f',value:[]}
+	},
+	vertexShader:[
+		'attribute float opacity;',
+		'attribute float phase;',
+		'varying float vOpacity;',
+		'varying float vPhase;',
+		'void main() {',
+			'vOpacity=opacity;',
+			'vPhase=phase;',
+			'vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );',
+			'gl_PointSize = 125.0*opacity / pow(length( mvPosition.xyz ),0.5);',//
+			'gl_Position = projectionMatrix * mvPosition;',
+		'}'
+	].join('\n'),
+	fragmentShader:[
+		'varying float vOpacity;',
+		'varying float vPhase;',
+		'uniform sampler2D texture;',
+
+		'void main() {',
+
+			//'gl_FragColor = vec4( color * vColor, 1.0 );',
+			'gl_FragColor = texture2D( texture, gl_PointCoord*0.25+vec2(mod(vPhase,4.0),floor(vPhase*0.25))*0.25);',
+			'gl_FragColor.xyz*=max(vOpacity,1.0);',
+			'gl_FragColor.w*=min(vOpacity,1.0);',
+
+		'}'
+	].join('\n'),
+	depthWrite:false,
+	depthTest:true,
+	transparent:true
+})
+resource.residueMat=new THREE.ShaderMaterial({
+	uniforms:{
+		texture:{type:"t",value:resource.residueTex},
+		textureMask:{type:'t',value:resource.residueMaskTex},
+		clock:{type:'f',value:0}
+	},
+	attributes:{
+		exploding:{type:"f",value:[]},
+		phase:{type:"f",value:[]}
+	},
+	vertexShader:[
+		'attribute float exploding;',
+		'attribute float phase;',
+		'varying float vExploding;',
+		'varying float vPhase;',
+		'void main() {',
+			'vExploding=exploding;',
+			'vPhase=phase;',
+			'vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );',
+			'gl_PointSize = (3000.0-2000.0*exploding) / length( mvPosition.xyz );',
+			'gl_Position = projectionMatrix * mvPosition;',
+		'}'
+	].join('\n'),
+	fragmentShader:[
+		'uniform float clock;',
+		'varying float vExploding;',
+		'varying float vPhase;',
+		'uniform sampler2D texture;',
+		'uniform sampler2D textureMask;',
+
+		'void main() {',
+
+			//'gl_FragColor = vec4( color * vColor, 1.0 );',
+			'gl_FragColor = texture2D( textureMask, gl_PointCoord )*texture2D( texture, gl_PointCoord+vec2(0.0,vPhase-clock));',
+			'gl_FragColor.w*=vExploding;',
+
+		'}'
+	].join('\n'),
+	blending:THREE.AdditiveBlending,
+	depthWrite:false,
+	transparent:true
+})
 resource.shieldMat=new THREE.MeshBasicMaterial({
 	map:resource.shieldTex,
 	blending:THREE.AdditiveBlending,
@@ -128,13 +225,6 @@ resource.absorbMat=new THREE.MeshBasicMaterial({
 	depthWrite:false,
 	transparent:true
 })
-resource.residueMat=new THREE.SpriteMaterial({
-	useScreenCoordinates:false,
-	blending:THREE.AdditiveBlending,
-	color:0xFFFFFF,
-	depthWrite:false,
-	map:resource.residueTex
-})
 sceneloader=new THREE.SceneLoader()
 sceneloader.load('scene/ship/Ship.js',function(data){
 })
@@ -142,10 +232,8 @@ sceneloader.load('scene/ship2/Ship.js',function(data){
 	resource.hullObj=data.objects['Hull']
 	resource.shieldObj=data.objects['Shield']
 	resource.absorbObj=data.objects['Absorb']
+	resource.engineObj=data.objects['Engine']
  })
-loader.load('scene/residue/Residue.js',function(data){
-	resource.residueGeo=data
-})
 loader.load('scene/trackresource/Pad2.js',function(geo){resource.padGeo=geo})
 
 
@@ -169,3 +257,8 @@ req.onload=function(){
 	}
 }
 req.send()
+
+
+//Load those sounds!
+resource.chimeSound=new WebSound('audio/Airplane Chime.ogg')
+resource.chimeSound.setVolume(1)

@@ -6,8 +6,8 @@
 	"type"          : "scene",
 	"sourceFile"    : "Ship.blend",
 	"generatedBy"   : "Blender 2.65 Exporter",
-	"objects"       : 4,
-	"geometries"    : 4,
+	"objects"       : 5,
+	"geometries"    : 5,
 	"materials"     : 2,
 	"textures"      : 0
 },
@@ -17,6 +17,20 @@
 
 "objects" :
 {
+	"Engine" : {
+		"geometry"  : "geo_Hull.000",
+		"groups"    : [  ],
+		"material"  : "",
+		"position"  : [ 0, -3.76514e-10, 0.011 ],
+		"rotation"  : [ -1.5708, 0, 0 ],
+		"quaternion": [ -0.707107, 0, 0, 0.707107 ],
+		"scale"     : [ 1, 1, 1 ],
+		"visible"       : true,
+		"castShadow"    : false,
+		"receiveShadow" : false,
+		"doubleSided"   : false
+	},
+
 	"Plane" : {
 		"geometry"  : "geo_Plane",
 		"groups"    : [  ],
@@ -77,6 +91,11 @@
 
 "geometries" :
 {
+	"geo_Hull.000" : {
+		"type" : "ascii",
+		"url"  : "Ship.Hull.000.js"
+	},
+
 	"geo_Plane" : {
 		"type" : "ascii",
 		"url"  : "Ship.Plane.js"

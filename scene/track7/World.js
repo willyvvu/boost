@@ -6,8 +6,8 @@
 	"type"          : "scene",
 	"sourceFile"    : "World.blend",
 	"generatedBy"   : "Blender 2.65 Exporter",
-	"objects"       : 15,
-	"geometries"    : 15,
+	"objects"       : 18,
+	"geometries"    : 17,
 	"materials"     : 3,
 	"textures"      : 0
 },
@@ -17,8 +17,36 @@
 
 "objects" :
 {
+	"Post" : {
+		"geometry"  : "geo_Post",
+		"groups"    : [  ],
+		"material"  : "",
+		"position"  : [ 0, 0, 0 ],
+		"rotation"  : [ -1.5708, 0, 0 ],
+		"quaternion": [ -0.707107, 0, 0, 0.707107 ],
+		"scale"     : [ 1, 1, 1 ],
+		"visible"       : true,
+		"castShadow"    : false,
+		"receiveShadow" : false,
+		"doubleSided"   : false
+	},
+
+	"Sign" : {
+		"geometry"  : "geo_Plane",
+		"groups"    : [  ],
+		"material"  : "",
+		"position"  : [ 0, 0, 0 ],
+		"rotation"  : [ -1.5708, 0, 0 ],
+		"quaternion": [ -0.707107, 0, 0, 0.707107 ],
+		"scale"     : [ 1, 1, 1 ],
+		"visible"       : true,
+		"castShadow"    : false,
+		"receiveShadow" : false,
+		"doubleSided"   : false
+	},
+
 	"Cube.004" : {
-		"geometry"  : "geo_Cube.002",
+		"geometry"  : "geo_Cube.005",
 		"groups"    : [  ],
 		"material"  : "",
 		"position"  : [ 0, -6.93297e-06, 202.549 ],
@@ -171,13 +199,13 @@
 		"doubleSided"   : false
 	},
 
-	"Center" : {
-		"geometry"  : "geo_Center",
+	"CloseCollide" : {
+		"geometry"  : "geo_CloseCollide",
 		"groups"    : [  ],
-		"material"  : "",
+		"material"  : "Material",
 		"position"  : [ 0, -6.93297e-06, 202.549 ],
-		"rotation"  : [ -1.5708, 0, 0 ],
-		"quaternion": [ -0.707107, 0, 0, 0.707107 ],
+		"rotation"  : [ 1.5708, -3.14159, 1.50729e-14 ],
+		"quaternion": [ -5.33851e-08, 0.707107, 0.707107, -5.33851e-08 ],
 		"scale"     : [ 1, 1, 1 ],
 		"visible"       : true,
 		"castShadow"    : false,
@@ -192,6 +220,20 @@
 		"position"  : [ 0, -6.93297e-06, 202.549 ],
 		"rotation"  : [ 1.5708, -3.14159, 1.50729e-14 ],
 		"quaternion": [ -5.33851e-08, 0.707107, 0.707107, -5.33851e-08 ],
+		"scale"     : [ 1, 1, 1 ],
+		"visible"       : true,
+		"castShadow"    : false,
+		"receiveShadow" : false,
+		"doubleSided"   : false
+	},
+
+	"Center" : {
+		"geometry"  : "geo_Auto.000",
+		"groups"    : [  ],
+		"material"  : "",
+		"position"  : [ 0, -6.93297e-06, 202.549 ],
+		"rotation"  : [ -1.5708, 0, 0 ],
+		"quaternion": [ -0.707107, 0, 0, 0.707107 ],
 		"scale"     : [ 1, 1, 1 ],
 		"visible"       : true,
 		"castShadow"    : false,
@@ -231,9 +273,19 @@
 
 "geometries" :
 {
-	"geo_Cube.002" : {
+	"geo_Post" : {
 		"type" : "ascii",
-		"url"  : "World.Cube.002.js"
+		"url"  : "World.Post.js"
+	},
+
+	"geo_Plane" : {
+		"type" : "ascii",
+		"url"  : "World.Plane.js"
+	},
+
+	"geo_Cube.005" : {
+		"type" : "ascii",
+		"url"  : "World.Cube.005.js"
 	},
 
 	"geo_Cube.008" : {
@@ -249,11 +301,6 @@
 	"geo_Cube.007" : {
 		"type" : "ascii",
 		"url"  : "World.Cube.007.js"
-	},
-
-	"geo_Plane" : {
-		"type" : "ascii",
-		"url"  : "World.Plane.js"
 	},
 
 	"geo_Icosphere.004" : {
@@ -286,14 +333,19 @@
 		"url"  : "World.Ground.001.js"
 	},
 
-	"geo_Center" : {
+	"geo_CloseCollide" : {
 		"type" : "ascii",
-		"url"  : "World.Center.js"
+		"url"  : "World.CloseCollide.js"
 	},
 
 	"geo_Backup.000" : {
 		"type" : "ascii",
 		"url"  : "World.Backup.000.js"
+	},
+
+	"geo_Auto.000" : {
+		"type" : "ascii",
+		"url"  : "World.Auto.000.js"
 	},
 
 	"geo_Backup" : {

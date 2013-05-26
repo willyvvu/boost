@@ -1,70 +1,67 @@
 function Control(){
-	this.__proto__=_Control
 	this.zero()
 	return this
 }
-_Control={
-	zero:function(){
-		this.accel=0
-		this.lbrake=0
-		this.rbrake=0
-		this.boost=0
-		this.steer=0
-		this.pitch=0
-		this.roll=0
-		this.use=0
-		this.respawn=0
-		this.rearview=0
-		this.ex=0
-		//this.lookx=0
-		//this.looky=0
-	},
-	copy:function(obj){
-		this.accel=obj.accel
-		this.lbrake=obj.lbrake
-		this.rbrake=obj.rbrake
-		this.boost=obj.boost
-		this.steer=obj.steer
-		this.pitch=obj.pitch
-		this.roll=obj.roll
-		this.use=obj.use
-		this.respawn=obj.respawn
-		this.rearview=obj.rearview
-		this.ex=obj.ex
-		//this.lookx=obj.lookx
-		//this.looky=obj.looky
-	},
-	autopilot:function(obj){
-		this.accel=obj.accel
-		this.lbrake=obj.lbrake
-		this.rbrake=obj.rbrake
-		//this.boost=obj.boost
-		this.steer=obj.steer
-		this.pitch=obj.pitch
-		this.roll=obj.roll
-		//this.use=obj.use
-		//this.respawn=obj.respawn
-		//this.rearview=obj.rearview
-		//this.ex=obj.ex
-		//this.lookx=obj.lookx
-		//this.looky=obj.looky
-	},
-	assist:function(obj){
-		var stopping=Math.min(this.lbrake,this.rbrake)
-		//this.accel=obj.accel
-		this.lbrake=obj.lbrake+stopping
-		this.rbrake=obj.rbrake+stopping
-		//this.boost=obj.boost
-		this.steer=obj.steer
-		//this.pitch=obj.pitch
-		//this.roll=obj.roll
-		//this.use=obj.use
-		//this.respawn=obj.respawn
-		//this.rearview=obj.rearview
-		//this.ex=obj.ex
-		//this.lookx=obj.lookx
-		//this.looky=obj.looky
-	}
+Control.prototype.zero=function(){
+	this.accel=0
+	this.lbrake=0
+	this.rbrake=0
+	this.boost=0
+	this.steer=0
+	this.pitch=0
+	this.roll=0
+	this.use=0
+	this.respawn=0
+	this.rearview=0
+	this.ex=0
+	//this.lookx=0
+	//this.looky=0
+}
+Control.prototype.copy=function(obj){
+	this.accel=obj.accel
+	this.lbrake=obj.lbrake
+	this.rbrake=obj.rbrake
+	this.boost=obj.boost
+	this.steer=obj.steer
+	this.pitch=obj.pitch
+	this.roll=obj.roll
+	this.use=obj.use
+	this.respawn=obj.respawn
+	this.rearview=obj.rearview
+	this.ex=obj.ex
+	//this.lookx=obj.lookx
+	//this.looky=obj.looky
+}
+Control.prototype.autopilot=function(obj){
+	this.accel=obj.accel
+	this.lbrake=obj.lbrake
+	this.rbrake=obj.rbrake
+	//this.boost=obj.boost
+	this.steer=obj.steer
+	this.pitch=obj.pitch
+	this.roll=obj.roll
+	//this.use=obj.use
+	//this.respawn=obj.respawn
+	//this.rearview=obj.rearview
+	//this.ex=obj.ex
+	//this.lookx=obj.lookx
+	//this.looky=obj.looky
+}
+Control.prototype.assist=function(obj){
+	var stopping=Math.min(this.lbrake,this.rbrake)
+	//this.accel=obj.accel
+	this.lbrake=obj.lbrake+stopping
+	this.rbrake=obj.rbrake+stopping
+	//this.boost=obj.boost
+	this.steer=obj.steer
+	//this.pitch=obj.pitch
+	//this.roll=obj.roll
+	//this.use=obj.use
+	//this.respawn=obj.respawn
+	//this.rearview=obj.rearview
+	//this.ex=obj.ex
+	//this.lookx=obj.lookx
+	//this.looky=obj.looky
 }
 //Variables
 keyboard=new Control()

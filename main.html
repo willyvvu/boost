@@ -49,16 +49,15 @@
 				position:fixed;
 				/*color:black;*/
 			}
-			#reticle{
+			.reticle{
 				text-align:center;
 				z-index:50;
 				top:50%;
+				left:50%;
 				margin-top:-0.5cm;
-				left:0;
-				right:0;
+				margin-left:-0.5cm;
 				font-size:1cm;
-				position:fixed;
-				opacity:0;
+				position:absolute;
 				/*color:black;*/
 			}
 			#hudcontainer{
@@ -114,9 +113,9 @@
 		<div id="countdown"></div>
 		<div id="loading">&lt;Transferring data&gt;</div>
 		<div id="info"></div>
-		<div id="reticle">[&nbsp;&nbsp;&nbsp;]</div>
 		<section id="hudcontainer" style="display:none">
 			<div class="center">
+				<div class="reticle" style="display:none">[&nbsp;&nbsp;&nbsp;]</div>
 				<div class="radar">|||</div>
 				<div class="lowerright"><span class="speed"></span><span id="units">mph</span></div>
 				<div class="lowerleft"><span class="energy"></span>%</div>
@@ -145,7 +144,7 @@
 		<script src="fx/BloomPass.js"></script>
 		<script src="fx/CopyShader.js"></script>
 		<script src="fx/ConvolutionShader.js"></script>
-		<!--<audio src="audio/CoLD SToRAGE - Lost In Music.mp3" id="backgroundaudio"></audio>-->
+		<audio src="audio/07. On a Good Day.ogg" id="backgroundaudio"></audio>
 		<!--<script src="js/const.js"></script>
 		<script src="js/scene.js"></script>
 		<script src="js/fx.js"></script>
@@ -156,6 +155,7 @@
 		<script src="js/main.js"></script>-->
 		<script src="scene/track7/track.js"></script>
 		<script src="js/powerups.js"></script>
+		<script src="js/audio2.js"></script>
 		<script src="js/constant2.js"></script>
 		<script src="js/ship2.js"></script>
 		<script src="js/loader2.js"></script>

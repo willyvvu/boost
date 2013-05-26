@@ -56,6 +56,9 @@ near=0.1//Near
 far=10000000//Far
 camsmooth=0.1
 radarfar=500
+aimfar=300
+aimangle=Math.PI/8
+
 //Other stuff
 slightly=0.01
 trail=20
@@ -64,12 +67,23 @@ collisionconst=0.5//Really small, but not 0
 maxcollisions=10
 blow=0//Seconds before blowing up
 //Powerups
+
 residueslow=40
 emprange=600//This is hardcoded into the shader
 empslow=100
+emphurt=0.3
+jumpforce=0.97
+fullclip=100
+worldpadding=100
 
-//Autopilot
-
+function formatTime(n){
+	var millis=n%1000
+	n=(n-millis)/1000
+	var seconds=n%60
+	n=(n-seconds)/60
+	var minutes=n
+	return (minutes/100).toFixed(2).slice(2)+':'+(seconds/100).toFixed(2).slice(2)+'.'+(millis/1000).toFixed(1).slice(2)
+}
 function more(a,b){//a>b when b>0,else, a<b when b<0
 	return a*b>b*b
 }
@@ -104,6 +118,26 @@ function addSpark(position,velocity){
 	current.color=Math.random()
 	currentspark++
 	if(currentspark>=sparks.geometry.vertices.length){currentspark=0}
+}
+function addFragment(position,velocity,large){
+	var current=fragments.geometry.vertices[currentfragment]
+	current.copy(position)
+	current.velocity.set(Math.random()-0.5,Math.random()-0.5,Math.random()-0.5)
+	if(velocity){
+		current.velocity.multiplyScalar(0.5)
+		current.velocity.add(velocity)
+	}
+	resource.fragmentMat.attributes.opacity.value[currentfragment]=large?3:2
+	currentfragment++
+	if(currentfragment>=fragments.geometry.vertices.length){currentfragment=0}
+}
+function addSmokeLerp(position,velocity,fireball){
+	var totaldist=velocity.length()
+	var temp=new THREE.Vector3()
+	for(var filldist=0;filldist<totaldist;filldist+=1){
+		temp.copy(velocity).multiplyScalar(-filldist/totaldist).add(position)
+		addSmoke(temp,fireball)
+	}
 }
 function addSmoke(position,fireball){
 	var current=smoke.geometry.vertices[currentsmoke]
@@ -148,37 +182,39 @@ function addBoostPad(position,rotation,powerup){
 	boostpads.push(pad)
 	scene.add(pad)
 	scene.add(collider)
-	colliders.push(collider)
+	padcolliders.push(collider)
 }
-function addResidue(position){
-	var residue=new THREE.Sprite(
-		//resource.residueGeo,
-		resource.residueMat.clone()
-	)
-	residue.position.copy(position)
-	var collider=new THREE.Mesh(
-		new THREE.CubeGeometry(5,5,5),
-		new THREE.MeshBasicMaterial()
-	)
-	collider.position.copy(position)
-	collider.visible=false
-	residue.exploding=0
-	collider.residue=residue
-	residue.collider=collider
-	scene.add(collider)
-	residuals.push(residue)
-	rescolliders.push(collider)
-	scene.add(residue)
-	if(rescolliders.length>100){
-		removeResidue(rescolliders[0])
+function addResidue(position,owner){
+	var current=residualsystem.geometry.vertices[currentresidue]
+	current.copy(position)
+	current.owner=owner
+	current.index=currentresidue
+	resource.residueMat.attributes.exploding.value[currentresidue]=1
+	residuals.unshift(current)
+	var rescol=new THREE.Mesh(new THREE.CubeGeometry(3,3,3),new THREE.MeshBasicMaterial())
+	rescol.position.copy(position)
+	rescol.visible=false
+	rescol.residue=true
+	scene.add(rescol)
+	rescolliders.unshift(rescol)
+	if(residuals.length>residualsystem.geometry.vertices.length){
+		residuals.splice(residualsystem.geometry.vertices.length)
+		rescolliders.splice(residualsystem.geometry.vertices.length)
 	}
+	currentresidue++
+	if(currentresidue>=residualsystem.geometry.vertices.length){currentresidue=0}
+	residualsystem.geometry.verticesNeedUpdate=true
+	resource.residueMat.attributes.exploding.needsUpdate=true
+	resource.residueMat.attributes.phase.needsUpdate=true
 }
-function removeResidue(object){
-	scene.remove(object)
-	//scene.remove(object.residue)
-	smartpop(rescolliders,object)
-	object.residue.exploding=slightly
-	//smartpop(residuals,object.residue)
+function removeResidue(r,velocity,large){
+	for(var f=0;f<10;f++){
+		addFragment(residuals[r],velocity,large)
+	}
+	resource.residueMat.attributes.exploding.value[residuals[r].index]=1-slightly
+	residuals.splice(r,1)
+	scene.remove(rescolliders[r])
+	rescolliders.splice(r,1)
 }
 function entity(text){
 	for(var e in entityTable){
@@ -217,14 +253,11 @@ function solveRay(origin,direction,distance,objects,_times,_now,_previousface,_w
 		if(!intersection&&intersections[c].object===trackcollide){
 			intersection=intersections[c]
 		}
-		if(intersections[c].object.residue){
-			removeResidue(intersections[c].object)
-		}
 	}
 	if(intersection){
 		//Hit something
 		var normal=intersection.face.normal.clone().transformDirection(intersection.object.matrix)
-		if(!intersection.face.isfloor&&normal.dot(_now)<-0.5){
+		if(!intersection.face.isfloor){//&&normal.dot(_now)<-0.5){
 			//Missiles should explode now: hit a wall
 			return false
 		}
@@ -254,5 +287,47 @@ function solveRay(origin,direction,distance,objects,_times,_now,_previousface,_w
 	else{//Continue on
 		origin.add(_now.clone().multiplyScalar(distance))
 		return _now.normalize()
+	}
+}
+function coneSort(a,b){
+	return a.angle-b.angle
+}
+function parseHUD(element){
+	element.powerup=element.getElementsByClassName('powerup')[0]
+	element.speed=element.getElementsByClassName('speed')[0]
+	element.energy=element.getElementsByClassName('energy')[0]
+	element.lowerleft=element.getElementsByClassName('lowerleft')[0]
+	element.currentlap=element.getElementsByClassName('currentlap')[0]
+	element.currenttime=element.getElementsByClassName('currenttime')[0]
+	element.radar=element.getElementsByClassName('radar')[0]
+	element.warnfront=element.getElementsByClassName('warnfront')[0]
+	element.warnbehind=element.getElementsByClassName('warnbehind')[0]
+	element.topcenter=element.getElementsByClassName('topcenter')[0]
+	element.reticle=element.getElementsByClassName('reticle')[0]
+}
+function flareCallback(object){
+	var f, fl = object.lensFlares.length;
+	var flare;
+	var vecX = -object.positionScreen.x * 2;
+	var vecY = -object.positionScreen.y * 2;
+	for( f = 0; f < fl; f++ ) {
+		   flare = object.lensFlares[ f ];
+		   flare.x = object.positionScreen.x + vecX * flare.distance;
+		   flare.y = object.positionScreen.y + vecY * flare.distance;
+		   flare.rotation = 0;
+	}
+}
+function engineFlareCallback(object){
+	var f, fl = object.lensFlares.length;
+	var flare;
+	var vecX = -object.positionScreen.x * 2;
+	var vecY = -object.positionScreen.y * 2;
+	//console.log(object.positionScreen)
+	for( f = 0; f < fl; f++ ) {
+		   flare = object.lensFlares[ f ];
+		   flare.x = object.positionScreen.x + vecX * flare.distance;
+		   flare.y = object.positionScreen.y + vecY * flare.distance;
+		   flare.scale=clamp(100*(1-object.positionScreen.z),0,1);
+		   flare.rotation = 0;
 	}
 }

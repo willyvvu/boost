@@ -85,6 +85,152 @@ resource.zoneTrackMaterial=new THREE.ShaderMaterial({
 		'}'
 	].join('\n')
 })
+
+
+
+resource.trackMaterial=new THREE.ShaderMaterial({
+	lights:true,
+	uniforms: THREE.UniformsUtils.merge( [
+
+		THREE.UniformsLib[ "common" ],
+		THREE.UniformsLib[ "bump" ],
+		THREE.UniformsLib[ "normalmap" ],
+		THREE.UniformsLib[ "fog" ],
+		THREE.UniformsLib[ "lights" ],
+		THREE.UniformsLib[ "shadowmap" ],
+
+		{
+			wave:{type:'f',value:emprange},
+			wavepos:{type:'v3',value:new THREE.Vector3()},
+			
+			"ambient"  : { type: "c", value: new THREE.Color( 0xffffff ) },
+			"emissive" : { type: "c", value: new THREE.Color( 0x000000 ) },
+			"specular" : { type: "c", value: new THREE.Color( 0x111111 ) },
+			"shininess": { type: "f", value: 30 },
+			"wrapRGB"  : { type: "v3", value: new THREE.Vector3( 1, 1, 1 ) }
+		}
+
+	] ),
+
+	vertexShader: [
+
+		"#define PHONG",
+		"#define USE_MAP",
+		"#define USE_SPECULARMAP",
+
+		'varying vec4 pos;',
+		'varying vec2 uvpos;',
+		'varying float wavemag;',
+		'uniform float wave;',
+		'uniform vec3 wavepos;',
+			
+
+		"varying vec3 vViewPosition;",
+		"varying vec3 vNormal;",
+
+		THREE.ShaderChunk[ "map_pars_vertex" ],
+		THREE.ShaderChunk[ "lightmap_pars_vertex" ],
+		THREE.ShaderChunk[ "envmap_pars_vertex" ],
+		THREE.ShaderChunk[ "lights_phong_pars_vertex" ],
+		THREE.ShaderChunk[ "color_pars_vertex" ],
+		THREE.ShaderChunk[ "morphtarget_pars_vertex" ],
+		THREE.ShaderChunk[ "skinning_pars_vertex" ],
+		THREE.ShaderChunk[ "shadowmap_pars_vertex" ],
+
+		"void main() {",
+
+			THREE.ShaderChunk[ "map_vertex" ],
+			THREE.ShaderChunk[ "lightmap_vertex" ],
+			THREE.ShaderChunk[ "color_vertex" ],
+
+			THREE.ShaderChunk[ "morphnormal_vertex" ],
+			THREE.ShaderChunk[ "skinbase_vertex" ],
+			THREE.ShaderChunk[ "skinnormal_vertex" ],
+			THREE.ShaderChunk[ "defaultnormal_vertex" ],
+
+			"vNormal = normalize( transformedNormal );",
+
+			THREE.ShaderChunk[ "morphtarget_vertex" ],
+			THREE.ShaderChunk[ "skinning_vertex" ],
+			THREE.ShaderChunk[ "default_vertex" ],
+
+			"vViewPosition = -mvPosition.xyz;",
+
+			THREE.ShaderChunk[ "worldpos_vertex" ],
+			THREE.ShaderChunk[ "envmap_vertex" ],
+			THREE.ShaderChunk[ "lights_phong_vertex" ],
+			THREE.ShaderChunk[ "shadowmap_vertex" ],
+			
+			'float dist=length(position-vec3(-wavepos.x,wavepos.z-200.0,wavepos.y));',//-wavepos.x
+			'wavemag=100.0/(abs(dist-wave)*abs(dist-wave)+100.0)*clamp(1.0-(dist-400.0)/100.0,0.0,1.0);',
+			'uvpos=uv;',
+			'gl_Position=projectionMatrix*',
+				'modelViewMatrix*',
+				'vec4(position+vec3(0.0,0.0,-10.0)*wavemag,1.0);',
+			'pos=gl_Position;',
+		"}"
+
+	].join("\n"),
+
+	fragmentShader: [
+
+		"#define PHONG",
+		"#define USE_MAP",
+		"#define USE_SPECULARMAP",
+
+		"uniform vec3 diffuse;",
+		"uniform float opacity;",
+
+		"uniform vec3 ambient;",
+		"uniform vec3 emissive;",
+		"uniform vec3 specular;",
+		"uniform float shininess;",
+
+
+		'varying vec4 pos;',
+		'varying vec2 uvpos;',
+		'varying float wavemag;',
+		'uniform float wave;',
+		'uniform vec3 wavepos;',
+
+
+		THREE.ShaderChunk[ "color_pars_fragment" ],
+		THREE.ShaderChunk[ "map_pars_fragment" ],
+		THREE.ShaderChunk[ "lightmap_pars_fragment" ],
+		THREE.ShaderChunk[ "envmap_pars_fragment" ],
+		THREE.ShaderChunk[ "fog_pars_fragment" ],
+		THREE.ShaderChunk[ "lights_phong_pars_fragment" ],
+		THREE.ShaderChunk[ "shadowmap_pars_fragment" ],
+		THREE.ShaderChunk[ "bumpmap_pars_fragment" ],
+		THREE.ShaderChunk[ "normalmap_pars_fragment" ],
+		THREE.ShaderChunk[ "specularmap_pars_fragment" ],
+
+		"void main() {",
+
+			"gl_FragColor = vec4( vec3 ( 1.0 ), opacity );",
+
+			THREE.ShaderChunk[ "map_fragment" ],
+			THREE.ShaderChunk[ "alphatest_fragment" ],
+			THREE.ShaderChunk[ "specularmap_fragment" ],
+
+			THREE.ShaderChunk[ "lights_phong_fragment" ],
+
+			THREE.ShaderChunk[ "lightmap_fragment" ],
+			THREE.ShaderChunk[ "color_fragment" ],
+			THREE.ShaderChunk[ "envmap_fragment" ],
+			THREE.ShaderChunk[ "shadowmap_fragment" ],
+
+			THREE.ShaderChunk[ "linear_to_gamma_fragment" ],
+
+			THREE.ShaderChunk[ "fog_fragment" ],
+			
+			'gl_FragColor+=wavemag*sin(uvpos.x*160.0)*sin(uvpos.y*160.0);',
+		"}"
+
+	].join("\n")
+})
+
+
 var scalePass=new THREE.ShaderPass({//I'm going to be PRO with some
 //Scales up the image. For use with motion blur.
 	uniforms:{
@@ -131,20 +277,12 @@ var coolPass=new THREE.ShaderPass({//I'm going to be PRO with some
 	].join('\n'),
 	fragmentShader: [
 	'uniform sampler2D tDiffuse;',
-	//'uniform sampler2D tDiffuse2;',
-	//'uniform sampler2D tHex;',
 	'uniform float phase;',
 	'uniform vec2 resolution;',
-	//'uniform vec3 color;',
-	/*'uniform float damage;',
-	'uniform float boost;',
-	'uniform float push;',
-	'uniform float cover;',*/
 	'uniform float motionblur;',
 	'varying vec2 v;',
 	'varying vec3 pos;',
 	'void main() {',
-		//'vec4 color=vec4(0.0,0.0,0.0,0.0);',
 		'vec2 vc=v;',
 		'vec2 center=vec2(1.0,resolution.y/resolution.x)*(v-0.5);',
 		'float vin=clamp(length(v-0.5)-0.4,0.0,1.0);',
@@ -153,10 +291,6 @@ var coolPass=new THREE.ShaderPass({//I'm going to be PRO with some
 			'float x=(lc-1.5*phase+0.2);',//0.5=phase
 			'vc+=center*-0.7/(1.0+10000.0*x*x*x*x);',//'(2.5/((lc-x)*(lc-x)));',
 		'}',
-		/*'if(damage>0.001){color+=vin*damage*vec4(0.6,0.0,-0.4,1.0);};',
-		'if(boost>0.001){color+=vin*boost*vec4(0.6,0.6,1.0,1.0);};',
-		'if(push>0.001){color+=vin*push*vec4(0.0,1.0,0.0,1.0);};',
-		'if(cover>0.001){color+=cover*vec4(1.0,1.0,1.0,1.0);};',*/
 		'if(motionblur>0.01){',
 			'vec2 center=vc-0.5;',
 			'gl_FragColor=texture2D(tDiffuse,vc)*(1.0-0.6*motionblur)',
@@ -167,18 +301,6 @@ var coolPass=new THREE.ShaderPass({//I'm going to be PRO with some
 		'else{',
 			'gl_FragColor=texture2D(tDiffuse,vc);',
 		'}',
-		//Bloom
-		/*'float bloomcutoff=0.3;',
-		'float bloomamount=0.15;',
-		'gl_FragColor+=clamp(texture2D(tDiffuse,vec2(vc.x+3.0/resolution.x,vc.y+3.0/resolution.y))*(bloomamount+bloomcutoff)-bloomcutoff,0.0,bloomamount);',
-		'gl_FragColor+=clamp(texture2D(tDiffuse,vec2(vc.x,vc.y+3.0/resolution.y))*(bloomamount+bloomcutoff)-bloomcutoff,0.0,bloomamount);',
-		'gl_FragColor+=clamp(texture2D(tDiffuse,vec2(vc.x-3.0/resolution.x,vc.y+3.0/resolution.y))*(bloomamount+bloomcutoff)-bloomcutoff,0.0,bloomamount);',
-		'gl_FragColor+=clamp(texture2D(tDiffuse,vec2(vc.x+3.0/resolution.x,vc.y))*(bloomamount+bloomcutoff)-bloomcutoff,0.0,bloomamount);',
-		'gl_FragColor+=clamp(texture2D(tDiffuse,vec2(vc.x-3.0/resolution.x,vc.y))*(bloomamount+bloomcutoff)-bloomcutoff,0.0,bloomamount);',
-		'gl_FragColor+=clamp(texture2D(tDiffuse,vec2(vc.x+3.0/resolution.x,vc.y-3.0/resolution.y))*(bloomamount+bloomcutoff)-bloomcutoff,0.0,bloomamount);',
-		'gl_FragColor+=clamp(texture2D(tDiffuse,vec2(vc.x,vc.y-3.0/resolution.y))*(bloomamount+bloomcutoff)-bloomcutoff,0.0,bloomamount);',
-		'gl_FragColor+=clamp(texture2D(tDiffuse,vec2(vc.x-3.0/resolution.x,vc.y-3.0/resolution.y))*(bloomamount+bloomcutoff)-bloomcutoff,0.0,bloomamount);',
-		*/
 		// apply gamma correction and exposure
 		//'gl_FragColor = vec4( pow( exposure * gl_FragColor.xyz, vec3( 1.1 ) ), 1.0 );',
 		

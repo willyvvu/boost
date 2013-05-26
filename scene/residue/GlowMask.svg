@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="512"
+   height="512"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="GlowMask.svg"
+   inkscape:export-filename="/home/william/Documents/Node (10th grade)/Boost/scene/residue/GlowMask.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs4">
+    <linearGradient
+       id="linearGradient3883">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:0;"
+         offset="0"
+         id="stop3885" />
+      <stop
+         id="stop3893"
+         offset="0.65684932"
+         style="stop-color:#ffffff;stop-opacity:0.25384617;" />
+      <stop
+         id="stop3891"
+         offset="0.93835616"
+         style="stop-color:#ffffff;stop-opacity:1;" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:0;"
+         offset="1"
+         id="stop3887" />
+    </linearGradient>
+    <filter
+       id="filter3757"
+       inkscape:label="filter1"
+       y="-0.10000000000000001"
+       x="-0.10000000000000001">
+      <feTurbulence
+         id="feTurbulence3759"
+         baseFrequency="0.021390374331550804"
+         type="turbulence"
+         seed="0"
+         numOctaves="1" />
+      <feColorMatrix
+         id="feColorMatrix3761"
+         type="luminanceToAlpha"
+         result="result1" />
+      <feFlood
+         id="feFlood3765"
+         result="result2"
+         flood-color="rgb(253,0,8)" />
+      <feComposite
+         id="feComposite3763"
+         operator="in"
+         result="result3"
+         in="result2"
+         in2="result1" />
+      <feFlood
+         id="feFlood3771"
+         result="result6"
+         flood-color="rgb(255,187,50)" />
+      <feBlend
+         blend="normal"
+         id="feBlend3769"
+         in="result3"
+         result="result5"
+         in2="result6"
+         mode="normal" />
+      <feComposite
+         id="feComposite3767"
+         in2="SourceAlpha"
+         operator="in"
+         result="result4" />
+    </filter>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3883"
+       id="radialGradient3889"
+       cx="256"
+       cy="256"
+       fx="256"
+       fy="256"
+       r="256"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#000000"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.87909738"
+     inkscape:cx="268.90986"
+     inkscape:cy="272.16396"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:window-width="1366"
+     inkscape:window-height="744"
+     inkscape:window-x="0"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid2985"
+       empspacing="4"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true"
+       spacingx="32px"
+       spacingy="32px" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-540.36218)">
+    <rect
+       style="color:#000000;fill:url(#radialGradient3889);fill-opacity:1.0;fill-rule:nonzero;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="rect3113"
+       width="512"
+       height="512"
+       x="0"
+       y="0"
+       transform="translate(0,540.36218)" />
+  </g>
+</svg>
